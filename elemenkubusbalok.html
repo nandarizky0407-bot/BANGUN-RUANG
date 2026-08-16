@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eksplorasi Bangun Ruang — Kubus & Balok</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800;12..96,900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+:root {
+  --bg: #0a0d14; --bg-2: #0f1320; --surface: #161b26; --surface-2: #1d2330;
+  --border: #2a3343; --border-bright: #3a4658;
+  --fg: #f0f4f8; --muted: #8892a8; --muted-2: #5a6478;
+  --accent: #fbbf24; --accent-2: #22d3ee;
+  --pink: #f472b6; --lime: #a3e635; --violet: #a78bfa;
+  --success: #4ade80; --danger: #f87171;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden; line-height: 1.6;
+}
+.font-display { font-family: 'Bricolage Grotesque', sans-serif; letter-spacing: -0.02em; }
+
+.bg-grid {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(34,211,238,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,211,238,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+.bg-glow { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.22; pointer-events: none; z-index: 0; }
+.glow-1 { width: 600px; height: 600px; background: #fbbf24; top: -200px; right: -200px; }
+.glow-2 { width: 500px; height: 500px; background: #22d3ee; bottom: 20%; left: -150px; }
+.glow-3 { width: 400px; height: 400px; background: #a78bfa; top: 60%; right: 10%; opacity: 0.15; }
+main { position: relative; z-index: 1; }
+
+.topnav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10, 13, 20, 0.85);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.85rem 2rem;
+}
+.topnav-inner { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.brand { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 1.15rem; display: flex; align-items: center; gap: 0.6rem; }
+.brand-mark { width: 30px; height: 30px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; color: #0a0d14; }
+.nav-links { display: flex; gap: 1.75rem; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; font-weight: 500; }
+.nav-links a:hover { color: var(--fg); }
+@media (max-width: 700px) { .nav-links { display: none; } }
+
+.hero {
+  min-height: 100vh; display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  align-items: center; gap: 3rem;
+  padding: 4rem 2rem; position: relative;
+}
+@media (max-width: 900px) { .hero { grid-template-columns: 1fr; padding: 3rem 1.5rem; gap: 2rem; } }
+.hero-content { max-width: 720px; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 1rem; background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.3); border-radius: 100px;
+  font-size: 0.82rem; color: var(--accent-2); font-weight: 500; margin-bottom: 1.5rem;
+}
+.hero h1 {
+  font-size: clamp(2.5rem, 6.5vw, 5.2rem); font-weight: 900;
+  line-height: 0.95; margin: 0 0 1.5rem 0;
+  background: linear-gradient(135deg, #f0f4f8 0%, #fbbf24 55%, #22d3ee 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero p.lead { font-size: clamp(1rem, 1.4vw, 1.18rem); color: var(--muted); max-width: 600px; margin: 0 0 2rem 0; }
+.hero-meta { display: flex; gap: 2.5rem; flex-wrap: wrap; margin-top: 2rem; }
+.meta-item { display: flex; flex-direction: column; gap: 0.25rem; }
+.meta-value { font-family: 'Bricolage Grotesque', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--accent); line-height: 1; }
+.meta-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 500; }
+.hero-visual { display: flex; align-items: center; justify-content: center; position: relative; }
+.hero-cube-wrap { width: 100%; max-width: 460px; position: relative; }
+.hero-cube-svg { width: 100%; height: auto; filter: drop-shadow(0 30px 60px rgba(251, 191, 36, 0.15)); animation: heroFloat 7s ease-in-out infinite; }
+@keyframes heroFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(1.5deg); } }
+.hero-cube-orbit { position: absolute; inset: -10%; border: 1px dashed rgba(34, 211, 238, 0.15); border-radius: 50%; animation: spin 30s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.section { padding: 5rem 2rem; position: relative; }
+@media (max-width: 700px) { .section { padding: 3.5rem 1.25rem; } }
+.section-inner { max-width: 1280px; margin: 0 auto; }
+.section-eyebrow { font-size: 0.78rem; color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.22em; font-weight: 600; margin-bottom: 0.75rem; }
+.section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.1; margin: 0 0 1rem 0; }
+.section-desc { font-size: 1.05rem; color: var(--muted); max-width: 720px; margin: 0 0 3rem 0; }
+
+.viewer-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 1.5rem; }
+@media (max-width: 900px) { .viewer-grid { grid-template-columns: 1fr; } }
+.viewer-canvas {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(251, 191, 36, 0.08), transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(34, 211, 238, 0.08), transparent 50%),
+    var(--bg-2);
+  border: 1px solid var(--border); border-radius: 16px;
+  height: 580px; position: relative; overflow: hidden;
+}
+@media (max-width: 700px) { .viewer-canvas { height: 420px; } }
+.viewer-canvas canvas { display: block; border-radius: 16px; }
+.viewer-label { position: absolute; top: 1rem; left: 1rem; font-family: 'Bricolage Grotesque', sans-serif; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.2em; z-index: 5; font-weight: 600; }
+.viewer-hint { position: absolute; bottom: 1rem; right: 1rem; font-size: 0.75rem; color: var(--muted-2); display: flex; align-items: center; gap: 0.4rem; z-index: 5; pointer-events: none; }
+.vertex-label {
+  background: rgba(15, 19, 32, 0.92); border: 1px solid var(--accent);
+  color: var(--accent); font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 700; font-size: 13px; padding: 2px 7px; border-radius: 6px;
+  pointer-events: none; white-space: nowrap;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.control-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+.shape-toggle { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg-2); border-radius: 12px; padding: 4px; gap: 4px; }
+.shape-toggle button { padding: 0.7rem; border: none; background: transparent; color: var(--muted); font-family: inherit; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.92rem; }
+.shape-toggle button.active { background: var(--accent); color: #0a0d14; }
+.dim-slider { display: flex; flex-direction: column; gap: 0.5rem; }
+.dim-slider label { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--muted); }
+.dim-slider label span { color: var(--accent); font-weight: 700; font-family: 'Bricolage Grotesque', sans-serif; }
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: var(--border); border-radius: 2px; outline: none; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--accent); border-radius: 50%; cursor: pointer; box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2); }
+input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent); border-radius: 50%; cursor: pointer; border: none; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 0.55rem 0; cursor: pointer; user-select: none; }
+.toggle-row span { font-size: 0.92rem; color: var(--fg); display: flex; align-items: center; }
+.toggle-row .swatch { width: 12px; height: 12px; border-radius: 3px; margin-right: 0.6rem; display: inline-block; }
+.toggle-switch { position: relative; width: 42px; height: 22px; background: var(--border); border-radius: 11px; transition: background 0.2s; flex-shrink: 0; }
+.toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: var(--muted); border-radius: 50%; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+.toggle-switch.on { background: var(--accent); }
+.toggle-switch.on::after { left: 23px; background: #0a0d14; }
+.legend { display: flex; flex-direction: column; gap: 0.55rem; padding-top: 1rem; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+.legend-item { display: flex; align-items: center; font-size: 0.8rem; color: var(--muted); }
+.legend-item .swatch { width: 14px; height: 14px; border-radius: 3px; margin-right: 0.6rem; }
+
+.element-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.25rem; }
+.element-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem; position: relative; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.element-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.4s; }
+.element-card:hover::before { transform: scaleX(1); }
+.element-card[data-color="pink"]::before { background: var(--pink); }
+.element-card[data-color="lime"]::before { background: var(--lime); }
+.element-card[data-color="violet"]::before { background: var(--violet); }
+.element-card[data-color="cyan"]::before { background: var(--accent-2); }
+.element-card:hover { transform: translateY(-4px); border-color: var(--border-bright); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+.element-icon { width: 52px; height: 52px; border-radius: 12px; background: rgba(251, 191, 36, 0.1); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--accent); margin-bottom: 1rem; }
+.element-card[data-color="pink"] .element-icon { background: rgba(244, 114, 182, 0.1); color: var(--pink); }
+.element-card[data-color="lime"] .element-icon { background: rgba(163, 230, 53, 0.1); color: var(--lime); }
+.element-card[data-color="violet"] .element-icon { background: rgba(167, 139, 250, 0.1); color: var(--violet); }
+.element-card[data-color="cyan"] .element-icon { background: rgba(34, 211, 238, 0.1); color: var(--accent-2); }
+.element-card h3 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 700; margin: 0 0 0.5rem 0; }
+.element-card p { font-size: 0.9rem; color: var(--muted); margin: 0 0 1.25rem 0; }
+.element-card p strong { color: var(--fg); font-weight: 600; }
+.element-stats { display: flex; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.element-stat { flex: 1; }
+.element-stat .num { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--fg); }
+.element-stat .lbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; }
+
+.formula-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 900px) { .formula-grid { grid-template-columns: 1fr; } }
+.formula-card { background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; }
+.formula-card h3 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.6rem; margin: 0 0 0.5rem 0; }
+.formula-row { display: flex; flex-direction: column; padding: 1rem 1.1rem; background: rgba(0,0,0,0.25); border-radius: 10px; margin: 0.75rem 0; border-left: 3px solid var(--accent); }
+.formula-row .lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; font-weight: 500; }
+.formula-row .eq { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--accent); }
+.formula-row .desc { font-size: 0.85rem; color: var(--muted); margin-top: 0.4rem; }
+
+.calculator { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem; margin-top: 1.5rem; }
+.calc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
+@media (max-width: 600px) { .calc-grid { grid-template-columns: 1fr; } }
+.calc-input { display: flex; flex-direction: column; gap: 0.4rem; }
+.calc-input label { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+.calc-input input { background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; padding: 0.7rem; color: var(--fg); font-family: inherit; font-size: 1rem; transition: border-color 0.2s; }
+.calc-input input:focus { outline: none; border-color: var(--accent); }
+.calc-result { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.result-box { background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem; text-align: center; }
+.result-box .val { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.9rem; font-weight: 800; color: var(--accent); margin: 0.3rem 0; }
+.result-box .lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 500; }
+
+.quiz-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+.quiz-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem; transition: border-color 0.3s; }
+.quiz-card.correct { border-color: var(--success); }
+.quiz-card.wrong { border-color: var(--danger); }
+.quiz-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+.quiz-num { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--accent); background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.quiz-question { font-size: 1rem; color: var(--fg); line-height: 1.55; padding-top: 0.45rem; }
+.quiz-options { display: grid; grid-template-columns: 1fr; gap: 0.55rem; margin: 1rem 0; }
+@media (min-width: 700px) { .quiz-options { grid-template-columns: 1fr 1fr; } }
+.quiz-option { display: flex; align-items: center; gap: 0.75rem; padding: 0.8rem 1rem; background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; user-select: none; }
+.quiz-option:hover { border-color: var(--accent-2); background: rgba(34, 211, 238, 0.06); }
+.quiz-option.selected { border-color: var(--accent); background: rgba(251, 191, 36, 0.08); }
+.quiz-option.correct-answer { border-color: var(--success); background: rgba(74, 222, 128, 0.12); }
+.quiz-option.wrong-answer { border-color: var(--danger); background: rgba(248, 113, 113, 0.12); }
+.quiz-option .opt-letter { width: 26px; height: 26px; border-radius: 50%; background: var(--border); color: var(--fg); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem; flex-shrink: 0; }
+.quiz-option.selected .opt-letter { background: var(--accent); color: #0a0d14; }
+.quiz-option.correct-answer .opt-letter { background: var(--success); color: #0a0d14; }
+.quiz-option.wrong-answer .opt-letter { background: var(--danger); color: #0a0d14; }
+.quiz-option .opt-text { font-size: 0.92rem; }
+.quiz-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+.btn-check { background: var(--accent); color: #0a0d14; border: none; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
+.btn-check:hover { background: #fcd34d; transform: translateY(-1px); }
+.btn-reset { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 500; cursor: pointer; font-family: inherit; font-size: 0.9rem; transition: all 0.2s; }
+.btn-reset:hover { color: var(--fg); border-color: var(--border-bright); }
+.quiz-feedback { display: none; margin-top: 1rem; padding: 1.1rem; border-radius: 10px; background: var(--bg-2); border: 1px solid var(--border); animation: slideIn 0.3s ease-out; }
+.quiz-feedback.show { display: block; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+.feedback-status { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; margin-bottom: 0.6rem; font-family: 'Bricolage Grotesque', sans-serif; font-size: 1rem; }
+.feedback-status.correct { color: var(--success); }
+.feedback-status.wrong { color: var(--danger); }
+.feedback-explanation { font-size: 0.9rem; color: var(--muted); line-height: 1.65; }
+.feedback-explanation strong { color: var(--fg); }
+
+footer { padding: 3rem 2rem; border-top: 1px solid var(--border); text-align: center; color: var(--muted); font-size: 0.88rem; }
+
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+.quiz-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; padding: 1rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+.quiz-progress { display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: var(--muted); }
+.progress-bar { width: 140px; height: 8px; background: var(--bg-2); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); width: 0%; transition: width 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow glow-1"></div>
+<div class="bg-glow glow-2"></div>
+<div class="bg-glow glow-3"></div>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <div class="brand">
+      <div class="brand-mark"><i class="fa-solid fa-cube"></i></div>
+      BangunRuang
+    </div>
+    <div class="nav-links">
+      <a href="#viewer">Visualisasi</a>
+      <a href="#elemen">Elemen</a>
+      <a href="#rumus">Rumus</a>
+      <a href="#latihan">Latihan</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-tag"><i class="fa-solid fa-shapes"></i> Geometri Tiga Dimensi • SMP &amp; SMA</div>
+    <h1 class="font-display">Eksplorasi<br>Kubus &amp; Balok</h1>
+    <p class="lead">Pelajari sisi, rusuk, titik sudut, diagonal sisi, diagonal ruang, dan bidang diagonal melalui visualisasi 3D interaktif. Lengkap dengan rumus, kalkulator, dan 20 soal cerita HOTS.</p>
+    <div class="hero-meta">
+      <div class="meta-item"><div class="meta-value">8</div><div class="meta-label">Titik Sudut</div></div>
+      <div class="meta-item"><div class="meta-value">12</div><div class="meta-label">Rusuk</div></div>
+      <div class="meta-item"><div class="meta-value">6</div><div class="meta-label">Sisi</div></div>
+      <div class="meta-item"><div class="meta-value">20</div><div class="meta-label">Soal HOTS</div></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-cube-wrap">
+      <div class="hero-cube-orbit"></div>
+      <svg class="hero-cube-svg" viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="60,200 180,200 240,40 120,40" fill="rgba(167,139,250,0.35)" stroke="rgba(167,139,250,1)" stroke-width="2"/>
+        <g stroke="#22d3ee" stroke-width="2" fill="none" stroke-linecap="round">
+          <line x1="60" y1="200" x2="180" y2="200"/>
+          <line x1="180" y1="200" x2="240" y2="160"/>
+          <line x1="240" y1="160" x2="120" y2="160"/>
+          <line x1="120" y1="160" x2="60" y2="200"/>
+          <line x1="60" y1="80" x2="180" y2="80"/>
+          <line x1="180" y1="80" x2="240" y2="40"/>
+          <line x1="240" y1="40" x2="120" y2="40"/>
+          <line x1="120" y1="40" x2="60" y2="80"/>
+          <line x1="60" y1="200" x2="60" y2="80"/>
+          <line x1="180" y1="200" x2="180" y2="80"/>
+          <line x1="240" y1="160" x2="240" y2="40"/>
+          <line x1="120" y1="160" x2="120" y2="40"/>
+        </g>
+        <line x1="60" y1="200" x2="240" y2="40" stroke="#a3e635" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="60" y1="200" x2="180" y2="80" stroke="#f472b6" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <g fill="#ffffff">
+          <circle cx="60" cy="200" r="5"/><circle cx="180" cy="200" r="5"/>
+          <circle cx="240" cy="160" r="5"/><circle cx="120" cy="160" r="5"/>
+          <circle cx="60" cy="80" r="5"/><circle cx="180" cy="80" r="5"/>
+          <circle cx="240" cy="40" r="5"/><circle cx="120" cy="40" r="5"/>
+        </g>
+        <g font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="15" fill="#fbbf24">
+          <text x="42" y="218" text-anchor="middle">A</text>
+          <text x="195" y="218" text-anchor="middle">B</text>
+          <text x="258" y="158" text-anchor="middle">C</text>
+          <text x="105" y="158" text-anchor="middle">D</text>
+          <text x="42" y="72" text-anchor="middle">E</text>
+          <text x="195" y="72" text-anchor="middle">F</text>
+          <text x="258" y="32" text-anchor="middle">G</text>
+          <text x="105" y="32" text-anchor="middle">H</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 3D Viewer -->
+<section class="section" id="viewer">
+  <div class="section-inner">
+    <div class="section-eyebrow">Visualisasi 3D Interaktif</div>
+    <h2 class="section-title font-display">Putar, Perhatikan, Pahami</h2>
+    <p class="section-desc">Gunakan mouse untuk memutar bangun ruang. Aktifkan elemen-elemen geometris satu per satu untuk melihat bagaimana mereka tersusun di dalam bangun. Titik sudut diberi nama <strong style="color:var(--fg)">A, B, C, D</strong> pada sisi alas dan <strong style="color:var(--fg)">E, F, G, H</strong> pada sisi atas.</p>
+    <div class="viewer-grid">
+      <div class="viewer-canvas" id="canvas-container">
+        <div class="viewer-label">Kubus ABCD.EFGH</div>
+        <div class="viewer-hint"><i class="fa-solid fa-arrows-up-down-left-right"></i> Seret untuk memutar</div>
+      </div>
+      <div class="control-panel">
+        <div class="shape-toggle">
+          <button id="btn-cube" class="active">Kubus</button>
+          <button id="btn-balok">Balok</button>
+        </div>
+        <div id="dim-controls" style="display:none; flex-direction:column; gap:1rem;">
+          <div class="dim-slider"><label>Panjang (p) <span id="val-p">4.0</span></label><input type="range" id="slider-p" min="2" max="6" step="0.5" value="4"></div>
+          <div class="dim-slider"><label>Lebar (l) <span id="val-l">2.5</span></label><input type="range" id="slider-l" min="1" max="5" step="0.5" value="2.5"></div>
+          <div class="dim-slider"><label>Tinggi (t) <span id="val-t">3.0</span></label><input type="range" id="slider-t" min="2" max="6" step="0.5" value="3"></div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.1rem;">
+          <div class="toggle-row" data-toggle="faceDiag" role="button" tabindex="0"><span><span class="swatch" style="background:#f472b6"></span>Diagonal Sisi</span><div class="toggle-switch"></div></div>
+          <div class="toggle-row" data-toggle="spaceDiag" role="button" tabindex="0"><span><span class="swatch" style="background:#a3e635"></span>Diagonal Ruang</span><div class="toggle-switch"></div></div>
+          <div class="toggle-row" data-toggle="diagPlane" role="button" tabindex="0"><span><span class="swatch" style="background:#a78bfa"></span>Bidang Diagonal</span><div class="toggle-switch on"></div></div>
+          <div class="toggle-row" data-toggle="autoRotate" role="button" tabindex="0"><span><i class="fa-solid fa-rotate" style="margin-right:8px; color:var(--accent-2); width:14px;"></i>Putar Otomatis</span><div class="toggle-switch"></div></div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><span class="swatch" style="background:#fbbf24; opacity:0.5;"></span>Sisi (permukaan)</div>
+          <div class="legend-item"><span class="swatch" style="background:#22d3ee"></span>Rusuk</div>
+          <div class="legend-item"><span class="swatch" style="background:#ffffff"></span>Titik Sudut</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Element Explanations -->
+<section class="section" id="elemen">
+  <div class="section-inner">
+    <div class="section-eyebrow">Anatomi Bangun Ruang</div>
+    <h2 class="section-title font-display">Enam Elemen Geometris</h2>
+    <p class="section-desc">Setiap kubus dan balok terdiri dari enam jenis elemen geometris berikut. Pahami definisi, nama, dan jumlahnya pada kedua bangun tersebut.</p>
+    <div class="element-grid">
+      <div class="element-card">
+        <div class="element-icon"><i class="fa-solid fa-square"></i></div>
+        <h3>Sisi</h3>
+        <p>Bidang persegi (pada kubus) atau persegi panjang (pada balok) yang membatasi bangun ruang. Sisi disebut juga <strong>permukaan</strong> atau <strong>bidang</strong>.</p>
+        <div class="element-stats"><div class="element-stat"><div class="num">6</div><div class="lbl">Kubus</div></div><div class="element-stat"><div class="num">6</div><div class="lbl">Balok</div></div></div>
+      </div>
+      <div class="element-card" data-color="cyan">
+        <div class="element-icon"><i class="fa-solid fa-circle-dot"></i></div>
+        <h3>Titik Sudut</h3>
+        <p>Titik pertemuan antara tiga rusuk. Diberi nama <strong>A, B, C, D</strong> pada sisi alas (searah jarum jam) dan <strong>E, F, G, H</strong> pada sisi atas — E di atas A, F di atas B, dan seterusnya.</p>
+        <div class="element-stats"><div class="element-stat"><div class="num">8</div><div class="lbl">Kubus</div></div><div class="element-stat"><div class="num">8</div><div class="lbl">Balok</div></div></div>
+      </div>
+      <div class="element-card">
+        <div class="element-icon"><i class="fa-solid fa-grip-lines"></i></div>
+        <h3>Rusuk</h3>
+        <p>Ruas garis pertemuan antara dua sisi yang berdekatan. Pada kubus semua rusuk sama panjang; pada balok terdapat tiga kelompok rusuk sejajar (p, l, t).</p>
+        <div class="element-stats"><div class="element-stat"><div class="num">12</div><div class="lbl">Kubus</div></div><div class="element-stat"><div class="num">12</div><div class="lbl">Balok</div></div></div>
+      </div>
+      <div class="element-card" data-color="pink">
+        <div class="element-icon"><i class="fa-solid fa-slash"></i></div>
+        <h3>Diagonal Sisi</h3>
+        <p>Ruas garis yang menghubungkan dua titik sudut berhadapan pada <strong>sisi yang sama</strong>. Contoh: <strong>AC, BD, EG, FH, AF, AH</strong>, dan seterusnya.</p>
+        <div class="element-stats"><div class="element-stat"><div class="num">12</div><div class="lbl">Kubus</div></div><div class="element-stat"><div class="num">12</div><div class="lbl">Balok</div></div></div>
+      </div>
+      <div class="element-card" data-color="lime">
+        <div class="element-icon"><i class="fa-solid fa-arrows-up-down-left-right"></i></div>
+        <h3>Diagonal Ruang</h3>
+        <p>Ruas garis yang menghubungkan dua titik sudut berhadapan yang <strong>tidak terletak pada sisi yang sama</strong>. Berjumlah 4: <strong>AG, BH, CE, DF</strong>.</p>
+        <div class="element-stats"><div class="element-stat"><div class="num">4</div><div class="lbl">Kubus</div></div><div class="element-stat"><div class="num">4</div><div class="lbl">Balok</div></div></div>
+      </div>
+      <div class="element-card" data-color="violet">
+        <div class="element-icon"><i class="fa-solid fa-vector-square"></i></div>
+        <h3>Bidang Diagonal</h3>
+        <p>Bidang segiempat (berbentuk persegi panjang) yang dibentuk oleh dua rusuk sejajar yang berhadapan, membelah bangun menjadi dua bagian. Contoh: <strong>ABGH, BCEH, ACGE</strong>.</p>
+        <div class="element-stats"><div class="element-stat"><div class="num">6</div><div class="lbl">Kubus</div></div><div class="element-stat"><div class="num">6</div><div class="lbl">Balok</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Formulas -->
+<section class="section" id="rumus">
+  <div class="section-inner">
+    <div class="section-eyebrow">Rumus &amp; Kalkulator</div>
+    <h2 class="section-title font-display">Luas, Volume, dan Diagonal</h2>
+    <p class="section-desc">Rumus dasar untuk menghitung luas permukaan, volume, panjang sisi jika volume diketahui, serta berbagai diagonal pada kubus dan balok.</p>
+    <div class="formula-grid">
+      <div class="formula-card">
+        <h3>Kubus</h3>
+        <p style="color:var(--muted); margin:0 0 0.5rem 0;">Semua rusuk sama panjang = <strong style="color:var(--accent)">s</strong></p>
+        <div class="formula-row"><div class="lbl">Luas Permukaan</div><div class="eq">L = 6 × s²</div><div class="desc">Enam sisi persegi, masing-masing berluas s²</div></div>
+        <div class="formula-row"><div class="lbl">Volume</div><div class="eq">V = s³</div><div class="desc">Sisi dipangkatkan tiga</div></div>
+        <div class="formula-row"><div class="lbl">Mencari sisi jika volume diketahui</div><div class="eq">s = ∛V</div><div class="desc">Akar pangkat tiga dari volume</div></div>
+        <div class="formula-row"><div class="lbl">Diagonal Sisi</div><div class="eq">d<sub>s</sub> = s√2</div><div class="desc">Contoh: AC, BD, EG, FH</div></div>
+        <div class="formula-row"><div class="lbl">Diagonal Ruang</div><div class="eq">d<sub>r</sub> = s√3</div><div class="desc">Contoh: AG, BH, CE, DF</div></div>
+      </div>
+      <div class="formula-card">
+        <h3>Balok</h3>
+        <p style="color:var(--muted); margin:0 0 0.5rem 0;">Panjang = <strong style="color:var(--accent)">p</strong>, Lebar = <strong style="color:var(--accent)">l</strong>, Tinggi = <strong style="color:var(--accent)">t</strong></p>
+        <div class="formula-row"><div class="lbl">Luas Permukaan</div><div class="eq">L = 2 × (pl + lt + pt)</div><div class="desc">Tiga pasang sisi persegi panjang</div></div>
+        <div class="formula-row"><div class="lbl">Volume</div><div class="eq">V = p × l × t</div><div class="desc">Panjang × Lebar × Tinggi</div></div>
+        <div class="formula-row"><div class="lbl">Mencari sisi jika volume &amp; dua sisi lain diketahui</div><div class="eq">p = V / (l × t)</div><div class="desc">Berlaku juga: l = V/(p×t), t = V/(p×l)</div></div>
+        <div class="formula-row"><div class="lbl">Diagonal Sisi</div><div class="eq">d<sub>s</sub> = √(p²+l²) / √(l²+t²) / √(p²+t²)</div><div class="desc">Tiga macam sesuai pasangan sisi</div></div>
+        <div class="formula-row"><div class="lbl">Diagonal Ruang</div><div class="eq">d<sub>r</sub> = √(p² + l² + t²)</div><div class="desc">Rumus Pythagoras tiga dimensi</div></div>
+      </div>
+    </div>
+    <div class="calculator">
+      <h3 style="font-family:'Bricolage Grotesque', sans-serif; font-size:1.3rem; margin:0 0 1.1rem 0; display:flex; align-items:center; gap:0.5rem;"><i class="fa-solid fa-calculator" style="color:var(--accent-2);"></i> Kalkulator Interaktif</h3>
+      <div class="calc-grid">
+        <div class="calc-input"><label>Panjang (p) — cm</label><input type="number" id="calc-p" value="6" min="0.1" step="0.1"></div>
+        <div class="calc-input"><label>Lebar (l) — cm</label><input type="number" id="calc-l" value="6" min="0.1" step="0.1"></div>
+        <div class="calc-input"><label>Tinggi (t) — cm</label><input type="number" id="calc-t" value="6" min="0.1" step="0.1"></div>
+      </div>
+      <div class="calc-result">
+        <div class="result-box"><div class="lbl">Luas Permukaan</div><div class="val" id="calc-lp">216.00</div><div style="font-size:0.78rem; color:var(--muted);">cm²</div></div>
+        <div class="result-box"><div class="lbl">Volume</div><div class="val" id="calc-vol">216.00</div><div style="font-size:0.78rem; color:var(--muted);">cm³</div></div>
+      </div>
+      <p style="font-size:0.82rem; color:var(--muted); margin-top:1rem; text-align:center;">Tip: Jika p = l = t, berarti ini adalah kubus.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Quiz -->
+<section class="section" id="latihan">
+  <div class="section-inner">
+    <div class="section-eyebrow">Latihan Soal HOTS</div>
+    <h2 class="section-title font-display">20 Soal Cerita Pilihan Ganda</h2>
+    <p class="section-desc">Soal-soal berikut menuntut berpikir tingkat tinggi (HOTS): analisis, evaluasi, dan sintesis. Pilih jawaban, lalu tekan <strong style="color:var(--fg)">Cek Jawaban</strong> untuk melihat pembahasan lengkap.</p>
+    
+    <div class="quiz-toolbar">
+      <div class="quiz-progress">
+        <i class="fa-solid fa-circle-check" style="color:var(--success);"></i>
+        <span>Dijawab benar: <strong id="score-correct" style="color:var(--success);">0</strong> / 20</span>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+      <button class="btn-reset" id="reset-all"><i class="fa-solid fa-rotate-left"></i> Reset Semua</button>
+    </div>
+    
+    <div class="quiz-grid" id="quiz-container"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Eksplorasi Bangun Ruang — Media pembelajaran geometri tiga dimensi</p>
+</footer>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+const container = document.getElementById('canvas-container');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+camera.position.set(5.5, 4.5, 6.5);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+container.appendChild(renderer.domElement);
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(container.clientWidth, container.clientHeight);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.left = '0';
+labelRenderer.domElement.style.pointerEvents = 'none';
+container.appendChild(labelRenderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 4;
+controls.maxDistance = 16;
+controls.target.set(0, 0, 0);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.75);
+dirLight.position.set(5, 8, 5);
+scene.add(dirLight);
+const fillLight = new THREE.DirectionalLight(0x22d3ee, 0.25);
+fillLight.position.set(-5, 3, -5);
+scene.add(fillLight);
+
+const baseGroup = new THREE.Group();
+const faceDiagGroup = new THREE.Group();
+const spaceDiagGroup = new THREE.Group();
+const diagPlaneGroup = new THREE.Group();
+scene.add(baseGroup, faceDiagGroup, spaceDiagGroup, diagPlaneGroup);
+
+let shape = 'cube';
+let dims = { p: 4, l: 2.5, t: 3 };
+
+// STATE DEFAULT: diagPlane bernilai true agar langsung terlihat saat dibuka
+const state = { faceDiag: false, spaceDiag: false, diagPlane: true, autoRotate: false };
+
+function clearGroup(g) {
+  while (g.children.length) {
+    const c = g.children.pop();
+    if (c.geometry) c.geometry.dispose();
+    if (c.material) {
+      if (Array.isArray(c.material)) c.material.forEach(m => m.dispose());
+      else c.material.dispose();
+    }
+    if (c instanceof CSS2DObject && c.element.parentNode) {
+      c.element.parentNode.removeChild(c.element);
+    }
+  }
+}
+
+function buildShape() {
+  clearGroup(baseGroup); clearGroup(faceDiagGroup); clearGroup(spaceDiagGroup); clearGroup(diagPlaneGroup);
+  let p, l, t;
+  if (shape === 'cube') { p = l = t = 3; }
+  else { p = dims.p; l = dims.l; t = dims.t; }
+  
+  const v = {
+    A: new THREE.Vector3(-p/2, -t/2, -l/2),
+    B: new THREE.Vector3( p/2, -t/2, -l/2),
+    C: new THREE.Vector3( p/2, -t/2,  l/2),
+    D: new THREE.Vector3(-p/2, -t/2,  l/2),
+    E: new THREE.Vector3(-p/2,  t/2, -l/2),
+    F: new THREE.Vector3( p/2,  t/2, -l/2),
+    G: new THREE.Vector3( p/2,  t/2,  l/2),
+    H: new THREE.Vector3(-p/2,  t/2,  l/2),
+  };
+  
+  // Bangun Ruang Utama (Kuning)
+  const boxGeo = new THREE.BoxGeometry(p, t, l);
+  const boxMat = new THREE.MeshPhongMaterial({ 
+    color: 0xfbbf24, 
+    transparent: true, 
+    opacity: 0.15, 
+    side: THREE.DoubleSide, 
+    shininess: 30,
+    depthWrite: false // PENTING: agar tidak menutupi bidang di dalamnya
+  });
+  const boxMesh = new THREE.Mesh(boxGeo, boxMat);
+  boxMesh.renderOrder = 1;
+  baseGroup.add(boxMesh);
+  
+  const edgesGeo = new THREE.EdgesGeometry(boxGeo);
+  const edgesLine = new THREE.LineSegments(edgesGeo, new THREE.LineBasicMaterial({ color: 0x22d3ee }));
+  edgesLine.renderOrder = 2;
+  baseGroup.add(edgesLine);
+  
+  Object.entries(v).forEach(([name, pos]) => {
+    const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    sphere.position.copy(pos);
+    sphere.renderOrder = 3;
+    baseGroup.add(sphere);
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'vertex-label';
+    labelDiv.textContent = name;
+    const label = new CSS2DObject(labelDiv);
+    const offset = pos.clone().normalize().multiplyScalar(0.45);
+    label.position.copy(pos).add(offset);
+    baseGroup.add(label);
+  });
+  
+  // Diagonal Sisi
+  const faceDiagPairs = [['A','C'],['E','G'],['A','F'],['D','G'],['A','H'],['B','G']];
+  faceDiagPairs.forEach(([a, b]) => {
+    const geo = new THREE.BufferGeometry().setFromPoints([v[a], v[b]]);
+    const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xf472b6, depthWrite: false }));
+    line.renderOrder = 4;
+    faceDiagGroup.add(line);
+  });
+  
+  // Diagonal Ruang
+  const spaceDiagPairs = [['A','G'],['B','H'],['C','E'],['D','F']];
+  spaceDiagPairs.forEach(([a, b]) => {
+    const geo = new THREE.BufferGeometry().setFromPoints([v[a], v[b]]);
+    const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xa3e635, depthWrite: false }));
+    line.renderOrder = 5;
+    spaceDiagGroup.add(line);
+  });
+  
+  // === BIDANG DIAGONAL ===
+  // 6 bidang diagonal berbentuk segiempat yang membelah bangun ruang
+  const planes = [
+    ['A','B','G','H'], // ABGH
+    ['B','C','H','E'], // BCEH
+    ['C','D','E','F'], // CDEF
+    ['D','A','F','G'], // DAFG
+    ['A','E','G','C'], // AEGC
+    ['D','H','F','B'], // DHFB
+  ];
+  
+  planes.forEach(verts => {
+    const p0 = v[verts[0]];
+    const p1 = v[verts[1]];
+    const p2 = v[verts[2]];
+    const p3 = v[verts[3]];
+    
+    // Membuat geometry quad 3D
+    const positions = new Float32Array([
+      p0.x, p0.y, p0.z,
+      p1.x, p1.y, p1.z,
+      p2.x, p2.y, p2.z,
+      p3.x, p3.y, p3.z
+    ]);
+    const indices = new Uint16Array([0, 1, 2, 0, 2, 3]);
+    
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setIndex(new THREE.BufferAttribute(indices, 1));
+    geo.computeVertexNormals();
+    
+    // Material Bidang Diagonal yang solid namun tembus pandang
+    const mat = new THREE.MeshBasicMaterial({ 
+      color: 0xa78bfa, 
+      transparent: true, 
+      opacity: 0.45, 
+      side: THREE.DoubleSide,
+      depthWrite: false // Agar selalu dirender di atas kulit luar
+    });
+    const planeMesh = new THREE.Mesh(geo, mat);
+    planeMesh.renderOrder = 0; // Render pertama di antara objek transparan
+    diagPlaneGroup.add(planeMesh);
+    
+    // Outline ungu terang yang tegas
+    const edgePts = [p0, p1, p2, p3, p0];
+    const edgeGeo = new THREE.BufferGeometry().setFromPoints(edgePts);
+    const edgeLine = new THREE.Line(edgeGeo, new THREE.LineBasicMaterial({ color: 0xd8b4fe }));
+    edgeLine.renderOrder = 6;
+    diagPlaneGroup.add(edgeLine);
+  });
+  
+  applyToggles();
+}
+
+function applyToggles() {
+  faceDiagGroup.visible = state.faceDiag;
+  spaceDiagGroup.visible = state.spaceDiag;
+  diagPlaneGroup.visible = state.diagPlane;
+  controls.autoRotate = state.autoRotate;
+  controls.autoRotateSpeed = 1.5;
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
+}
+animate();
+
+function onResize() {
+  const w = container.clientWidth, h = container.clientHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+  labelRenderer.setSize(w, h);
+}
+window.addEventListener('resize', onResize);
+
+document.getElementById('btn-cube').addEventListener('click', () => {
+  shape = 'cube';
+  document.getElementById('btn-cube').classList.add('active');
+  document.getElementById('btn-balok').classList.remove('active');
+  document.getElementById('dim-controls').style.display = 'none';
+  document.querySelector('.viewer-label').textContent = 'Kubus ABCD.EFGH';
+  buildShape();
+});
+document.getElementById('btn-balok').addEventListener('click', () => {
+  shape = 'balok';
+  document.getElementById('btn-balok').classList.add('active');
+  document.getElementById('btn-cube').classList.remove('active');
+  document.getElementById('dim-controls').style.display = 'flex';
+  document.querySelector('.viewer-label').textContent = 'Balok ABCD.EFGH';
+  buildShape();
+});
+['p','l','t'].forEach(dim => {
+  const slider = document.getElementById('slider-' + dim);
+  const valEl = document.getElementById('val-' + dim);
+  slider.addEventListener('input', () => {
+    dims[dim] = parseFloat(slider.value);
+    valEl.textContent = dims[dim].toFixed(1);
+    buildShape();
+  });
+});
+document.querySelectorAll('.toggle-row').forEach(row => {
+  const handler = () => {
+    const key = row.dataset.toggle;
+    state[key] = !state[key];
+    row.querySelector('.toggle-switch').classList.toggle('on', state[key]);
+    applyToggles();
+  };
+  row.addEventListener('click', handler);
+  row.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
+  });
+});
+buildShape();
+
+const calcP = document.getElementById('calc-p');
+const calcL = document.getElementById('calc-l');
+const calcT = document.getElementById('calc-t');
+const calcLP = document.getElementById('calc-lp');
+const calcVol = document.getElementById('calc-vol');
+function updateCalc() {
+  const p = parseFloat(calcP.value) || 0;
+  const l = parseFloat(calcL.value) || 0;
+  const t = parseFloat(calcT.value) || 0;
+  calcLP.textContent = (2 * (p*l + l*t + p*t)).toFixed(2);
+  calcVol.textContent = (p * l * t).toFixed(2);
+}
+[calcP, calcL, calcT].forEach(el => el.addEventListener('input', updateCalc));
+updateCalc();
+</script>
+
+<script>
+// ===== 20 Soal HOTS =====
+const quizData = [
+  {
+    q: "Sebuah akuarium berbentuk kubus berusuk 40 cm diisi air hingga 75% volume. Kemudian dimasukkan 4 buah batu kubus berukuran rusuk 5 cm. Berapa cm³ air yang tumpah?",
+    options: ["0 cm³ — air tidak tumpah", "50 cm³", "100 cm³", "200 cm³", "500 cm³"],
+    answer: 0,
+    explanation: "Volume akuarium = 40³ = 64.000 cm³. Air awal = 75% × 64.000 = 48.000 cm³. Ruang kosong = 64.000 − 48.000 = 16.000 cm³. Volume 4 batu = 4 × 5³ = 4 × 125 = 500 cm³. Karena 500 < 16.000 (ruang kosong masih cukup), air tidak tumpah."
+  },
+  {
+    q: "Tiga buah kubus dengan rusuk 3 cm, 4 cm, dan 5 cm dilelehkan bersama, lalu dicetak menjadi satu kubus baru. Berapa panjang diagonal ruang kubus baru tersebut?",
+    options: ["6√3 cm", "6√2 cm", "8 cm", "6 cm", "12 cm"],
+    answer: 0,
+    explanation: "Volume total = 3³ + 4³ + 5³ = 27 + 64 + 125 = 216 cm³. Sisi kubus baru = ∛216 = 6 cm. Diagonal ruang = s√3 = 6√3 cm."
+  },
+  {
+    q: "Sebuah kolam renang berbentuk balok berukuran 20 m × 10 m × 2 m diisi air melalui pipa berdebit 50 liter/detik. Berapa jam waktu yang diperlukan untuk mengisi kolam hingga penuh? (1 m³ = 1.000 liter)",
+    options: ["1 jam 6 menit", "2 jam 13 menit", "3 jam 42 menit", "4 jam 10 menit", "5 jam 33 menit"],
+    answer: 1,
+    explanation: "Volume kolam = 20 × 10 × 2 = 400 m³ = 400.000 liter. Waktu = 400.000 / 50 = 8.000 detik = 8.000/3.600 jam ≈ 2,222 jam ≈ 2 jam 13 menit 20 detik."
+  },
+  {
+    q: "Sebuah kubus memiliki luas permukaan 384 cm². Panjang diagonal ruang kubus tersebut adalah...",
+    options: ["8√2 cm", "8√3 cm", "16 cm", "12√2 cm", "4√6 cm"],
+    answer: 1,
+    explanation: "Luas permukaan kubus = 6s² = 384 → s² = 64 → s = 8 cm. Diagonal ruang = s√3 = 8√3 cm."
+  },
+  {
+    q: "Sebuah kotak tanpa tutup berbentuk balok berukuran 30 cm × 20 cm × 15 cm akan dilapisi cat. Jika satu kaleng cat menutupi 600 cm², berapa kaleng cat minimum yang dibutuhkan?",
+    options: ["3 kaleng", "4 kaleng", "5 kaleng", "6 kaleng", "7 kaleng"],
+    answer: 1,
+    explanation: "Kotak tanpa tutup → luas = 2(pl + lt + pt) − pl. pl = 600, lt = 300, pt = 450. Luas = 2(600+300+450) − 600 = 2.700 − 600 = 2.100 cm². Kaleng = ⌈2.100/600⌉ = ⌈3,5⌉ = 4 kaleng."
+  },
+  {
+    q: "Jika panjang rusuk sebuah kubus ditambah sebesar 20%, maka persentase kenaikan volume kubus tersebut adalah...",
+    options: ["20%", "40%", "60%", "72,8%", "80%"],
+    answer: 3,
+    explanation: "V_lama = s³. V_baru = (1,2s)³ = 1,728 s³. Kenaikan = (1,728 − 1) × 100% = 72,8%. Volume naik lebih besar dari sisi karena pangkat tiga."
+  },
+  {
+    q: "Perbandingan luas permukaan terhadap volume kubus berusuk 6 cm adalah a : 1. Jika rusuk diubah menjadi 3 cm, perbandingannya menjadi b : 1. Nilai b − a = ...",
+    options: ["0", "0,5", "1", "1,5", "2"],
+    answer: 2,
+    explanation: "Untuk kubus, LP/V = 6s²/s³ = 6/s. Sisi 6 cm → a = 6/6 = 1. Sisi 3 cm → b = 6/3 = 2. Maka b − a = 2 − 1 = 1. Semakin kecil kubus, rasio LP:V semakin besar."
+  },
+  {
+    q: "Sebuah balok memiliki perbandingan p : l : t = 6 : 3 : 2 dan volume 288 cm³. Panjang diagonal ruang balok tersebut adalah...",
+    options: ["12 cm", "13 cm", "14 cm", "15 cm", "16 cm"],
+    answer: 2,
+    explanation: "Misal p = 6k, l = 3k, t = 2k. Volume = 36k³ = 288 → k³ = 8 → k = 2. Maka p = 12, l = 6, t = 4. Diagonal ruang = √(12² + 6² + 4²) = √(144 + 36 + 16) = √196 = 14 cm."
+  },
+  {
+    q: "Sebuah kado berbentuk balok berukuran 30 cm × 20 cm × 10 cm akan dibungkus kertas. Karena ada tumpang tindih, dibutuhkan kertas 10% lebih banyak dari luas permukaan. Jika harga kertas Rp 15 per cm², berapa biaya yang diperlukan?",
+    options: ["Rp 31.500", "Rp 33.000", "Rp 34.650", "Rp 36.300", "Rp 38.500"],
+    answer: 3,
+    explanation: "Luas permukaan = 2(pl + lt + pt) = 2(600 + 200 + 300) = 2(1.100) = 2.200 cm². Dengan tambahan 10% = 2.200 × 1,1 = 2.420 cm². Biaya = 2.420 × 15 = Rp 36.300."
+  },
+  {
+    q: "Sebuah tangki air berbentuk balok berukuran 2,5 m × 1,6 m × 1 m terisi air 60% dari kapasitas penuh. Jika digunakan untuk mandi 5 kali, masing-masing 30 liter, sisa air dalam tangki menjadi... liter.",
+    options: ["2.040 liter", "2.100 liter", "2.190 liter", "2.250 liter", "2.340 liter"],
+    answer: 3,
+    explanation: "Volume tangki = 2,5 × 1,6 × 1 = 4 m³ = 4.000 liter. Air awal = 60% × 4.000 = 2.400 liter. Total dipakai = 5 × 30 = 150 liter. Sisa = 2.400 − 150 = 2.250 liter."
+  },
+  {
+    q: "Diketahui kubus berusuk 10 cm dan balok berukuran 12 cm × 10 cm × 8 cm. Selisih luas permukaan kedua bangun tersebut adalah...",
+    options: ["8 cm²", "10 cm²", "12 cm²", "36 cm²", "72 cm²"],
+    answer: 0,
+    explanation: "Luas kubus = 6 × 10² = 600 cm². Luas balok = 2(12×10 + 10×8 + 12×8) = 2(120 + 80 + 96) = 2(296) = 592 cm². Selisih = 600 − 592 = 8 cm²."
+  },
+  {
+    q: "Sebuah kubus memiliki volume 729 cm³. Panjang diagonal sisi kubus tersebut adalah...",
+    options: ["9√2 cm", "9√3 cm", "18 cm", "18√2 cm", "27 cm"],
+    answer: 0,
+    explanation: "Volume = s³ = 729 → s = 9 cm. Diagonal sisi = s√2 = 9√2 cm."
+  },
+  {
+    q: "Sebuah balok memiliki perbandingan p : l : t = 4 : 3 : 2 dan volume 192 cm³. Ukuran panjang × lebar × tinggi balok tersebut adalah...",
+    options: ["8 × 6 × 4", "16 × 12 × 8", "4 × 3 × 2", "12 × 9 × 6", "6 × 4 × 2"],
+    answer: 0,
+    explanation: "Misal p = 4k, l = 3k, t = 2k. Volume = 24k³ = 192 → k³ = 8 → k = 2. Maka p = 8, l = 6, t = 4. Ukuran: 8 × 6 × 4 cm."
+  },
+  {
+    q: "Sebuah ruangan berbentuk kubus dengan rusuk 4 m akan dicat pada keempat dinding dan langit-langit (tanpa lantai). Jika biaya cat Rp 25.000 per m², total biaya yang diperlukan adalah...",
+    options: ["Rp 1.500.000", "Rp 1.750.000", "Rp 2.000.000", "Rp 2.250.000", "Rp 2.500.000"],
+    answer: 2,
+    explanation: "Yang dicat = 4 dinding + 1 langit-langit = 5 sisi. Luas = 5 × s² = 5 × 16 = 80 m². Biaya = 80 × 25.000 = Rp 2.000.000."
+  },
+  {
+    q: "Sebuah kotak susu berbentuk balok memiliki kapasitas 1 liter (1.000 cm³). Jika panjang 10 cm dan lebar 8 cm, maka tinggi kotak adalah...",
+    options: ["10 cm", "12,5 cm", "15 cm", "16 cm", "20 cm"],
+    answer: 1,
+    explanation: "Volume = p × l × t → 1.000 = 10 × 8 × t → 1.000 = 80t → t = 12,5 cm."
+  },
+  {
+    q: "Dari sebuah kubus berusuk 8 cm, dipotong sebuah kubus kecil berusuk 3 cm dari salah satu sudutnya. Berapa cm² luas permukaan bangun yang tersisa?",
+    options: ["384 cm²", "396 cm²", "408 cm²", "414 cm²", "420 cm²"],
+    answer: 0,
+    explanation: "Luas awal kubus = 6 × 8² = 384 cm². Saat sudut dipotong, 3 sisi kubus kecil yang berada di permukaan luar hilang (luas 3 × 3² = 27 cm²), tetapi muncul 3 sisi baru kubus kecil di bagian dalam (luas 3 × 3² = 27 cm²). Selisih = 0, sehingga luas permukaan tetap 384 cm²."
+  },
+  {
+    q: "Sebuah kubus memiliki rusuk 6 cm. Luas salah satu bidang diagonal kubus tersebut adalah...",
+    options: ["18 cm²", "18√2 cm²", "36 cm²", "36√2 cm²", "72 cm²"],
+    answer: 3,
+    explanation: "Bidang diagonal kubus berbentuk persegi panjang dengan ukuran s × s√2. Luas = s × s√2 = s²√2 = 6²√2 = 36√2 cm²."
+  },
+  {
+    q: "Sebuah tandon air berbentuk balok berukuran 2 m × 1,5 m × 1 m diisi air melalui pipa berdebit 100 liter/menit. Jika awalnya kosong, berapa jam waktu yang diperlukan untuk mengisi penuh? (1 m³ = 1.000 liter)",
+    options: ["0,3 jam", "0,5 jam", "1 jam", "1,5 jam", "2 jam"],
+    answer: 1,
+    explanation: "Volume tandon = 2 × 1,5 × 1 = 3 m³ = 3.000 liter. Waktu = 3.000 / 100 = 30 menit = 0,5 jam."
+  },
+  {
+    q: "Sebuah balok memiliki panjang (2x) cm, lebar 3 cm, dan tinggi 5 cm. Jika volume balok 60 cm³, maka nilai x adalah...",
+    options: ["2", "3", "4", "5", "6"],
+    answer: 0,
+    explanation: "Volume balok = p × l × t → 2x × 3 × 5 = 60 → 30x = 60 → x = 2."
+  },
+  {
+    q: "Jika panjang rusuk sebuah kubus dijadikan 3 kali semula, maka volume kubus menjadi berapa kali semula?",
+    options: ["3 kali", "6 kali", "9 kali", "27 kali", "81 kali"],
+    answer: 3,
+    explanation: "Volume kubus = s³. Jika rusuk menjadi 3 kali (3s), volume baru = (3s)³ = 27s³. Jadi volume menjadi 27 kali lipat. (Aturan umum: jika rusuk n kali, volume menjadi n³ kali.)"
+  }
+];
+
+// ===== Render Quiz =====
+const quizContainer = document.getElementById('quiz-container');
+const scoreCorrect = document.getElementById('score-correct');
+const progressFill = document.getElementById('progress-fill');
+const answeredState = new Array(quizData.length).fill(null); // null / true / false
+
+function updateScore() {
+  const correct = answeredState.filter(s => s === true).length;
+  scoreCorrect.textContent = correct;
+  progressFill.style.width = (correct / quizData.length * 100) + '%';
+}
+
+function renderQuiz() {
+  quizContainer.innerHTML = '';
+  quizData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.dataset.idx = idx;
+    
+    const optionsHTML = item.options.map((opt, i) => `
+      <div class="quiz-option" data-idx="${i}" role="button" tabindex="0">
+        <div class="opt-letter">${String.fromCharCode(65 + i)}</div>
+        <div class="opt-text">${opt}</div>
+      </div>
+    `).join('');
+    
+    card.innerHTML = `
+      <div class="quiz-header">
+        <div class="quiz-num">${idx + 1}</div>
+        <div class="quiz-question">${item.q}</div>
+      </div>
+      <div class="quiz-options">${optionsHTML}</div>
+      <div class="quiz-actions">
+        <button class="btn-check">Cek Jawaban</button>
+        <button class="btn-reset">Hapus</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    `;
+    
+    // Option selection
+    let selected = null;
+    const optionEls = card.querySelectorAll('.quiz-option');
+    optionEls.forEach(optEl => {
+      const selectHandler = () => {
+        if (card.classList.contains('correct') || card.classList.contains('wrong')) return;
+        optionEls.forEach(o => o.classList.remove('selected'));
+        optEl.classList.add('selected');
+        selected = parseInt(optEl.dataset.idx);
+      };
+      optEl.addEventListener('click', selectHandler);
+      optEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectHandler(); }
+      });
+    });
+    
+    // Check button
+    const btnCheck = card.querySelector('.btn-check');
+    const btnReset = card.querySelector('.btn-reset');
+    const feedback = card.querySelector('.quiz-feedback');
+    
+    btnCheck.addEventListener('click', () => {
+      if (selected === null) {
+        // Shake feedback
+        feedback.innerHTML = `<div class="feedback-status wrong"><i class="fa-solid fa-triangle-exclamation"></i> Belum memilih jawaban</div><div class="feedback-explanation">Silakan pilih salah satu opsi terlebih dahulu sebelum menekan Cek Jawaban.</div>`;
+        feedback.classList.add('show');
+        return;
+      }
+      const isCorrect = selected === item.answer;
+      
+      // Remove selected class, add result classes
+      optionEls.forEach((o, i) => {
+        o.classList.remove('selected');
+        if (i === item.answer) o.classList.add('correct-answer');
+        if (i === selected && !isCorrect) o.classList.add('wrong-answer');
+      });
+      
+      card.classList.remove('correct', 'wrong');
+      card.classList.add(isCorrect ? 'correct' : 'wrong');
+      
+      feedback.innerHTML = `
+        <div class="feedback-status ${isCorrect ? 'correct' : 'wrong'}">
+          <i class="fa-solid ${isCorrect ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
+          ${isCorrect ? 'Jawaban Benar!' : 'Jawaban Kurang Tepat'}
+        </div>
+        <div class="feedback-explanation">
+          <strong>Jawaban yang benar: ${String.fromCharCode(65 + item.answer)}. ${item.options[item.answer]}</strong><br><br>
+          <strong>Pembahasan:</strong> ${item.explanation}
+        </div>
+      `;
+      feedback.classList.add('show');
+      
+      btnCheck.style.display = 'none';
+      
+      // Update state & score (only if first attempt or changed)
+      answeredState[idx] = isCorrect;
+      updateScore();
+    });
+    
+    btnReset.addEventListener('click', () => {
+      selected = null;
+      optionEls.forEach(o => o.classList.remove('selected', 'correct-answer', 'wrong-answer'));
+      card.classList.remove('correct', 'wrong');
+      feedback.classList.remove('show');
+      feedback.innerHTML = '';
+      btnCheck.style.display = '';
+      answeredState[idx] = null;
+      updateScore();
+    });
+    
+    quizContainer.appendChild(card);
+  });
+}
+
+document.getElementById('reset-all').addEventListener('click', () => {
+  document.querySelectorAll('.quiz-card').forEach(card => {
+    const resetBtn = card.querySelector('.btn-reset');
+    if (resetBtn) resetBtn.click();
+  });
+});
+
+renderQuiz();
+updateScore();
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+setTimeout(() => {
+  document.querySelectorAll('.element-card, .formula-card, .quiz-card').forEach(el => {
+    el.classList.add('reveal');
+    observer.observe(el);
+  });
+}, 50);
+</script>
+
+</body>
+</html>
