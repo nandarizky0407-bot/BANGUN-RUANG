@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisis Kubus n×n×n — Teorema Cat Kubus</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+  :root {
+    --bg: #0a0a14;
+    --bg2: #14141f;
+    --card: #1a1a28;
+    --border: rgba(255,255,255,0.08);
+    --fg: #f0f0f5;
+    --muted: #8b8b9e;
+    --accent: #fbbf24;
+    --accent-2: #06d6a0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Manrope', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  .display-font { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(251,191,36,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(251,191,36,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .glow-amber { background: radial-gradient(circle at 50% 50%, rgba(251,191,36,0.18) 0%, transparent 60%); }
+  .glow-cyan { background: radial-gradient(circle at 50% 50%, rgba(6,214,160,0.12) 0%, transparent 60%); }
+
+  .cat-card {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border: 1px solid var(--border);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .cat-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--cat-color, transparent) 0%, transparent 50%);
+    opacity: 0.08;
+    transition: opacity 0.3s;
+  }
+  .cat-card:hover::before { opacity: 0.18; }
+  .cat-card.active {
+    border-color: var(--cat-color);
+    box-shadow: 0 0 30px var(--cat-glow), inset 0 0 0 1px var(--cat-color);
+    transform: translateY(-2px);
+  }
+  .cat-card.active::before { opacity: 0.25; }
+
+  .big-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .btn {
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Manrope', sans-serif;
+    backdrop-filter: blur(8px);
+  }
+  .btn:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.2);
+    transform: translateY(-1px);
+  }
+  .btn.active {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1a1a28;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(251,191,36,0.3);
+  }
+
+  .formula-box {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(251,191,36,0.15);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+  }
+
+  #canvas-container {
+    position: relative;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a14 70%);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    width: 100%;
+    height: 620px;
+  }
+  #scene-canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+  #scene-canvas:active { cursor: grabbing; }
+
+  .corner-deco {
+    position: absolute;
+    width: 28px; height: 28px;
+    border: 1.5px solid rgba(251,191,36,0.4);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .corner-tl { top: 12px; left: 12px; border-right: 0; border-bottom: 0; }
+  .corner-tr { top: 12px; right: 12px; border-left: 0; border-bottom: 0; }
+  .corner-bl { bottom: 12px; left: 12px; border-right: 0; border-top: 0; }
+  .corner-br { bottom: 12px; right: 12px; border-left: 0; border-top: 0; }
+
+  .legend-dot {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    vertical-align: middle;
+  }
+
+  @keyframes float-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .float-in { animation: float-in 0.8s ease-out backwards; }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 16px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(20,20,31,0.95);
+    border: 1px solid var(--border);
+    padding: 12px 24px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 100;
+    font-size: 13px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .stat-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.05);
+    overflow: hidden;
+  }
+  .stat-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .size-btn {
+    min-width: 60px; height: 44px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .size-btn:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(251,191,36,0.4);
+  }
+  .size-btn.active {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1a1a28;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(251,191,36,0.3);
+  }
+
+  table { border-collapse: separate; border-spacing: 0; }
+  .tbl-row { transition: background 0.2s; }
+  .tbl-row:hover { background: rgba(255,255,255,0.03); }
+  .tbl-row.active { background: rgba(251,191,36,0.08); }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--card); border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover { background: #2a2a3a; }
+</style>
+</head>
+<body>
+
+<header class="grid-bg border-b border-white/5 relative overflow-hidden">
+  <div class="absolute inset-0 glow-amber pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto px-6 py-12 relative">
+    <div class="flex items-center gap-2 text-xs text-amber-400/80 mono mb-4 float-in">
+      <span class="w-8 h-px bg-amber-400/60"></span>
+      <span>GEOMETRI INTERAKTIF · TEOREMA CAT KUBUS</span>
+    </div>
+    <h1 class="display-font text-5xl md:text-7xl font-bold mb-4 float-in" style="animation-delay:0.1s">
+      Kubus <span class="text-amber-400">n×n×n</span>
+    </h1>
+    <p class="text-lg md:text-xl text-gray-300 max-w-2xl float-in" style="animation-delay:0.2s">
+      Sebuah kubus besar dicat seluruh permukaannya lalu dipotong menjadi kubus satuan.
+      Eksplorasi visual bagaimana cat terdistribusi — bekerja untuk semua ukuran kubus.
+    </p>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 py-10">
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+    <!-- LEFT: 3D Scene -->
+    <div class="lg:col-span-3 float-in" style="animation-delay:0.3s">
+      <div id="canvas-container">
+        <span class="corner-deco corner-tl"></span>
+        <span class="corner-deco corner-tr"></span>
+        <span class="corner-deco corner-bl"></span>
+        <span class="corner-deco corner-br"></span>
+        <canvas id="scene-canvas"></canvas>
+
+        <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none z-10">
+          <div class="text-xs mono text-gray-400 tracking-wider">VIEW · 3D PERSPECTIVE</div>
+          <div class="text-xs mono text-gray-400" id="cube-count">27 CUBES</div>
+        </div>
+
+        <div class="absolute bottom-4 left-4 flex flex-wrap gap-2 z-10">
+          <button id="btn-reset" class="btn">⟲ Reset</button>
+          <button id="btn-explode" class="btn">⤧ Pisahkan</button>
+          <button id="btn-rotate" class="btn">↻ Auto-Rotate</button>
+        </div>
+
+        <div class="scroll-hint">SERET UNTUK MEMUTAR · SCROLL UNTUK ZOOM</div>
+      </div>
+
+      <!-- Size selector -->
+      <div class="mt-4 flex flex-wrap items-center gap-3 p-4 rounded-xl" style="background:rgba(255,255,255,0.03); border:1px solid var(--border)">
+        <div class="text-xs mono text-gray-400 tracking-wider mr-2">UKURAN KUBUS</div>
+        <button class="size-btn" data-size="2">2³</button>
+        <button class="size-btn active" data-size="3">3³</button>
+        <button class="size-btn" data-size="4">4³</button>
+        <button class="size-btn" data-size="5">5³</button>
+        <button class="size-btn" data-size="6">6³</button>
+        <div class="text-xs text-gray-500 mono ml-2" id="size-info">n = 3 · 27 kubus satuan</div>
+      </div>
+
+      <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-300">
+        <span><span class="legend-dot" style="background:#ef4444"></span> 3 sisi (sudut)</span>
+        <span><span class="legend-dot" style="background:#f59e0b"></span> 2 sisi (rusuk)</span>
+        <span><span class="legend-dot" style="background:#06d6a0"></span> 1 sisi (sisi)</span>
+        <span><span class="legend-dot" style="background:#64748b"></span> 0 sisi (inti)</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: Stats -->
+    <div class="lg:col-span-2 space-y-3 float-in" style="animation-delay:0.4s">
+      <div class="text-xs mono text-gray-400 tracking-wider mb-2">KLIK KARTU UNTUK MEMFILTER</div>
+
+      <div class="cat-card rounded-xl p-5" data-cat="3" style="--cat-color:#ef4444; --cat-glow:rgba(239,68,68,0.25)">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-gray-400 mono">Sudut · 3 sisi</div>
+            <div class="text-sm text-gray-300 mt-1">Pojok kubus besar</div>
+          </div>
+          <div class="big-number text-red-400" id="count-3">8</div>
+        </div>
+        <div class="text-xs text-gray-400 mb-2">Rumus: <span class="mono text-gray-300">8</span> (konstan untuk semua n)</div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-3" style="width:29.6%; background:#ef4444"></div></div>
+      </div>
+
+      <div class="cat-card rounded-xl p-5" data-cat="2" style="--cat-color:#f59e0b; --cat-glow:rgba(245,158,11,0.25)">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-gray-400 mono">Rusuk · 2 sisi</div>
+            <div class="text-sm text-gray-300 mt-1">Tengah setiap rusuk</div>
+          </div>
+          <div class="big-number text-amber-400" id="count-2">12</div>
+        </div>
+        <div class="text-xs text-gray-400 mb-2">Rumus: <span class="mono text-gray-300">12 × (n−2) = <span id="formula-2">12</span></span></div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-2" style="width:44.4%; background:#f59e0b"></div></div>
+      </div>
+
+      <div class="cat-card rounded-xl p-5" data-cat="1" style="--cat-color:#06d6a0; --cat-glow:rgba(6,214,160,0.25)">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-gray-400 mono">Sisi · 1 sisi</div>
+            <div class="text-sm text-gray-300 mt-1">Tengah setiap permukaan</div>
+          </div>
+          <div class="big-number text-emerald-400" id="count-1">6</div>
+        </div>
+        <div class="text-xs text-gray-400 mb-2">Rumus: <span class="mono text-gray-300">6 × (n−2)² = <span id="formula-1">6</span></span></div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-1" style="width:22.2%; background:#06d6a0"></div></div>
+      </div>
+
+      <div class="cat-card rounded-xl p-5" data-cat="0" style="--cat-color:#64748b; --cat-glow:rgba(100,116,139,0.3)">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-gray-400 mono">Inti · 0 sisi</div>
+            <div class="text-sm text-gray-300 mt-1">Tersembunyi di dalam</div>
+          </div>
+          <div class="big-number text-slate-400" id="count-0">1</div>
+        </div>
+        <div class="text-xs text-gray-400 mb-2">Rumus: <span class="mono text-gray-300">(n−2)³ = <span id="formula-0">1</span></span></div>
+        <div class="stat-bar"><div class="stat-bar-fill" id="bar-0" style="width:3.7%; background:#64748b"></div></div>
+      </div>
+
+      <div class="rounded-xl p-5 mt-4" style="background:linear-gradient(135deg, rgba(251,191,36,0.12), rgba(251,191,36,0.02)); border:1px solid rgba(251,191,36,0.25)">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-amber-400 mono">Total kubus satuan</div>
+            <div class="text-sm text-gray-300 mt-1" id="total-breakdown">8 + 12 + 6 + 1</div>
+          </div>
+          <div class="big-number text-amber-300" id="count-total">27</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPLANATION -->
+  <section class="mt-20">
+    <div class="text-center mb-12">
+      <div class="text-xs mono text-amber-400/80 tracking-wider mb-3">PENJELASAN MATEMATIS</div>
+      <h2 class="display-font text-4xl md:text-5xl font-bold mb-4">Mengapa Berhitung Seperti Itu?</h2>
+      <p class="text-gray-400 max-w-2xl mx-auto">
+        Kunci masalah ini: memetakan posisi setiap kubus satuan terhadap permukaan kubus besar.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="rounded-2xl p-6 border border-white/5" style="background:linear-gradient(135deg, rgba(239,68,68,0.08), rgba(20,20,31,0.6))">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold" style="background:#ef4444">3</div>
+          <h3 class="display-font text-2xl font-bold">Sudut — 3 Sisi Tercat</h3>
+        </div>
+        <p class="text-gray-300 mb-4 leading-relaxed">
+          Setiap kubus satuan di pojok kubus besar menempel pada <strong>3 permukaan</strong> sekaligus.
+          Sebuah kubus memiliki <strong>8 sudut</strong>, jadi selalu ada 8 kubus seperti ini — tidak peduli berapa ukuran kubusnya.
+        </p>
+        <div class="formula-box text-red-300">
+          <div class="text-gray-400 text-xs mb-1">// Jumlah sudut kubus</div>
+          <div>Jumlah = 8</div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl p-6 border border-white/5" style="background:linear-gradient(135deg, rgba(245,158,11,0.08), rgba(20,20,31,0.6))">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold" style="background:#f59e0b">2</div>
+          <h3 class="display-font text-2xl font-bold">Rusuk — 2 Sisi Tercat</h3>
+        </div>
+        <p class="text-gray-300 mb-4 leading-relaxed">
+          Pada setiap rusuk (garis pertemuan dua permukaan), kubus di <strong>tengah rusuk</strong> menempel pada
+          tepat 2 permukaan. Kubus memiliki 12 rusuk, masing-masing menyumbang (n−2) kubus.
+        </p>
+        <div class="formula-box text-amber-300">
+          <div class="text-gray-400 text-xs mb-1">// n = panjang sisi kubus</div>
+          <div>Jumlah = 12 × (n − 2)</div>
+          <div>Untuk n=3: 12 × 1 = 12</div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl p-6 border border-white/5" style="background:linear-gradient(135deg, rgba(6,214,160,0.08), rgba(20,20,31,0.6))">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold" style="background:#06d6a0">1</div>
+          <h3 class="display-font text-2xl font-bold">Sisi — 1 Sisi Tercat</h3>
+        </div>
+        <p class="text-gray-300 mb-4 leading-relaxed">
+          Di tiap permukaan kubus besar, kubus satuan yang berada <strong>di tengah permukaan</strong> (bukan di tepi)
+          hanya menempel pada 1 permukaan. Ada 6 permukaan, masing-masing menyumbang (n−2)² kubus.
+        </p>
+        <div class="formula-box text-emerald-300">
+          <div class="text-gray-400 text-xs mb-1">// 6 sisi kubus</div>
+          <div>Jumlah = 6 × (n − 2)²</div>
+          <div>Untuk n=3: 6 × 1 = 6</div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl p-6 border border-white/5" style="background:linear-gradient(135deg, rgba(100,116,139,0.1), rgba(20,20,31,0.6))">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold" style="background:#64748b">0</div>
+          <h3 class="display-font text-2xl font-bold">Inti — Tanpa Cat</h3>
+        </div>
+        <p class="text-gray-300 mb-4 leading-relaxed">
+          Kubus satuan yang berada <strong>di dalam</strong>, sama sekali tidak menyentuh permukaan kubus besar.
+          Ini adalah kubus "padatan dalam" berukuran (n−2)³.
+        </p>
+        <div class="formula-box text-slate-300">
+          <div class="text-gray-400 text-xs mb-1">// Volume interior</div>
+          <div>Jumlah = (n − 2)³</div>
+          <div>Untuk n=3: 1³ = 1</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl p-8 border border-amber-400/20" style="background:linear-gradient(135deg, rgba(251,191,36,0.06), rgba(20,20,31,0.6))">
+      <h3 class="display-font text-2xl font-bold mb-4 flex items-center gap-3">
+        <span class="text-amber-400">✓</span> Verifikasi Total
+      </h3>
+      <p class="text-gray-300 mb-4">
+        Jumlah semua kubus satuan harus sama dengan volume kubus besar, yaitu <span class="mono text-amber-300">n³</span>.
+      </p>
+      <div class="formula-box text-amber-200" id="verification-box">
+        <div>8 + 12 + 6 + 1 = <span class="text-amber-300 font-bold">27</span> ✓</div>
+        <div class="text-gray-400 mt-2">// Sama dengan 3³ = 27 — terverifikasi!</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section class="mt-20 mb-12">
+    <div class="rounded-3xl p-8 md:p-12 relative overflow-hidden" style="background:linear-gradient(135deg, #1a1a2e, #0a0a14); border:1px solid var(--border)">
+      <div class="absolute -top-20 -right-20 w-80 h-80 glow-amber pointer-events-none"></div>
+      <div class="absolute -bottom-20 -left-20 w-80 h-80 glow-cyan pointer-events-none"></div>
+
+      <div class="relative">
+        <div class="text-xs mono text-amber-400 tracking-wider mb-3">TABEL PERBANDINGAN</div>
+        <h2 class="display-font text-3xl md:text-4xl font-bold mb-8">Pola untuk Berbagai Ukuran Kubus</h2>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left">
+                <th class="py-3 px-4 text-gray-400 mono text-xs uppercase tracking-wider">n</th>
+                <th class="py-3 px-4 text-red-400 mono text-xs uppercase tracking-wider">3 sisi</th>
+                <th class="py-3 px-4 text-amber-400 mono text-xs uppercase tracking-wider">2 sisi</th>
+                <th class="py-3 px-4 text-emerald-400 mono text-xs uppercase tracking-wider">1 sisi</th>
+                <th class="py-3 px-4 text-slate-400 mono text-xs uppercase tracking-wider">0 sisi</th>
+                <th class="py-3 px-4 text-amber-300 mono text-xs uppercase tracking-wider">Total (n³)</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-table" class="mono"></tbody>
+          </table>
+        </div>
+
+        <p class="text-gray-400 text-sm mt-6 max-w-3xl">
+          Perhatikan bagaimana jumlah kubus <span class="text-red-300">sudut selalu 8</span>,
+          sementara kubus <span class="text-slate-300">inti tumbuh cepat</span> mengikuti (n−2)³.
+          Gunakan tombol ukuran di atas untuk melihat visualisasi setiap baris.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-white/5 py-8 text-center text-sm text-gray-500">
+  <p>Visualisasi interaktif · Teorema Cat Kubus · Geometri 3 Dimensi</p>
+</footer>
+
+<div id="toast" class="toast"></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ===== STATE =====
+const state = {
+  n: 3,
+  filter: null,
+  exploded: false,
+  autoRotate: false,
+  hovered: null
+};
+
+const COLORS = { 3: 0xef4444, 2: 0xf59e0b, 1: 0x06d6a0, 0: 0x64748b };
+const COLOR_STR = { 3: '#ef4444', 2: '#f59e0b', 1: '#06d6a0', 0: '#64748b' };
+
+// ===== THREE.JS SETUP =====
+const canvas = document.getElementById('scene-canvas');
+const container = document.getElementById('canvas-container');
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+camera.position.set(7, 6, 8);
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 4;
+controls.maxDistance = 30;
+controls.autoRotateSpeed = 2.0;
+
+// ===== LIGHTING =====
+scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+const keyLight = new THREE.DirectionalLight(0xfff5e0, 1.4);
+keyLight.position.set(8, 12, 6);
+keyLight.castShadow = true;
+keyLight.shadow.mapSize.set(2048, 2048);
+keyLight.shadow.camera.left = -10;
+keyLight.shadow.camera.right = 10;
+keyLight.shadow.camera.top = 10;
+keyLight.shadow.camera.bottom = -10;
+keyLight.shadow.bias = -0.0005;
+scene.add(keyLight);
+
+const fillLight = new THREE.DirectionalLight(0x88aaff, 0.4);
+fillLight.position.set(-6, 4, -8);
+scene.add(fillLight);
+
+const rimLight = new THREE.DirectionalLight(0xfbbf24, 0.5);
+rimLight.position.set(0, -4, -6);
+scene.add(rimLight);
+
+// ===== GROUND =====
+const ground = new THREE.Mesh(
+  new THREE.CircleGeometry(20, 64),
+  new THREE.MeshStandardMaterial({ color: 0x0d0d18, roughness: 0.9, metalness: 0.1, transparent: true, opacity: 0.6 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -3;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// ===== CUBE GROUP =====
+const cubeGroup = new THREE.Group();
+scene.add(cubeGroup);
+
+let cubes = [];
+
+// ===== TEXTURES =====
+const paintedTextures = {};
+const unpaintedTexture = createUnpaintedTexture();
+
+function createPaintedTexture(cat) {
+  if (paintedTextures[cat]) return paintedTextures[cat];
+
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const ctx = c.getContext('2d');
+
+  ctx.fillStyle = COLOR_STR[cat];
+  ctx.fillRect(0, 0, 128, 128);
+
+  const grd = ctx.createLinearGradient(0, 0, 128, 128);
+  grd.addColorStop(0, 'rgba(255,255,255,0.2)');
+  grd.addColorStop(1, 'rgba(0,0,0,0.2)');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, 128, 128);
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(2, 2, 124, 124);
+
+  for (let i = 0; i < 200; i++) {
+    ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.1})`;
+    ctx.fillRect(Math.random() * 128, Math.random() * 128, 1, 1);
+  }
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.needsUpdate = true;
+  paintedTextures[cat] = tex;
+  return tex;
+}
+
+function createUnpaintedTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const ctx = c.getContext('2d');
+
+  ctx.fillStyle = '#2a2a3a';
+  ctx.fillRect(0, 0, 128, 128);
+
+  const grd = ctx.createLinearGradient(0, 0, 128, 128);
+  grd.addColorStop(0, 'rgba(255,255,255,0.05)');
+  grd.addColorStop(1, 'rgba(0,0,0,0.2)');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, 128, 128);
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(2, 2, 124, 124);
+
+  for (let i = 0; i < 300; i++) {
+    ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.05})`;
+    ctx.fillRect(Math.random() * 128, Math.random() * 128, 1, 1);
+  }
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+// ===== CLASSIFY =====
+function classifyCube(x, y, z, n) {
+  let count = 0;
+  if (x === 0 || x === n - 1) count++;
+  if (y === 0 || y === n - 1) count++;
+  if (z === 0 || z === n - 1) count++;
+  return count;
+}
+
+// ===== BUILD CUBES =====
+function buildCubes(n) {
+  // Bersihkan kubus lama
+  while (cubeGroup.children.length > 0) {
+    const child = cubeGroup.children[0];
+    cubeGroup.remove(child);
+    // Dispose wireframes
+    child.children.forEach(c => {
+      if (c.geometry) c.geometry.dispose();
+      if (c.material) c.material.dispose();
+    });
+    if (child.geometry) child.geometry.dispose();
+    if (child.material) {
+      if (Array.isArray(child.material)) {
+        child.material.forEach(m => m.dispose());
+      } else {
+        child.material.dispose();
+      }
+    }
+  }
+  cubes = [];
+
+  const totalSize = 3.0;
+  const unit = totalSize / n;
+  const cubeSize = unit * 0.92;
+  const gap = unit * 0.08;
+  const spacing = cubeSize + gap;
+  const offset = (n - 1) / 2;
+
+  for (let x = 0; x < n; x++) {
+    for (let y = 0; y < n; y++) {
+      for (let z = 0; z < n; z++) {
+        const cat = classifyCube(x, y, z, n);
+        const geo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+
+        const makeMat = (isPainted) => new THREE.MeshStandardMaterial({
+          map: isPainted ? createPaintedTexture(cat) : unpaintedTexture,
+          roughness: 0.55,
+          metalness: 0.15
+        });
+
+        // Urutan BoxGeometry: +X, -X, +Y, -Y, +Z, -Z
+        const materials = [
+          makeMat(x === n - 1), makeMat(x === 0),
+          makeMat(y === n - 1), makeMat(y === 0),
+          makeMat(z === n - 1), makeMat(z === 0)
+        ];
+
+        const cube = new THREE.Mesh(geo, materials);
+        cube.position.set(
+          (x - offset) * spacing,
+          (y - offset) * spacing,
+          (z - offset) * spacing
+        );
+        cube.castShadow = true;
+        cube.receiveShadow = true;
+
+        cube.userData = {
+          x, y, z,
+          category: cat,
+          originalPos: cube.position.clone(),
+          targetPos: cube.position.clone(),
+          targetScale: 1
+        };
+
+        // Wireframe
+        const edges = new THREE.EdgesGeometry(geo);
+        const wire = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({
+          color: 0x000000, transparent: true, opacity: 0.35
+        }));
+        cube.add(wire);
+        cube.userData.wire = wire;
+
+        cubeGroup.add(cube);
+        cubes.push(cube);
+      }
+    }
+  }
+
+  // Sesuaikan kamera
+  const dist = 5 + n * 1.3;
+  camera.position.set(dist * 0.85, dist * 0.7, dist);
+  controls.target.set(0, 0, 0);
+  controls.update();
+
+  // Sesuaikan ground
+  ground.position.y = -(totalSize / 2) - 0.3;
+  ground.scale.setScalar(Math.max(1, n / 3));
+
+  updateStats(n);
+}
+
+// ===== STATS =====
+function computeCounts(n) {
+  return {
+    3: 8,
+    2: 12 * Math.max(0, n - 2),
+    1: 6 * Math.max(0, n - 2) ** 2,
+    0: Math.max(0, n - 2) ** 3,
+    total: n ** 3
+  };
+}
+
+function updateStats(n) {
+  const c = computeCounts(n);
+  document.getElementById('count-3').textContent = c[3];
+  document.getElementById('count-2').textContent = c[2];
+  document.getElementById('count-1').textContent = c[1];
+  document.getElementById('count-0').textContent = c[0];
+  document.getElementById('count-total').textContent = c.total;
+
+  document.getElementById('formula-2').textContent = c[2];
+  document.getElementById('formula-1').textContent = c[1];
+  document.getElementById('formula-0').textContent = c[0];
+
+  document.getElementById('total-breakdown').textContent = `${c[3]} + ${c[2]} + ${c[1]} + ${c[0]}`;
+  document.getElementById('cube-count').textContent = `${c.total} CUBES`;
+  document.getElementById('size-info').textContent = `n = ${n} · ${c.total} kubus satuan`;
+
+  const total = Math.max(1, c.total);
+  document.getElementById('bar-3').style.width = (c[3] / total * 100) + '%';
+  document.getElementById('bar-2').style.width = (c[2] / total * 100) + '%';
+  document.getElementById('bar-1').style.width = (c[1] / total * 100) + '%';
+  document.getElementById('bar-0').style.width = (c[0] / total * 100) + '%';
+
+  document.getElementById('verification-box').innerHTML = `
+    <div>${c[3]} + ${c[2]} + ${c[1]} + ${c[0]} = <span class="text-amber-300 font-bold">${c.total}</span> ✓</div>
+    <div class="text-gray-400 mt-2">// Sama dengan ${n}³ = ${c.total} — terverifikasi!</div>
+  `;
+
+  buildComparisonTable();
+}
+
+function buildComparisonTable() {
+  const tbody = document.getElementById('comparison-table');
+  let html = '';
+  for (let n = 2; n <= 6; n++) {
+    const c = computeCounts(n);
+    const isActive = n === state.n;
+    html += `
+      <tr class="tbl-row ${isActive ? 'active' : ''}" style="border-top:1px solid rgba(255,255,255,0.05);">
+        <td class="py-3 px-4 ${isActive ? 'text-amber-300 font-bold' : 'text-gray-300'}">${n}³</td>
+        <td class="py-3 px-4 text-red-300">${c[3]}</td>
+        <td class="py-3 px-4 text-amber-300">${c[2]}</td>
+        <td class="py-3 px-4 text-emerald-300">${c[1]}</td>
+        <td class="py-3 px-4 text-slate-300">${c[0]}</td>
+        <td class="py-3 px-4 text-amber-200 font-bold">${c.total}</td>
+      </tr>
+    `;
+  }
+  tbody.innerHTML = html;
+}
+
+// ===== INTERACTION: RAYCASTER =====
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+function onPointerMove(e) {
+  const rect = canvas.getBoundingClientRect();
+  mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(cubes);
+
+  if (intersects.length > 0) {
+    const hit = intersects[0].object;
+    if (state.hovered !== hit) {
+      // Reset hover sebelumnya
+      if (state.hovered && state.filter === null) {
+        state.hovered.material.forEach(mat => {
+          mat.emissive.setHex(0x000000);
+          mat.emissiveIntensity = 0;
+        });
+      }
+      state.hovered = hit;
+      canvas.style.cursor = 'pointer';
+    }
+  } else {
+    if (state.hovered && state.filter === null) {
+      state.hovered.material.forEach(mat => {
+        mat.emissive.setHex(0x000000);
+        mat.emissiveIntensity = 0;
+      });
+    }
+    state.hovered = null;
+    canvas.style.cursor = 'grab';
+  }
+}
+
+function onPointerClick() {
+  if (state.hovered) {
+    const cat = state.hovered.userData.category;
+    selectCategory(cat);
+    const d = state.hovered.userData;
+    showToast(`Kubus (${d.x+1}, ${d.y+1}, ${d.z+1}) · ${cat} sisi tercat`);
+  }
+}
+
+canvas.addEventListener('pointermove', onPointerMove);
+canvas.addEventListener('click', onPointerClick);
+
+// ===== CATEGORY FILTER =====
+function selectCategory(cat) {
+  state.filter = (state.filter === cat) ? null : cat;
+  updateCardSelection();
+  updateCubeAppearance();
+}
+
+function updateCardSelection() {
+  document.querySelectorAll('.cat-card').forEach(card => {
+    const cat = parseInt(card.dataset.cat);
+    card.classList.toggle('active', state.filter === cat);
+  });
+}
+
+function updateCubeAppearance() {
+  cubes.forEach(cube => {
+    const cat = cube.userData.category;
+    const isFiltered = state.filter !== null && state.filter !== cat;
+    const isHighlighted = state.filter !== null && state.filter === cat;
+
+    cube.userData.targetScale = isFiltered ? 0.7 : (isHighlighted ? 1.1 : 1.0);
+
+    cube.material.forEach(mat => {
+      mat.transparent = isFiltered;
+      mat.opacity = isFiltered ? 0.15 : 1.0;
+      if (isHighlighted) {
+        mat.emissive.setHex(COLORS[cat]);
+        mat.emissiveIntensity = 0.35;
+      } else {
+        mat.emissive.setHex(0x000000);
+        mat.emissiveIntensity = 0;
+      }
+    });
+
+    if (cube.userData.wire) {
+      cube.userData.wire.material.opacity = isFiltered ? 0.08 : 0.35;
+    }
+  });
+}
+
+document.querySelectorAll('.cat-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const cat = parseInt(card.dataset.cat);
+    selectCategory(cat);
+    const labels = { 0: 'inti (tanpa cat)', 1: '1 sisi tercat', 2: '2 sisi tercat', 3: '3 sisi tercat' };
+    showToast(`Filter: ${labels[cat]}`);
+  });
+});
+
+// ===== TOAST =====
+const toastEl = document.getElementById('toast');
+let toastTimeout;
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toastEl.classList.remove('show'), 2200);
+}
+
+// ===== BUTTONS =====
+const btnReset = document.getElementById('btn-reset');
+const btnExplode = document.getElementById('btn-explode');
+const btnRotate = document.getElementById('btn-rotate');
+
+btnReset.addEventListener('click', () => {
+  // Reset kamera
+  const dist = 5 + state.n * 1.3;
+  const targetPos = new THREE.Vector3(dist * 0.85, dist * 0.7, dist);
+  const startPos = camera.position.clone();
+  const startTime = performance.now();
+  const duration = 800;
+
+  function animateReset() {
+    const elapsed = performance.now() - startTime;
+    const t = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    camera.position.lerpVectors(startPos, targetPos, eased);
+    controls.target.lerp(new THREE.Vector3(0, 0, 0), eased);
+    if (t < 1) requestAnimationFrame(animateReset);
+  }
+  animateReset();
+
+  // Reset filter
+  state.filter = null;
+  updateCardSelection();
+  updateCubeAppearance();
+
+  // Reset explode
+  if (state.exploded) {
+    state.exploded = false;
+    updateExplode();
+    btnExplode.textContent = '⤧ Pisahkan';
+  }
+
+  // Reset auto-rotate
+  if (state.autoRotate) {
+    state.autoRotate = false;
+    controls.autoRotate = false;
+    btnRotate.textContent = '↻ Auto-Rotate';
+    btnRotate.classList.remove('active');
+  }
+
+  showToast('View direset');
+});
+
+btnExplode.addEventListener('click', () => {
+  state.exploded = !state.exploded;
+  updateExplode();
+  btnExplode.textContent = state.exploded ? '⤧ Gabungkan' : '⤧ Pisahkan';
+  btnExplode.classList.toggle('active', state.exploded);
+  showToast(state.exploded ? 'Kubus dipisahkan' : 'Kubus digabungkan');
+});
+
+btnRotate.addEventListener('click', () => {
+  state.autoRotate = !state.autoRotate;
+  controls.autoRotate = state.autoRotate;
+  btnRotate.textContent = state.autoRotate ? '↻ Stop Rotate' : '↻ Auto-Rotate';
+  btnRotate.classList.toggle('active', state.autoRotate);
+  showToast(state.autoRotate ? 'Auto-rotate aktif' : 'Auto-rotate dimatikan');
+});
+
+function updateExplode() {
+  const factor = state.exploded ? 2.5 : 1.0;
+  cubes.forEach(cube => {
+    const orig = cube.userData.originalPos;
+    cube.userData.targetPos.set(orig.x * factor, orig.y * factor, orig.z * factor);
+  });
+}
+
+// ===== SIZE BUTTONS =====
+document.querySelectorAll('.size-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const newSize = parseInt(btn.dataset.size);
+    if (newSize === state.n) return;
+
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    state.n = newSize;
+    state.filter = null;
+    state.exploded = false;
+    state.hovered = null;
+    state.autoRotate = false;
+    controls.autoRotate = false;
+
+    updateCardSelection();
+    btnExplode.textContent = '⤧ Pisahkan';
+    btnExplode.classList.remove('active');
+    btnRotate.textContent = '↻ Auto-Rotate';
+    btnRotate.classList.remove('active');
+
+    buildCubes(newSize);
+    showToast(`Kubus diubah ke ${newSize}×${newSize}×${newSize}`);
+  });
+});
+
+// ===== PARTICLES =====
+const particleCount = 60;
+const particleGeo = new THREE.BufferGeometry();
+const positions = new Float32Array(particleCount * 3);
+for (let i = 0; i < particleCount; i++) {
+  positions[i * 3] = (Math.random() - 0.5) * 20;
+  positions[i * 3 + 1] = (Math.random() - 0.5) * 12;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+}
+particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const particleMat = new THREE.PointsMaterial({
+  color: 0xfbbf24, size: 0.05, transparent: true, opacity: 0.5,
+  blending: THREE.AdditiveBlending, depthWrite: false
+});
+const particles = new THREE.Points(particleGeo, particleMat);
+scene.add(particles);
+
+// ===== ANIMATION LOOP =====
+let lastTime = 0;
+function animate(time) {
+  requestAnimationFrame(animate);
+
+  const delta = (time - lastTime) / 1000;
+  lastTime = time;
+
+  // Update posisi & skala kubus (lerp)
+  cubes.forEach(cube => {
+    cube.position.lerp(cube.userData.targetPos, 0.12);
+    const ts = cube.userData.targetScale || 1;
+    const cs = cube.scale.x;
+    const ns = cs + (ts - cs) * 0.15;
+    cube.scale.setScalar(ns);
+  });
+
+  // Hover glow
+  if (state.hovered && state.filter === null) {
+    const cat = state.hovered.userData.category;
+    state.hovered.material.forEach(mat => {
+      mat.emissive.setHex(COLORS[cat]);
+      mat.emissiveIntensity = 0.35;
+    });
+  }
+
+  // Particles drift
+  if (particles) {
+    particles.rotation.y += delta * 0.05;
+    const pos = particleGeo.attributes.position.array;
+    for (let i = 0; i < particleCount; i++) {
+      pos[i * 3 + 1] += Math.sin(time * 0.001 + i) * 0.002;
+    }
+    particleGeo.attributes.position.needsUpdate = true;
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+// ===== RESIZE =====
+function resize() {
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  if (w > 0 && h > 0) {
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h, false);
+  }
+}
+
+// ===== INIT =====
+resize();
+buildCubes(3);
+requestAnimationFrame(animate);
+
+// Pastikan canvas ukuran benar setelah layout selesai
+setTimeout(resize, 100);
+setTimeout(resize, 500);
+
+window.addEventListener('resize', resize);
+
+// Toast awal
+setTimeout(() => showToast('Klik kubus atau kartu untuk memfilter'), 1500);
+</script>
+
+</body>
+</html>
