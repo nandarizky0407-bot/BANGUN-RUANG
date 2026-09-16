@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volume Bangun Ruang — Presentasi Interaktif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+:root{
+  --bg:#0a0e1a; --surface:#131829; --surface-2:#1a2138;
+  --border:rgba(245,158,11,.18); --text:#e8edf7; --muted:#8b93a8;
+  --gold:#f59e0b; --cyan:#06b6d4; --emerald:#10b981; --rose:#f43f5e; --violet:#a78bfa;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100vh;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text)}
+.display{font-family:'Outfit',sans-serif;letter-spacing:-.02em}
+
+/* Mesh background */
+.bg-mesh{
+  background:
+    radial-gradient(ellipse at 15% 20%, rgba(245,158,11,.10), transparent 45%),
+    radial-gradient(ellipse at 85% 30%, rgba(6,182,212,.10), transparent 45%),
+    radial-gradient(ellipse at 50% 90%, rgba(167,139,250,.06), transparent 50%),
+    var(--bg);
+}
+
+/* Slides */
+.slides-wrap{position:relative;width:100%;height:100vh;padding-top:72px;padding-bottom:72px}
+.slide{
+  position:absolute;inset:72px 0 72px 0;
+  padding:2rem 4rem;overflow-y:auto;
+  opacity:0;pointer-events:none;transition:opacity .5s ease, transform .5s ease;
+  transform:translateY(8px);
+}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide::-webkit-scrollbar{width:6px}
+.slide::-webkit-scrollbar-track{background:transparent}
+.slide::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px;opacity:.5}
+
+/* Top bar */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:.85rem 2rem;display:flex;justify-content:space-between;align-items:center;
+  background:rgba(10,14,26,.75);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.logo-box{
+  width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--gold),var(--cyan));
+  box-shadow:0 4px 20px rgba(245,158,11,.3);
+}
+.progress-bar{height:4px;background:var(--surface-2);border-radius:2px;overflow:hidden;width:160px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--cyan));transition:width .5s}
+
+/* Bottom nav */
+.bottomnav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  padding:1rem 2rem;display:flex;justify-content:center;align-items:center;gap:1rem;
+  background:rgba(10,14,26,.75);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+}
+.nav-btn{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border);color:var(--text);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;
+  font-size:1.4rem;font-family:'Outfit',sans-serif;
+}
+.nav-btn:hover:not(:disabled){background:var(--gold);color:var(--bg);transform:scale(1.08);border-color:var(--gold)}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.dots-wrap{display:flex;gap:.4rem;max-width:60vw;overflow-x:auto;padding:.25rem}
+.dots-wrap::-webkit-scrollbar{display:none}
+.dot{
+  width:8px;height:8px;border-radius:50%;background:var(--surface-2);
+  cursor:pointer;transition:all .3s;flex-shrink:0;
+}
+.dot:hover{background:var(--muted)}
+.dot.active{background:var(--gold);width:28px;border-radius:4px}
+.dot.section-vol{background:rgba(16,185,129,.4)}
+.dot.section-vol.active{background:var(--emerald)}
+.dot.section-story{background:rgba(244,63,94,.4)}
+.dot.section-story.active{background:var(--rose)}
+
+/* Cover */
+.cover-title{font-size:clamp(3rem,8vw,7rem);font-weight:900;line-height:.92}
+.glow-text{
+  background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 40%,#06b6d4 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.glass{
+  background:rgba(19,24,41,.55);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:20px;
+}
+
+/* Badges */
+.badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  padding:.3rem .85rem;border-radius:100px;font-size:.7rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+}
+.badge-gold{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.3)}
+.badge-cyan{background:rgba(6,182,212,.12);color:var(--cyan);border:1px solid rgba(6,182,212,.3)}
+.badge-emerald{background:rgba(16,185,129,.12);color:var(--emerald);border:1px solid rgba(16,185,129,.3)}
+
+/* Particles */
+.particles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.particle{
+  position:absolute;width:3px;height:3px;border-radius:50%;
+  background:var(--gold);opacity:.4;animation:floatUp linear infinite;
+}
+@keyframes floatUp{
+  0%{transform:translateY(100vh) translateX(0);opacity:0}
+  10%{opacity:.4}
+  90%{opacity:.4}
+  100%{transform:translateY(-10vh) translateX(60px);opacity:0}
+}
+
+/* Canvas container */
+.canvas-container{
+  width:100%;height:380px;
+  background:radial-gradient(circle at center,rgba(245,158,11,.06),transparent 70%);
+  border-radius:16px;border:1px solid var(--border);position:relative;overflow:hidden;
+}
+.canvas-container canvas{display:block;border-radius:16px}
+.canvas-hint{
+  position:absolute;bottom:.5rem;left:.5rem;right:.5rem;text-align:center;
+  font-size:.7rem;color:var(--muted);pointer-events:none;
+}
+
+/* Formula card */
+.formula-card{
+  background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(6,182,212,.06));
+  border:1px solid var(--border);border-radius:14px;padding:1rem 1.25rem;
+}
+.formula{
+  font-family:'Outfit',sans-serif;font-size:1.55rem;font-weight:700;
+  background:linear-gradient(135deg,var(--gold),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* Part label */
+.part-label{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.55rem .9rem;background:var(--surface-2);border-radius:10px;
+  border-left:3px solid var(--gold);font-size:.85rem;
+}
+.part-label .swatch{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+
+/* Question card */
+.q-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:1.1rem 1.25rem;transition:all .3s;
+}
+.q-card:hover{border-color:rgba(245,158,11,.35);transform:translateY(-1px)}
+.q-card.correct{border-color:var(--emerald);background:rgba(16,185,129,.06)}
+.q-card.wrong{border-color:var(--rose);background:rgba(244,63,94,.06)}
+.q-num{
+  width:28px;height:28px;border-radius:8px;background:var(--surface-2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;color:var(--gold);
+  flex-shrink:0;
+}
+.q-card.correct .q-num{background:var(--emerald);color:#0a0e1a}
+.q-card.wrong .q-num{background:var(--rose);color:#fff}
+
+.answer-input{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  padding:.5rem .8rem;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.95rem;width:130px;
+}
+.answer-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,158,11,.15)}
+
+.btn{
+  padding:.45rem .9rem;border-radius:8px;font-weight:600;font-size:.82rem;
+  cursor:pointer;transition:all .3s;font-family:inherit;border:none;
+}
+.btn-check{background:var(--gold);color:var(--bg)}
+.btn-check:hover{background:#fbbf24;transform:translateY(-1px)}
+.btn-explain{background:transparent;color:var(--cyan);border:1px solid var(--cyan)}
+.btn-explain:hover{background:var(--cyan);color:var(--bg)}
+
+.explanation{
+  background:var(--surface-2);border-left:3px solid var(--cyan);
+  padding:.85rem 1rem;border-radius:8px;margin-top:.75rem;
+  display:none;font-size:.85rem;line-height:1.6;
+}
+.explanation.show{display:block;animation:slideDown .35s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+.feedback{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.8rem;font-weight:600;margin-left:.5rem;
+}
+.feedback.ok{color:var(--emerald)}
+.feedback.no{color:var(--rose)}
+
+/* Difficulty */
+.diff{
+  display:inline-block;padding:.15rem .55rem;border-radius:6px;
+  font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+}
+.diff-easy{background:rgba(16,185,129,.2);color:var(--emerald)}
+.diff-medium{background:rgba(245,158,11,.2);color:var(--gold)}
+.diff-hard{background:rgba(244,63,94,.2);color:var(--rose)}
+
+/* Result */
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:1.5rem;text-align:center;position:relative;overflow:hidden;
+}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--accent,var(--gold));
+}
+.stat-num{font-family:'Outfit',sans-serif;font-weight:900;font-size:3rem;line-height:1}
+.ring-wrap{position:relative;width:200px;height:200px;margin:0 auto}
+.ring-bg{stroke:var(--surface-2);stroke-width:14;fill:none}
+.ring-fill{stroke-width:14;fill:none;stroke-linecap:round;transition:stroke-dashoffset 1.2s ease}
+
+/* Bangun ruang mini card (intro) */
+.shape-mini{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:1rem;text-align:center;cursor:pointer;transition:all .3s;
+}
+.shape-mini:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 8px 25px rgba(245,158,11,.15)}
+.shape-mini-icon{
+  width:54px;height:54px;margin:0 auto .5rem;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* Tujuan list */
+.tujuan-item{
+  display:flex;gap:1rem;padding:1rem;background:var(--surface);
+  border:1px solid var(--border);border-radius:12px;transition:all .3s;
+}
+.tujuan-item:hover{border-color:var(--gold);transform:translateX(4px)}
+.tujuan-num{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Outfit',sans-serif;font-weight:700;color:var(--bg);
+}
+
+/* Bangun datar card */
+.bd-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:1rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  transition:all .3s;
+}
+.bd-card:hover{border-color:var(--cyan);transform:translateY(-3px)}
+.bd-svg{width:60px;height:60px}
+
+/* Section title */
+.section-title{
+  font-family:'Outfit',sans-serif;font-weight:900;
+  font-size:clamp(2rem,4vw,3rem);line-height:1.05;
+}
+
+/* Fade in */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.fade-in-up{animation:fadeInUp .6s ease backwards}
+.delay-1{animation-delay:.1s}.delay-2{animation-delay:.2s}.delay-3{animation-delay:.3s}
+.delay-4{animation-delay:.4s}.delay-5{animation-delay:.5s}
+
+/* Table */
+.r-table{width:100%;border-collapse:collapse;font-size:.9rem}
+.r-table th{
+  background:var(--surface-2);padding:.75rem;text-align:left;
+  font-family:'Outfit',sans-serif;font-weight:700;color:var(--gold);
+  border-bottom:2px solid var(--border);
+}
+.r-table td{padding:.75rem;border-bottom:1px solid var(--border)}
+.r-table tr:hover td{background:rgba(245,158,11,.04)}
+.r-table .formula-cell{font-family:'Outfit',sans-serif;font-weight:700;color:var(--cyan)}
+
+/* Finish exam btn */
+.finish-btn{
+  background:linear-gradient(135deg,var(--rose),#f97316);
+  color:#fff;padding:.7rem 1.5rem;border-radius:12px;font-weight:700;
+  cursor:pointer;border:none;transition:all .3s;font-family:inherit;
+  font-size:.9rem;display:inline-flex;align-items:center;gap:.5rem;
+}
+.finish-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(244,63,94,.3)}
+
+/* Reflect input */
+.reflect-input{
+  width:100%;background:var(--surface-2);border:1px solid var(--border);
+  color:var(--text);padding:.85rem 1rem;border-radius:10px;font-family:inherit;
+  font-size:.95rem;resize:vertical;min-height:90px;
+}
+.reflect-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,158,11,.15)}
+
+/* Thank you */
+.thank-mark{
+  font-family:'Outfit',sans-serif;font-weight:900;
+  font-size:clamp(4rem,12vw,11rem);line-height:.9;letter-spacing:-.04em;
+}
+
+@media (max-width:768px){
+  .slide{padding:1.5rem 1.25rem}
+  .cover-title{font-size:3rem}
+}
+</style>
+</head>
+<body class="bg-mesh">
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="flex items-center gap-3">
+    <div class="logo-box">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0a0e1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <div>
+      <div class="text-[.65rem] uppercase tracking-widest" style="color:var(--muted)">Matematika SMP</div>
+      <div class="display font-bold text-sm">Volume Bangun Ruang</div>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="text-xs" style="color:var(--muted)">Slide <span id="curSlide" style="color:var(--gold);font-weight:700">1</span> / <span id="totalSlides">27</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:3.7%"></div></div>
+  </div>
+</div>
+
+<!-- Slides -->
+<div class="slides-wrap">
+
+<!-- SLIDE 1: COVER -->
+<section class="slide active" data-slide="1">
+  <div class="max-w-7xl mx-auto h-full flex items-center">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center w-full">
+      <div class="fade-in-up">
+        <div class="badge badge-gold mb-6">Presentasi Interaktif · Geometri</div>
+        <h1 class="cover-title display">Volume<br><span class="glow-text">Bangun Ruang</span></h1>
+        <p class="text-lg mt-6 max-w-md" style="color:var(--muted)">Eksplorasi mendalam bentuk tiga dimensi, rumus volumenya, dan latihan soal interaktif untuk menguasai materi bangun ruang.</p>
+        <div class="flex gap-3 mt-8">
+          <button onclick="gotoSlide(2)" class="btn btn-check" style="padding:.7rem 1.5rem;font-size:.95rem">Mulai Belajar →</button>
+          <button onclick="gotoSlide(12)" class="btn btn-explain" style="padding:.7rem 1.5rem;font-size:.95rem">Langsung ke Latihan</button>
+        </div>
+        <div class="flex gap-6 mt-10 text-sm" style="color:var(--muted)">
+          <div><span class="display font-bold text-xl" style="color:var(--gold)">6</span><br>Bangun Ruang</div>
+          <div><span class="display font-bold text-xl" style="color:var(--cyan)">60</span><br>Soal Latihan</div>
+          <div><span class="display font-bold text-xl" style="color:var(--emerald)">3D</span><br>Visualisasi</div>
+        </div>
+      </div>
+      <div class="relative h-[420px] fade-in-up delay-2">
+        <div class="absolute inset-0 glass flex items-center justify-center">
+          <div id="cover-canvas" class="w-full h-full"></div>
+        </div>
+        <div class="absolute -top-3 -right-3 badge badge-cyan">3D Interaktif</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2: PEMANASAN - LUAS BANGUN DATAR -->
+<section class="slide" data-slide="2">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-8 fade-in-up">
+      <div class="badge badge-cyan mb-3">Pemanasan</div>
+      <h2 class="section-title">Luas <span class="glow-text">Bangun Datar</span></h2>
+      <p class="mt-2" style="color:var(--muted)">Sebelum masuk ke volume bangun ruang, mari ingat kembali rumus luas bangun datar — karena luas alas menjadi kunci dalam menghitung volume.</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div class="bd-card fade-in-up delay-1">
+        <svg class="bd-svg" viewBox="0 0 60 60"><rect x="8" y="8" width="44" height="44" fill="none" stroke="#f59e0b" stroke-width="2.5"/><line x1="8" y1="52" x2="52" y2="8" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="3,2"/></svg>
+        <div class="display font-bold">Persegi</div>
+        <div class="formula" style="font-size:1.1rem">L = s²</div>
+      </div>
+      <div class="bd-card fade-in-up delay-1">
+        <svg class="bd-svg" viewBox="0 0 60 60"><rect x="6" y="14" width="48" height="32" fill="none" stroke="#f59e0b" stroke-width="2.5"/></svg>
+        <div class="display font-bold">Persegi Panjang</div>
+        <div class="formula" style="font-size:1.1rem">L = p × l</div>
+      </div>
+      <div class="bd-card fade-in-up delay-2">
+        <svg class="bd-svg" viewBox="0 0 60 60"><polygon points="30,8 52,50 8,50" fill="none" stroke="#f59e0b" stroke-width="2.5"/><line x1="30" y1="8" x2="30" y2="50" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="3,2"/></svg>
+        <div class="display font-bold">Segitiga</div>
+        <div class="formula" style="font-size:1.1rem">L = ½ × a × t</div>
+      </div>
+      <div class="bd-card fade-in-up delay-2">
+        <svg class="bd-svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="22" fill="none" stroke="#f59e0b" stroke-width="2.5"/><circle cx="30" cy="30" r="2" fill="#06b6d4"/></svg>
+        <div class="display font-bold">Lingkaran</div>
+        <div class="formula" style="font-size:1.1rem">L = π × r²</div>
+      </div>
+      <div class="bd-card fade-in-up delay-3">
+        <svg class="bd-svg" viewBox="0 0 60 60"><polygon points="10,15 50,15 40,45 20,45" fill="none" stroke="#f59e0b" stroke-width="2.5"/></svg>
+        <div class="display font-bold">Jajar Genjang</div>
+        <div class="formula" style="font-size:1.1rem">L = a × t</div>
+      </div>
+      <div class="bd-card fade-in-up delay-3">
+        <svg class="bd-svg" viewBox="0 0 60 60"><polygon points="8,30 22,8 38,8 52,30 38,52 22,52" fill="none" stroke="#f59e0b" stroke-width="2.5"/></svg>
+        <div class="display font-bold">Belah Ketupat</div>
+        <div class="formula" style="font-size:1.1rem">L = ½ × d₁ × d₂</div>
+      </div>
+      <div class="bd-card fade-in-up delay-4">
+        <svg class="bd-svg" viewBox="0 0 60 60"><polygon points="8,45 22,15 38,15 52,45" fill="none" stroke="#f59e0b" stroke-width="2.5"/><line x1="30" y1="15" x2="30" y2="45" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="3,2"/></svg>
+        <div class="display font-bold">Trapesium</div>
+        <div class="formula" style="font-size:1.05rem">L = ½ × (a+b) × t</div>
+      </div>
+      <div class="bd-card fade-in-up delay-4">
+        <svg class="bd-svg" viewBox="0 0 60 60"><polygon points="15,15 45,15 52,45 8,45" fill="none" stroke="#f59e0b" stroke-width="2.5"/></svg>
+        <div class="display font-bold">Layang-layang</div>
+        <div class="formula" style="font-size:1.1rem">L = ½ × d₁ × d₂</div>
+      </div>
+    </div>
+    <div class="glass mt-8 p-5 fade-in-up delay-5">
+      <div class="flex items-start gap-3">
+        <div class="text-2xl">💡</div>
+        <div>
+          <div class="display font-bold mb-1">Mengapa ini penting?</div>
+          <p class="text-sm" style="color:var(--muted)">Hampir semua rumus volume bangun ruang melibatkan <span style="color:var(--gold);font-weight:600">luas alas (La)</span>. Kuasai dulu luas bangun datar, maka volume bangun ruang akan jauh lebih mudah dipahami.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: TUJUAN PEMBELAJARAN -->
+<section class="slide" data-slide="3">
+  <div class="max-w-5xl mx-auto">
+    <div class="mb-8 fade-in-up">
+      <div class="badge badge-emerald mb-3">Target Pemahaman</div>
+      <h2 class="section-title">Tujuan <span class="glow-text">Pembelajaran</span></h2>
+      <p class="mt-2" style="color:var(--muted)">Setelah mengikuti presentasi ini, peserta didik diharapkan mampu:</p>
+    </div>
+    <div class="space-y-3">
+      <div class="tujuan-item fade-in-up delay-1"><div class="tujuan-num">1</div><div><div class="display font-bold">Mengenal Bangun Ruang</div><p class="text-sm mt-1" style="color:var(--muted)">Mengidentifikasi bagian-bagian bangun ruang: sisi, rusuk, titik sudut, diagonal sisi, dan diagonal ruang.</p></div></div>
+      <div class="tujuan-item fade-in-up delay-2"><div class="tujuan-num">2</div><div><div class="display font-bold">Memahami Visualisasi 3D</div><p class="text-sm mt-1" style="color:var(--muted)">Memvisualisasikan bentuk kubus, balok, prisma, limas, tabung, dan kerucut secara tiga dimensi.</p></div></div>
+      <div class="tujuan-item fade-in-up delay-3"><div class="tujuan-num">3</div><div><div class="display font-bold">Menguasai Rumus Volume & Luas Permukaan</div><p class="text-sm mt-1" style="color:var(--muted)">Menghitung volume dan luas permukaan setiap bangun ruang dengan tepat.</p></div></div>
+      <div class="tujuan-item fade-in-up delay-4"><div class="tujuan-num">4</div><div><div class="display font-bold">Menyelesaikan Soal Hitung</div><p class="text-sm mt-1" style="color:var(--muted)">Menyelesaikan 30 soal hitung volume dengan akurasi tinggi.</p></div></div>
+      <div class="tujuan-item fade-in-up delay-5"><div class="tujuan-num">5</div><div><div class="display font-bold">Menyelesaikan Soal Cerita</div><p class="text-sm mt-1" style="color:var(--muted)">Menerapkan rumus volume pada 30 soal cerita dengan tingkat kesulitan bertingkat (mudah, sedang, sulit).</p></div></div>
+      <div class="tujuan-item fade-in-up delay-5"><div class="tujuan-num">6</div><div><div class="display font-bold">Refleksi & Evaluasi Diri</div><p class="text-sm mt-1" style="color:var(--muted)">Merefleksikan pemahaman dan mengukur kemampuan melalui exam akhir.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: INTRO BANGUN RUANG -->
+<section class="slide" data-slide="4">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-8 fade-in-up">
+      <div class="badge badge-gold mb-3">Pengenalan</div>
+      <h2 class="section-title">Enam <span class="glow-text">Bangun Ruang</span></h2>
+      <p class="mt-2" style="color:var(--muted)">Bangun ruang adalah bangun tiga dimensi yang memiliki volume. Berikut enam bangun ruang yang akan kita pelajari. Klik untuk melompat ke penjelasan masing-masing.</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div class="shape-mini fade-in-up delay-1" onclick="gotoSlide(5)">
+        <div class="shape-mini-icon"><svg width="50" height="50" viewBox="0 0 50 50"><g fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10 15 L25 8 L40 15 L25 22 Z"/><path d="M10 15 L10 35 L25 42 L25 22"/><path d="M40 15 L40 35 L25 42 L25 22"/></g></svg></div>
+        <div class="display font-bold text-sm">Kubus</div>
+        <div class="text-xs" style="color:var(--muted)">6 sisi persegi</div>
+      </div>
+      <div class="shape-mini fade-in-up delay-1" onclick="gotoSlide(6)">
+        <div class="shape-mini-icon"><svg width="50" height="50" viewBox="0 0 50 50"><g fill="none" stroke="#f59e0b" stroke-width="2"><path d="M8 18 L20 12 L42 12 L30 18 Z"/><path d="M8 18 L8 38 L30 44 L30 18"/><path d="M42 12 L42 32 L30 44 L30 18"/></g></svg></div>
+        <div class="display font-bold text-sm">Balok</div>
+        <div class="text-xs" style="color:var(--muted)">6 sisi persegi panjang</div>
+      </div>
+      <div class="shape-mini fade-in-up delay-2" onclick="gotoSlide(7)">
+        <div class="shape-mini-icon"><svg width="50" height="50" viewBox="0 0 50 50"><g fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10 40 L25 12 L40 40 Z"/><path d="M10 40 L10 45 L40 45 L40 40"/><path d="M25 12 L25 45"/></g></svg></div>
+        <div class="display font-bold text-sm">Prisma</div>
+        <div class="text-xs" style="color:var(--muted)">Alas & tutup segitiga</div>
+      </div>
+      <div class="shape-mini fade-in-up delay-2" onclick="gotoSlide(8)">
+        <div class="shape-mini-icon"><svg width="50" height="50" viewBox="0 0 50 50"><g fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10 38 L40 38 L25 8 Z"/><path d="M10 38 L25 8"/><path d="M40 38 L25 8"/><path d="M25 38 L25 8"/></g></svg></div>
+        <div class="display font-bold text-sm">Limas</div>
+        <div class="text-xs" style="color:var(--muted)">Puncak runcing</div>
+      </div>
+      <div class="shape-mini fade-in-up delay-3" onclick="gotoSlide(9)">
+        <div class="shape-mini-icon"><svg width="50" height="50" viewBox="0 0 50 50"><g fill="none" stroke="#f59e0b" stroke-width="2"><ellipse cx="25" cy="38" rx="16" ry="4"/><line x1="9" y1="38" x2="25" y2="8"/><line x1="41" y1="38" x2="25" y2="8"/><ellipse cx="25" cy="8" rx="16" ry="4" stroke-dasharray="2,2"/></g></svg></div>
+        <div class="display font-bold text-sm">Tabung</div>
+        <div class="text-xs" style="color:var(--muted)">Alas lingkaran</div>
+      </div>
+      <div class="shape-mini fade-in-up delay-3" onclick="gotoSlide(10)">
+        <div class="shape-mini-icon"><svg width="50" height="50" viewBox="0 0 50 50"><g fill="none" stroke="#f59e0b" stroke-width="2"><ellipse cx="25" cy="40" rx="16" ry="4"/><line x1="9" y1="40" x2="25" y2="8"/><line x1="41" y1="40" x2="25" y2="8"/></g></svg></div>
+        <div class="display font-bold text-sm">Kerucut</div>
+        <div class="text-xs" style="color:var(--muted)">Satu puncak</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mt-8">
+      <div class="glass p-4 fade-in-up delay-1">
+        <div class="display font-bold text-lg" style="color:var(--gold)">Sisi</div>
+        <p class="text-xs mt-1" style="color:var(--muted)">Bidang pembatas bangun ruang.</p>
+      </div>
+      <div class="glass p-4 fade-in-up delay-2">
+        <div class="display font-bold text-lg" style="color:#10b981">Rusuk</div>
+        <p class="text-xs mt-1" style="color:var(--muted)">Garis pertemuan dua sisi.</p>
+      </div>
+      <div class="glass p-4 fade-in-up delay-3">
+        <div class="display font-bold text-lg" style="color:var(--cyan)">Titik Sudut</div>
+        <p class="text-xs mt-1" style="color:var(--muted)">Pertemuan tiga rusuk atau lebih.</p>
+      </div>
+      <div class="glass p-4 fade-in-up delay-4">
+        <div class="display font-bold text-lg" style="color:#f43f5e">Diagonal Sisi</div>
+        <p class="text-xs mt-1" style="color:var(--muted)">Garis yang menghubungkan dua titik sudut berhadapan pada satu sisi.</p>
+      </div>
+      <div class="glass p-4 fade-in-up delay-5">
+        <div class="display font-bold text-lg" style="color:var(--violet)">Diagonal Ruang</div>
+        <p class="text-xs mt-1" style="color:var(--muted)">Garis yang menghubungkan dua titik sudut berhadapan dalam ruang.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: KUBUS -->
+<section class="slide" data-slide="5">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-6 fade-in-up">
+      <div class="badge badge-gold mb-2">Bangun Ruang 01</div>
+      <h2 class="section-title">Kubus</h2>
+      <p style="color:var(--muted)" class="mt-1">Dibatasi 6 bidang persegi kongruen.</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="fade-in-up delay-1">
+        <div class="canvas-container" id="canvas-kubus"></div>
+        <p class="text-xs mt-2 text-center" style="color:var(--muted)">← Seret untuk memutar · Scroll untuk zoom →</p>
+      </div>
+      <div class="space-y-4 fade-in-up delay-2">
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--gold)">Bagian-bagian</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="part-label"><span class="swatch" style="background:#ef4444;opacity:.6"></span>6 Sisi persegi</div>
+            <div class="part-label"><span class="swatch" style="background:#10b981"></span>12 Rusuk</div>
+            <div class="part-label"><span class="swatch" style="background:#06b6d4;border-radius:50%"></span>8 Titik sudut</div>
+            <div class="part-label"><span class="swatch" style="background:#f59e0b"></span>12 Diagonal sisi</div>
+            <div class="part-label"><span class="swatch" style="background:#a78bfa"></span>4 Diagonal ruang</div>
+          </div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Volume</h4>
+          <div class="formula-card"><div class="formula">V = s × s × s = s³</div><p class="text-xs mt-2" style="color:var(--muted)">s = panjang rusuk</p></div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Luas Permukaan</h4>
+          <div class="formula-card"><div class="formula">L = 6 × s²</div><p class="text-xs mt-2" style="color:var(--muted)">6 sisi persegi yang kongruen</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6: BALOK -->
+<section class="slide" data-slide="6">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-6 fade-in-up">
+      <div class="badge badge-gold mb-2">Bangun Ruang 02</div>
+      <h2 class="section-title">Balok</h2>
+      <p style="color:var(--muted)" class="mt-1">Dibatasi 6 bidang persegi panjang (3 pasang kongruen).</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="fade-in-up delay-1">
+        <div class="canvas-container" id="canvas-balok"></div>
+        <p class="text-xs mt-2 text-center" style="color:var(--muted)">← Seret untuk memutar · Scroll untuk zoom →</p>
+      </div>
+      <div class="space-y-4 fade-in-up delay-2">
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--gold)">Bagian-bagian</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="part-label"><span class="swatch" style="background:#ef4444;opacity:.6"></span>6 Sisi persegipanjang</div>
+            <div class="part-label"><span class="swatch" style="background:#10b981"></span>12 Rusuk</div>
+            <div class="part-label"><span class="swatch" style="background:#06b6d4;border-radius:50%"></span>8 Titik sudut</div>
+            <div class="part-label"><span class="swatch" style="background:#f59e0b"></span>12 Diagonal sisi</div>
+            <div class="part-label"><span class="swatch" style="background:#a78bfa"></span>4 Diagonal ruang</div>
+          </div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Volume</h4>
+          <div class="formula-card"><div class="formula">V = p × l × t</div><p class="text-xs mt-2" style="color:var(--muted)">p = panjang, l = lebar, t = tinggi</p></div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Luas Permukaan</h4>
+          <div class="formula-card"><div class="formula">L = 2(pl + pt + lt)</div><p class="text-xs mt-2" style="color:var(--muted)">2 pasang masing-masing sisi</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7: PRISMA -->
+<section class="slide" data-slide="7">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-6 fade-in-up">
+      <div class="badge badge-gold mb-2">Bangun Ruang 03</div>
+      <h2 class="section-title">Prisma</h2>
+      <p style="color:var(--muted)" class="mt-1">Alas dan tutup berbentuk segi banyak kongruen, sisi tegak berbentuk persegi panjang.</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="fade-in-up delay-1">
+        <div class="canvas-container" id="canvas-prisma"></div>
+        <p class="text-xs mt-2 text-center" style="color:var(--muted)">← Seret untuk memutar · Scroll untuk zoom →</p>
+      </div>
+      <div class="space-y-4 fade-in-up delay-2">
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--gold)">Bagian-bagian (prisma segitiga)</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="part-label"><span class="swatch" style="background:#ef4444;opacity:.6"></span>5 Sisi (2 segitiga, 3 persegipanjang)</div>
+            <div class="part-label"><span class="swatch" style="background:#10b981"></span>9 Rusuk</div>
+            <div class="part-label"><span class="swatch" style="background:#06b6d4;border-radius:50%"></span>6 Titik sudut</div>
+            <div class="part-label"><span class="swatch" style="background:#f59e0b"></span>Diagonal sisi (pd sisi tegak)</div>
+          </div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Volume</h4>
+          <div class="formula-card"><div class="formula">V = La × t</div><p class="text-xs mt-2" style="color:var(--muted)">La = luas alas, t = tinggi prisma</p></div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Luas Permukaan</h4>
+          <div class="formula-card"><div class="formula">L = 2 × La + K × t</div><p class="text-xs mt-2" style="color:var(--muted)">K = keliling alas</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: LIMAS -->
+<section class="slide" data-slide="8">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-6 fade-in-up">
+      <div class="badge badge-gold mb-2">Bangun Ruang 04</div>
+      <h2 class="section-title">Limas</h2>
+      <p style="color:var(--muted)" class="mt-1">Memiliki alas segi banyak dan puncak tunggal. Sisi tegak berbentuk segitiga.</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="fade-in-up delay-1">
+        <div class="canvas-container" id="canvas-limas"></div>
+        <p class="text-xs mt-2 text-center" style="color:var(--muted)">← Serde untuk memutar · Scroll untuk zoom →</p>
+      </div>
+      <div class="space-y-4 fade-in-up delay-2">
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--gold)">Bagian-bagian (limas segiempat)</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="part-label"><span class="swatch" style="background:#ef4444;opacity:.6"></span>5 Sisi (1 persegi + 4 segitiga)</div>
+            <div class="part-label"><span class="swatch" style="background:#10b981"></span>8 Rusuk</div>
+            <div class="part-label"><span class="swatch" style="background:#06b6d4;border-radius:50%"></span>5 Titik sudut</div>
+            <div class="part-label"><span class="swatch" style="background:#f59e0b"></span>2 Diagonal sisi (pd alas)</div>
+          </div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Volume</h4>
+          <div class="formula-card"><div class="formula">V = ⅓ × La × t</div><p class="text-xs mt-2" style="color:var(--muted)">La = luas alas, t = tinggi limas</p></div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Luas Permukaan</h4>
+          <div class="formula-card"><div class="formula">L = La + jumlah luas sisi tegak</div><p class="text-xs mt-2" style="color:var(--muted)">Luas sisi tegak = ½ × keliling alas × apotema</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 9: TABUNG -->
+<section class="slide" data-slide="9">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-6 fade-in-up">
+      <div class="badge badge-gold mb-2">Bangun Ruang 05</div>
+      <h2 class="section-title">Tabung</h2>
+      <p style="color:var(--muted)" class="mt-1">Alas dan tutup berbentuk lingkaran, sisi tegak berupa selimut lingkaran.</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="fade-in-up delay-1">
+        <div class="canvas-container" id="canvas-tabung"></div>
+        <p class="text-xs mt-2 text-center" style="color:var(--muted)">← Seret untuk memutar · Scroll untuk zoom →</p>
+      </div>
+      <div class="space-y-4 fade-in-up delay-2">
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--gold)">Bagian-bagian</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="part-label"><span class="swatch" style="background:#ef4444;opacity:.6"></span>3 Sisi (2 lingkaran + 1 selimut)</div>
+            <div class="part-label"><span class="swatch" style="background:#10b981"></span>2 Rusuk (lingkaran atas & bawah)</div>
+            <div class="part-label"><span class="swatch" style="background:#06b6d4;border-radius:50%"></span>0 Titik sudut</div>
+            <div class="part-label"><span class="swatch" style="background:#a78bfa"></span>Tidak punya diagonal</div>
+          </div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Volume</h4>
+          <div class="formula-card"><div class="formula">V = π × r² × t</div><p class="text-xs mt-2" style="color:var(--muted)">r = jari-jari, t = tinggi</p></div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Luas Permukaan</h4>
+          <div class="formula-card"><div class="formula">L = 2πr(r + t)</div><p class="text-xs mt-2" style="color:var(--muted)">2 lingkaran + selimut = 2πr² + 2πrt</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 10: KERUCUT -->
+<section class="slide" data-slide="10">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-6 fade-in-up">
+      <div class="badge badge-gold mb-2">Bangun Ruang 06</div>
+      <h2 class="section-title">Kerucut</h2>
+      <p style="color:var(--muted)" class="mt-1">Alas berbentuk lingkaran, sisi tegak berupa selimut kerucut yang menyatu di puncak.</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="fade-in-up delay-1">
+        <div class="canvas-container" id="canvas-kerucut"></div>
+        <p class="text-xs mt-2 text-center" style="color:var(--muted)">← Seret untuk memutar · Scroll untuk zoom →</p>
+      </div>
+      <div class="space-y-4 fade-in-up delay-2">
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--gold)">Bagian-bagian</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="part-label"><span class="swatch" style="background:#ef4444;opacity:.6"></span>2 Sisi (1 lingkaran + selimut)</div>
+            <div class="part-label"><span class="swatch" style="background:#10b981"></span>1 Rusuk (lingkaran alas)</div>
+            <div class="part-label"><span class="swatch" style="background:#06b6d4;border-radius:50%"></span>1 Titik sudut (puncak)</div>
+            <div class="part-label"><span class="swatch" style="background:#a78bfa"></span>Garit pelukis (s)</div>
+          </div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Volume</h4>
+          <div class="formula-card"><div class="formula">V = ⅓ × π × r² × t</div><p class="text-xs mt-2" style="color:var(--muted)">r = jari-jari, t = tinggi</p></div>
+        </div>
+        <div>
+          <h4 class="display font-bold mb-2" style="color:var(--cyan)">Luas Permukaan</h4>
+          <div class="formula-card"><div class="formula">L = π × r × (r + s)</div><p class="text-xs mt-2" style="color:var(--muted)">s = garis pelukis, s = √(r² + t²)</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 11: RINGKASAN RUMUS -->
+<section class="slide" data-slide="11">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-6 fade-in-up">
+      <div class="badge badge-cyan mb-2">Ringkasan</div>
+      <h2 class="section-title">Tabel <span class="glow-text">Rumus Lengkap</span></h2>
+      <p style="color:var(--muted)" class="mt-1">Catat baik-baik — rumus ini akan dipakai di seluruh soal latihan.</p>
+    </div>
+    <div class="glass overflow-hidden fade-in-up delay-1">
+      <table class="r-table">
+        <thead><tr><th>Bangun Ruang</th><th>Volume</th><th>Luas Permukaan</th><th>Keterangan</th></tr></thead>
+        <tbody>
+          <tr><td class="display font-bold" style="color:var(--gold)">Kubus</td><td class="formula-cell">V = s³</td><td class="formula-cell">L = 6s²</td><td>s = rusuk</td></tr>
+          <tr><td class="display font-bold" style="color:var(--gold)">Balok</td><td class="formula-cell">V = p × l × t</td><td class="formula-cell">L = 2(pl+pt+lt)</td><td>p, l, t = panjang, lebar, tinggi</td></tr>
+          <tr><td class="display font-bold" style="color:var(--gold)">Prisma</td><td class="formula-cell">V = La × t</td><td class="formula-cell">L = 2La + K·t</td><td>La = luas alas, K = keliling alas</td></tr>
+          <tr><td class="display font-bold" style="color:var(--gold)">Limas</td><td class="formula-cell">V = ⅓ × La × t</td><td class="formula-cell">L = La + Lt</td><td>Lt = luas sisi tegak</td></tr>
+          <tr><td class="display font-bold" style="color:var(--gold)">Tabung</td><td class="formula-cell">V = π × r² × t</td><td class="formula-cell">L = 2πr(r + t)</td><td>r = jari-jari, t = tinggi</td></tr>
+          <tr><td class="display font-bold" style="color:var(--gold)">Kerucut</td><td class="formula-cell">V = ⅓ × π × r² × t</td><td class="formula-cell">L = π × r × (r + s)</td><td>s = √(r² + t²) garis pelukis</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6 fade-in-up delay-2">
+      <div class="glass p-4"><div class="display font-bold text-lg" style="color:var(--gold)">π = 22/7</div><p class="text-xs mt-1" style="color:var(--muted)">Digunakan jika r kelipatan 7</p></div>
+      <div class="glass p-4"><div class="display font-bold text-lg" style="color:var(--cyan)">π = 3,14</div><p class="text-xs mt-1" style="color:var(--muted)">Digunakan untuk perhitungan umum</p></div>
+      <div class="glass p-4"><div class="display font-bold text-lg" style="color:var(--emerald)">1 m³ = 1000 L</div><p class="text-xs mt-1" style="color:var(--muted)">1 liter = 1000 cm³ = 1 dm³</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 12-17: SOAL VOLUME (akan dirender JS) -->
+<section class="slide" data-slide="12"><div class="max-w-7xl mx-auto" id="vol-q-1"></div></section>
+<section class="slide" data-slide="13"><div class="max-w-7xl mx-auto" id="vol-q-2"></div></section>
+<section class="slide" data-slide="14"><div class="max-w-7xl mx-auto" id="vol-q-3"></div></section>
+<section class="slide" data-slide="15"><div class="max-w-7xl mx-auto" id="vol-q-4"></div></section>
+<section class="slide" data-slide="16"><div class="max-w-7xl mx-auto" id="vol-q-5"></div></section>
+<section class="slide" data-slide="17"><div class="max-w-7xl mx-auto" id="vol-q-6"></div></section>
+
+<!-- SLIDE 18-23: SOAL CERITA (akan dirender JS) -->
+<section class="slide" data-slide="18"><div class="max-w-7xl mx-auto" id="story-q-1"></div></section>
+<section class="slide" data-slide="19"><div class="max-w-7xl mx-auto" id="story-q-2"></div></section>
+<section class="slide" data-slide="20"><div class="max-w-7xl mx-auto" id="story-q-3"></div></section>
+<section class="slide" data-slide="21"><div class="max-w-7xl mx-auto" id="story-q-4"></div></section>
+<section class="slide" data-slide="22"><div class="max-w-7xl mx-auto" id="story-q-5"></div></section>
+<section class="slide" data-slide="23"><div class="max-w-7xl mx-auto" id="story-q-6"></div></section>
+
+<!-- SLIDE 24: HASIL EXAM -->
+<section class="slide" data-slide="24">
+  <div class="max-w-5xl mx-auto">
+    <div class="mb-6 fade-in-up">
+      <div class="badge badge-gold mb-2">Hasil Exam</div>
+      <h2 class="section-title">Rekap <span class="glow-text">Jawaban</span></h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div class="stat-card fade-in-up delay-1" style="--accent:var(--emerald)">
+        <div class="text-xs uppercase tracking-widest mb-2" style="color:var(--muted)">Benar</div>
+        <div class="stat-num" style="color:var(--emerald)" id="statCorrect">0</div>
+      </div>
+      <div class="stat-card fade-in-up delay-2" style="--accent:var(--rose)">
+        <div class="text-xs uppercase tracking-widest mb-2" style="color:var(--muted)">Salah</div>
+        <div class="stat-num" style="color:var(--rose)" id="statWrong">0</div>
+      </div>
+      <div class="stat-card fade-in-up delay-3" style="--accent:var(--muted)">
+        <div class="text-xs uppercase tracking-widest mb-2" style="color:var(--muted)">Belum Dijawab</div>
+        <div class="stat-num" style="color:var(--muted)" id="statUnanswered">60</div>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass p-6 fade-in-up delay-4">
+        <div class="display font-bold text-lg mb-3">Skor Akhir</div>
+        <div class="ring-wrap">
+          <svg width="200" height="200" viewBox="0 0 200 200">
+            <circle class="ring-bg" cx="100" cy="100" r="85"/>
+            <circle class="ring-fill" id="scoreRing" cx="100" cy="100" r="85" stroke="url(#ringGrad)" stroke-dasharray="534" stroke-dashoffset="534" transform="rotate(-90 100 100)"/>
+            <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <div class="display font-black text-4xl" id="scorePercent">0%</div>
+            <div class="text-xs" style="color:var(--muted)">dari 60 soal</div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm" id="scoreMsg" style="color:var(--muted)">Klik "Finish Exam" untuk menghitung.</div>
+      </div>
+      <div class="glass p-6 fade-in-up delay-5">
+        <div class="display font-bold text-lg mb-3">Detail per Kategori</div>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between items-center"><span>Soal Volume (30)</span><span id="detailVol" style="color:var(--gold);font-weight:700">0/30</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="barVol" style="width:0%"></div></div>
+          <div class="flex justify-between items-center mt-3"><span>Soal Cerita (30)</span><span id="detailStory" style="color:var(--rose);font-weight:700">0/30</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="barStory" style="width:0%;background:linear-gradient(90deg,#f43f5e,#f97316)"></div></div>
+          <div class="flex justify-between items-center mt-3"><span>Soal Mudah</span><span id="detailEasy" style="color:var(--emerald);font-weight:700">0/10</span></div>
+          <div class="flex justify-between items-center mt-2"><span>Soal Sedang</span><span id="detailMed" style="color:var(--gold);font-weight:700">0/10</span></div>
+          <div class="flex justify-between items-center mt-2"><span>Soal Sulit</span><span id="detailHard" style="color:var(--rose);font-weight:700">0/10</span></div>
+        </div>
+        <button onclick="resetExam()" class="btn btn-explain mt-5 w-full">Ulangi Exam</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 25: KESIMPULAN -->
+<section class="slide" data-slide="25">
+  <div class="max-w-5xl mx-auto">
+    <div class="mb-8 fade-in-up">
+      <div class="badge badge-emerald mb-2">Penutup</div>
+      <h2 class="section-title">Kesimpulan</h2>
+    </div>
+    <div class="space-y-4">
+      <div class="glass p-5 fade-in-up delay-1">
+        <div class="display font-bold text-lg mb-2" style="color:var(--gold)">1. Konsep Dasar Volume</div>
+        <p class="text-sm" style="color:var(--muted)">Volume mengukur ruang yang ditempati bangun tiga dimensi, satuan kubik (cm³, m³). Konsep kunci: <span style="color:var(--gold)">Volume = (Luas Alas) × (Tinggi)</span>, dengan variasi koefisien 1 untuk prisma dan ⅓ untuk limas/kerucut.</p>
+      </div>
+      <div class="glass p-5 fade-in-up delay-2">
+        <div class="display font-bold text-lg mb-2" style="color:var(--cyan)">2. Pola Berpikir Geometri</div>
+        <p class="text-sm" style="color:var(--muted)">Bangun ruang dapat dipahami dari alas dan tingginya. Kubus & balok: alas persegi/persegi panjang. Prisma & limas: alas segi banyak. Tabung & kerucut: alas lingkaran. Limas dan kerucut menggunakan ⅓ karena menyempit ke satu titik.</p>
+      </div>
+      <div class="glass p-5 fade-in-up delay-3">
+        <div class="display font-bold text-lg mb-2" style="color:var(--emerald)">3. Aplikasi dalam Kehidupan</div>
+        <p class="text-sm" style="color:var(--muted)">Rumus volume digunakan untuk: menghitung kapasitas tangki, aquarium, bak mandi; menentukan dosis obat cair; merancang kemasan; menghitung material bangunan; hingga memprediksi cadangan air.</p>
+      </div>
+      <div class="glass p-5 fade-in-up delay-4">
+        <div class="display font-bold text-lg mb-2" style="color:var(--violet)">4. Tips Menghitung</div>
+        <p class="text-sm" style="color:var(--muted)">Selalu cek satuan terlebih dahulu. Gunakan π = 22/7 jika r kelipatan 7, dan π = 3,14 jika bukan. Konversi satuan (1 m³ = 1000 L = 1.000.000 cm³) saat soal meminta satuan berbeda. Tulis rumus sebelum menghitung agar tidak salah.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 26: REFLEKSI -->
+<section class="slide" data-slide="26">
+  <div class="max-w-3xl mx-auto">
+    <div class="mb-8 fade-in-up">
+      <div class="badge badge-cyan mb-2">Evaluasi Diri</div>
+      <h2 class="section-title">Refleksi <span class="glow-text">Pembelajaran</span></h2>
+      <p style="color:var(--muted)" class="mt-2">Jawab pertanyaan berikut dengan jujur untuk mengukur pemahamanmu.</p>
+    </div>
+    <div class="space-y-4">
+      <div class="glass p-5 fade-in-up delay-1">
+        <label class="display font-bold block mb-2">1. Bangun ruang mana yang paling kamu pahami? Mengapa?</label>
+        <textarea class="reflect-input" placeholder="Tulis jawabanmu..."></textarea>
+      </div>
+      <div class="glass p-5 fade-in-up delay-2">
+        <label class="display font-bold block mb-2">2. Bagian materi mana yang masih kamu rasa sulit?</label>
+        <textarea class="reflect-input" placeholder="Tulis jawabanmu..."></textarea>
+      </div>
+      <div class="glass p-5 fade-in-up delay-3">
+        <label class="display font-bold block mb-2">3. Strategi apa yang kamu pakai saat menyelesaikan soal cerita?</label>
+        <textarea class="reflect-input" placeholder="Tulis jawabanmu..."></textarea>
+      </div>
+      <div class="glass p-5 fade-in-up delay-4">
+        <label class="display font-bold block mb-2">4. Apa yang akan kamu lakukan untuk meningkatkan pemahamanmu?</label>
+        <textarea class="reflect-input" placeholder="Tulis jawabanmu..."></textarea>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 27: THANK YOU -->
+<section class="slide" data-slide="27">
+  <div class="max-w-5xl mx-auto h-full flex flex-col items-center justify-center text-center">
+    <div class="fade-in-up">
+      <div class="badge badge-gold mb-6">Penutup</div>
+      <div class="thank-mark glow-text">Thank You<br>for Today</div>
+      <p class="text-lg mt-8 max-w-xl mx-auto" style="color:var(--muted)">Terima kasih sudah belajar dengan sungguh-sungguh. Geometri bukan sekadar rumus — ini cara kita memahami ruang di sekitar kita. Tetap berlatih, tetap bertanya, tetap curious.</p>
+      <div class="flex gap-3 justify-center mt-8">
+        <button onclick="gotoSlide(1)" class="btn btn-check" style="padding:.7rem 1.5rem">← Kembali ke Awal</button>
+        <button onclick="gotoSlide(24)" class="btn btn-explain" style="padding:.7rem 1.5rem">Lihat Hasil Exam</button>
+      </div>
+      <div class="grid grid-cols-3 gap-6 mt-12 max-w-md mx-auto">
+        <div><div class="display font-black text-2xl" style="color:var(--gold)">6</div><div class="text-xs" style="color:var(--muted)">Bangun Ruang</div></div>
+        <div><div class="display font-black text-2xl" style="color:var(--cyan)">60</div><div class="text-xs" style="color:var(--muted)">Soal Latihan</div></div>
+        <div><div class="display font-black text-2xl" style="color:var(--emerald)">∞</div><div class="text-xs" style="color:var(--muted)">Semangat Belajar</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottomnav">
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">‹</button>
+  <div class="dots-wrap" id="dots"></div>
+  <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">›</button>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* ============ DATA SOAL ============ */
+const volumeQuestions = [
+  {id:1,shape:'Kubus',q:'Kubus dengan rusuk 8 cm. Hitung volumenya.',a:512,unit:'cm³',exp:'V = s³ = 8³ = 8 × 8 × 8 = 512 cm³'},
+  {id:2,shape:'Kubus',q:'Kubus dengan panjang rusuk 12 cm. Volume kubus?',a:1728,unit:'cm³',exp:'V = s³ = 12³ = 12 × 12 × 12 = 1.728 cm³'},
+  {id:3,shape:'Kubus',q:'Kubus dengan rusuk 5 cm. Hitung volumenya.',a:125,unit:'cm³',exp:'V = s³ = 5³ = 5 × 5 × 5 = 125 cm³'},
+  {id:4,shape:'Kubus',q:'Sebuah kubus memiliki rusuk 15 cm. Volume?',a:3375,unit:'cm³',exp:'V = s³ = 15³ = 15 × 15 × 15 = 3.375 cm³'},
+  {id:5,shape:'Kubus',q:'Kubus dengan rusuk 10 cm. Hitung volumenya.',a:1000,unit:'cm³',exp:'V = s³ = 10³ = 10 × 10 × 10 = 1.000 cm³'},
+  {id:6,shape:'Balok',q:'Balok berukuran 10 × 6 × 4 cm. Hitung volume.',a:240,unit:'cm³',exp:'V = p × l × t = 10 × 6 × 4 = 240 cm³'},
+  {id:7,shape:'Balok',q:'Balok dengan p=15 cm, l=8 cm, t=5 cm. Volume?',a:600,unit:'cm³',exp:'V = p × l × t = 15 × 8 × 5 = 600 cm³'},
+  {id:8,shape:'Balok',q:'Balok berukuran 20 × 12 × 7 cm. Volume?',a:1680,unit:'cm³',exp:'V = p × l × t = 20 × 12 × 7 = 1.680 cm³'},
+  {id:9,shape:'Balok',q:'Balok dengan p=9 cm, l=5 cm, t=4 cm. Volume?',a:180,unit:'cm³',exp:'V = p × l × t = 9 × 5 × 4 = 180 cm³'},
+  {id:10,shape:'Balok',q:'Balok berukuran 12 × 7 × 10 cm. Hitung volume.',a:840,unit:'cm³',exp:'V = p × l × t = 12 × 7 × 10 = 840 cm³'},
+  {id:11,shape:'Prisma',q:'Prisma dengan La=24 cm² dan tinggi 10 cm. Volume?',a:240,unit:'cm³',exp:'V = La × t = 24 × 10 = 240 cm³'},
+  {id:12,shape:'Prisma',q:'Prisma segitiga dengan La=30 cm², t=12 cm. Volume?',a:360,unit:'cm³',exp:'V = La × t = 30 × 12 = 360 cm³'},
+  {id:13,shape:'Prisma',q:'Prisma dengan La=50 cm² dan tinggi 8 cm. Volume?',a:400,unit:'cm³',exp:'V = La × t = 50 × 8 = 400 cm³'},
+  {id:14,shape:'Prisma',q:'Prisma segitiga siku-siku dengan a=6 cm, t=8 cm, tinggi prisma 15 cm. Volume?',a:360,unit:'cm³',exp:'La = ½ × 6 × 8 = 24 cm². V = 24 × 15 = 360 cm³'},
+  {id:15,shape:'Prisma',q:'Prisma dengan La=36 cm² dan tinggi 15 cm. Volume?',a:540,unit:'cm³',exp:'V = La × t = 36 × 15 = 540 cm³'},
+  {id:16,shape:'Limas',q:'Limas dengan La=36 cm² dan t=10 cm. Volume?',a:120,unit:'cm³',exp:'V = ⅓ × La × t = ⅓ × 36 × 10 = 120 cm³'},
+  {id:17,shape:'Limas',q:'Limas segiempat dengan La=64 cm², t=12 cm. Volume?',a:256,unit:'cm³',exp:'V = ⅓ × La × t = ⅓ × 64 × 12 = 256 cm³'},
+  {id:18,shape:'Limas',q:'Limas segitiga dengan La=24 cm², t=15 cm. Volume?',a:120,unit:'cm³',exp:'V = ⅓ × La × t = ⅓ × 24 × 15 = 120 cm³'},
+  {id:19,shape:'Limas',q:'Limas segiempat dengan sisi alas 8 cm (La=64), t=15 cm. Volume?',a:320,unit:'cm³',exp:'La = 8² = 64 cm². V = ⅓ × 64 × 15 = 320 cm³'},
+  {id:20,shape:'Limas',q:'Limas dengan La=50 cm² dan t=18 cm. Volume?',a:300,unit:'cm³',exp:'V = ⅓ × La × t = ⅓ × 50 × 18 = 300 cm³'},
+  {id:21,shape:'Tabung',q:'Tabung r=7 cm, t=10 cm (π=22/7). Volume?',a:1540,unit:'cm³',exp:'V = π × r² × t = 22/7 × 49 × 10 = 1.540 cm³'},
+  {id:22,shape:'Tabung',q:'Tabung r=10 cm, t=15 cm (π=3,14). Volume?',a:4710,unit:'cm³',exp:'V = 3,14 × 100 × 15 = 4.710 cm³'},
+  {id:23,shape:'Tabung',q:'Tabung r=14 cm, t=20 cm (π=22/7). Volume?',a:12320,unit:'cm³',exp:'V = 22/7 × 196 × 20 = 12.320 cm³'},
+  {id:24,shape:'Tabung',q:'Tabung r=5 cm, t=21 cm (π=22/7). Volume?',a:1650,unit:'cm³',exp:'V = 22/7 × 25 × 21 = 1.650 cm³'},
+  {id:25,shape:'Tabung',q:'Tabung r=7 cm, t=20 cm (π=22/7). Volume?',a:3080,unit:'cm³',exp:'V = 22/7 × 49 × 20 = 3.080 cm³'},
+  {id:26,shape:'Kerucut',q:'Kerucut r=7 cm, t=15 cm (π=22/7). Volume?',a:770,unit:'cm³',exp:'V = ⅓ × π × r² × t = ⅓ × 22/7 × 49 × 15 = 770 cm³'},
+  {id:27,shape:'Kerucut',q:'Kerucut r=14 cm, t=18 cm (π=22/7). Volume?',a:3696,unit:'cm³',exp:'V = ⅓ × 22/7 × 196 × 18 = 3.696 cm³'},
+  {id:28,shape:'Kerucut',q:'Kerucut r=10 cm, t=21 cm (π=22/7). Volume?',a:2200,unit:'cm³',exp:'V = ⅓ × 22/7 × 100 × 21 = 2.200 cm³'},
+  {id:29,shape:'Kerucut',q:'Kerucut r=6 cm, t=14 cm (π=22/7). Volume?',a:528,unit:'cm³',exp:'V = ⅓ × 22/7 × 36 × 14 = 528 cm³'},
+  {id:30,shape:'Kerucut',q:'Kerucut r=21 cm, t=10 cm (π=22/7). Volume?',a:4620,unit:'cm³',exp:'V = ⅓ × 22/7 × 441 × 10 = 4.620 cm³'}
+];
+
+const storyQuestions = [
+  {id:1,level:'Mudah',q:'Rani memiliki aquarium berbentuk kubus dengan rusuk 10 cm. Berapa volume maksimum air yang dapat ditampung?',a:1000,unit:'cm³',exp:'V = s³ = 10³ = 1.000 cm³'},
+  {id:2,level:'Mudah',q:'Kotak pensil Adi berbentuk balok berukuran 15 × 8 × 5 cm. Hitung volume kotak pensil tersebut.',a:600,unit:'cm³',exp:'V = p × l × t = 15 × 8 × 5 = 600 cm³'},
+  {id:3,level:'Mudah',q:'Sebuah prisma memiliki luas alas 24 cm² dan tinggi 10 cm. Berapakah volume prisma tersebut?',a:240,unit:'cm³',exp:'V = La × t = 24 × 10 = 240 cm³'},
+  {id:4,level:'Mudah',q:'Mainan berbentuk limas memiliki luas alas 36 cm² dan tinggi 10 cm. Hitung volume mainan tersebut.',a:120,unit:'cm³',exp:'V = ⅓ × La × t = ⅓ × 36 × 10 = 120 cm³'},
+  {id:5,level:'Mudah',q:'Kaleng susu berbentuk tabung dengan jari-jari 7 cm dan tinggi 20 cm. Hitung volume kaleng (π=22/7).',a:3080,unit:'cm³',exp:'V = π × r² × t = 22/7 × 49 × 20 = 3.080 cm³'},
+  {id:6,level:'Mudah',q:'Sebuah kubus mainan memiliki rusuk 6 cm. Berapa volume kubus tersebut?',a:216,unit:'cm³',exp:'V = s³ = 6³ = 216 cm³'},
+  {id:7,level:'Mudah',q:'Balok kayu berukuran 20 × 10 × 8 cm. Hitung volume balok kayu tersebut.',a:1600,unit:'cm³',exp:'V = p × l × t = 20 × 10 × 8 = 1.600 cm³'},
+  {id:8,level:'Mudah',q:'Kaleng bekas berbentuk tabung berjari-jari 14 cm dan tinggi 10 cm. Volume kaleng? (π=22/7)',a:6160,unit:'cm³',exp:'V = 22/7 × 196 × 10 = 6.160 cm³'},
+  {id:9,level:'Mudah',q:'Es krim berbentuk kerucut dengan jari-jari 7 cm dan tinggi 15 cm. Hitung volume kerucut (π=22/7).',a:770,unit:'cm³',exp:'V = ⅓ × 22/7 × 49 × 15 = 770 cm³'},
+  {id:10,level:'Mudah',q:'Limas segiempat memiliki sisi alas 6 cm dan tinggi 10 cm. Volume limas?',a:120,unit:'cm³',exp:'La = 6² = 36 cm². V = ⅓ × 36 × 10 = 120 cm³'},
+  {id:11,level:'Sedang',q:'Kolam renang berbentuk balok berukuran 10 m × 5 m × 2 m. Berapa liter air yang dibutuhkan untuk memenuhi kolam? (1 m³ = 1.000 L)',a:100000,unit:'L',exp:'V = 10 × 5 × 2 = 100 m³ = 100 × 1.000 = 100.000 L'},
+  {id:12,level:'Sedang',q:'Bak mandi berbentuk balok berukuran 1,5 m × 1 m × 0,8 m. Hitung volume bak dalam liter.',a:1200,unit:'L',exp:'V = 1,5 × 1 × 0,8 = 1,2 m³ = 1.200 L'},
+  {id:13,level:'Sedang',q:'Pipa air berbentuk tabung dengan jari-jari 3,5 cm dan panjang 100 cm. Hitung volume pipa (π=22/7).',a:3850,unit:'cm³',exp:'V = 22/7 × 12,25 × 100 = 3.850 cm³'},
+  {id:14,level:'Sedang',q:'Tenda prisma memiliki luas alas 20 m² dan tinggi 5 m. Hitung volume tenda.',a:100,unit:'m³',exp:'V = La × t = 20 × 5 = 100 m³'},
+  {id:15,level:'Sedang',q:'Kardus berbentuk kubus dengan rusuk 0,5 m. Hitung volume kardus dalam liter. (1 m³ = 1.000 L)',a:125,unit:'L',exp:'V = 0,5³ = 0,125 m³ = 125 L'},
+  {id:16,level:'Sedang',q:'Tabung gas memiliki jari-jari 14 cm dan tinggi 50 cm. Hitung volume tabung (π=22/7).',a:30800,unit:'cm³',exp:'V = 22/7 × 196 × 50 = 30.800 cm³'},
+  {id:17,level:'Sedang',q:'Atap rumah berbentuk limas dengan luas alas 60 m² dan tinggi 5 m. Volume atap?',a:100,unit:'m³',exp:'V = ⅓ × 60 × 5 = 100 m³'},
+  {id:18,level:'Sedang',q:'Topi ulang tahun berbentuk kerucut dengan r=10 cm dan t=21 cm. Volume topi? (π=22/7)',a:2200,unit:'cm³',exp:'V = ⅓ × 22/7 × 100 × 21 = 2.200 cm³'},
+  {id:19,level:'Sedang',q:'Kotak permen berbentuk prisma dengan La=30 cm² dan tinggi 25 cm. Volume kotak?',a:750,unit:'cm³',exp:'V = 30 × 25 = 750 cm³'},
+  {id:20,level:'Sedang',q:'Drum minyak berbentuk tabung r=28 cm dan t=80 cm. Volume drum? (π=22/7)',a:197120,unit:'cm³',exp:'V = 22/7 × 784 × 80 = 197.120 cm³'},
+  {id:21,level:'Sulit',q:'Tabung air berdiameter 28 cm dan tinggi 1,5 m. Hitung volume dalam liter. (1 L = 1.000 cm³, π=22/7)',a:92.4,unit:'L',exp:'r=14, t=150 cm. V = 22/7 × 196 × 150 = 92.400 cm³ = 92,4 L'},
+  {id:22,level:'Sulit',q:'Tangki berbentuk balok berukuran 2,5 m × 1,2 m × 0,8 m. Hitung volume tangki dalam m³.',a:2.4,unit:'m³',exp:'V = 2,5 × 1,2 × 0,8 = 2,4 m³'},
+  {id:23,level:'Sulit',q:'Tumpukan pasir berbentuk kerucut dengan r=21 cm dan t=28 cm. Volume pasir? (π=22/7)',a:12936,unit:'cm³',exp:'V = ⅓ × 22/7 × 441 × 28 = 12.936 cm³'},
+  {id:24,level:'Sulit',q:'Bakuk es berbentuk kubus dengan rusuk 1,2 m. Hitung volume kubus dalam m³.',a:1.728,unit:'m³',exp:'V = 1,2³ = 1,728 m³'},
+  {id:25,level:'Sulit',q:'Prisma segitiga siku-siku dengan kaki a=6 cm dan b=8 cm, tinggi prisma 20 cm. Volume prisma?',a:480,unit:'cm³',exp:'La = ½ × 6 × 8 = 24 cm². V = 24 × 20 = 480 cm³'},
+  {id:26,level:'Sulit',q:'Limas segiempat dengan sisi alas 10 cm dan tinggi 12 cm. Hitung volume limas.',a:400,unit:'cm³',exp:'La = 10² = 100 cm². V = ⅓ × 100 × 12 = 400 cm³'},
+  {id:27,level:'Sulit',q:'Tabung r=14 cm dan t=2,5 m. Hitung volume tabung dalam cm³. (π=22/7)',a:154000,unit:'cm³',exp:'t=250 cm. V = 22/7 × 196 × 250 = 154.000 cm³'},
+  {id:28,level:'Sulit',q:'Sebuah kubus s=10 cm ditempeli tabung (r=5 cm, t=10 cm) di atasnya. Volume total bangun gabungan? (π=3,14)',a:1785,unit:'cm³',exp:'V kubus = 1.000. V tabung = 3,14 × 25 × 10 = 785. Total = 1.000 + 785 = 1.785 cm³'},
+  {id:29,level:'Sulit',q:'Kerucut r=10 cm dan t=24 cm. Hitung volume kerucut. (π=3,14)',a:2512,unit:'cm³',exp:'V = ⅓ × 3,14 × 100 × 24 = 2.512 cm³'},
+  {id:30,level:'Sulit',q:'Balok berukuran 50 × 30 × 20 cm. Hitung volume dalam m³. (1 m³ = 1.000.000 cm³)',a:0.03,unit:'m³',exp:'V = 50 × 30 × 20 = 30.000 cm³ = 0,03 m³'}
+];
+
+/* State jawaban */
+const answers = {}; // id -> {value, correct, type:'vol'|'story'}
+
+/* ============ RENDER SOAL VOLUME ============ */
+function renderVolQuestions(){
+  const perSlide = 5;
+  for(let page=0; page<6; page++){
+    const container = document.getElementById(`vol-q-${page+1}`);
+    if(!container) continue;
+    const slice = volumeQuestions.slice(page*perSlide, (page+1)*perSlide);
+    container.innerHTML = `
+      <div class="mb-6 fade-in-up">
+        <div class="badge badge-emerald mb-2">Latihan Soal Volume · ${page+1}/6</div>
+        <h2 class="section-title">Soal Hitung <span class="glow-text">Volume</span></h2>
+        <p class="mt-2" style="color:var(--muted)">Hitung volume bangun ruang berikut. Tuliskan jawaban tanpa satuan.</p>
+      </div>
+      ${slice.map((s,i)=>`
+        <div class="q-card fade-in-up delay-${(i%5)+1}" id="vcard-${s.id}">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="q-num">${s.id}</div>
+            <div class="flex-1">
+              <div class="text-xs mb-1" style="color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.05em">${s.shape}</div>
+              <div class="text-sm">${s.q}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap pl-11">
+            <input type="text" class="answer-input" id="vinput-${s.id}" placeholder="jawaban" onkeydown="if(event.key==='Enter')checkVol(${s.id})">
+            <span class="text-sm" style="color:var(--muted)">${s.unit}</span>
+            <button class="btn btn-check" onclick="checkVol(${s.id})">Cek Jawaban</button>
+            <button class="btn btn-explain" onclick="toggleExplain('vexp-${s.id}')">Pembahasan</button>
+            <span class="feedback" id="vfb-${s.id}"></span>
+          </div>
+          <div class="explanation" id="vexp-${s.id}"><strong style="color:var(--cyan)">Pembahasan:</strong> ${s.exp}</div>
+        </div>
+      `).join('')}
+      <div class="flex justify-between items-center mt-6 fade-in-up">
+        <button onclick="changeSlide(-1)" class="btn btn-explain">← Sebelumnya</button>
+        ${page<5 ? `<button onclick="changeSlide(1)" class="btn btn-check">Soal Selanjutnya →</button>` : `<button onclick="gotoSlide(18)" class="btn btn-check">Lanjut ke Soal Cerita →</button>`}
+      </div>
+    `;
+  }
+}
+
+/* ============ RENDER SOAL CERITA ============ */
+function renderStoryQuestions(){
+  const perSlide = 5;
+  for(let page=0; page<6; page++){
+    const container = document.getElementById(`story-q-${page+1}`);
+    if(!container) continue;
+    const slice = storyQuestions.slice(page*perSlide, (page+1)*perSlide);
+    const diffClass = (l)=> l==='Mudah'?'diff-easy':l==='Sedang'?'diff-medium':'diff-hard';
+    container.innerHTML = `
+      <div class="mb-6 fade-in-up">
+        <div class="badge badge-gold mb-2">Soal Cerita · ${page+1}/6</div>
+        <h2 class="section-title">Soal Cerita <span class="glow-text">Volume</span></h2>
+        <p class="mt-2" style="color:var(--muted)">Pahami soal, tentukan bangun ruang yang sesuai, lalu hitung volumenya.</p>
+      </div>
+      ${slice.map((s,i)=>`
+        <div class="q-card fade-in-up delay-${(i%5)+1}" id="scard-${s.id}">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="q-num">${s.id}</div>
+            <div class="flex-1">
+              <div class="text-xs mb-1"><span class="diff ${diffClass(s.level)}">${s.level}</span></div>
+              <div class="text-sm">${s.q}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap pl-11">
+            <input type="text" class="answer-input" id="sinput-${s.id}" placeholder="jawaban" onkeydown="if(event.key==='Enter')checkStory(${s.id})">
+            <span class="text-sm" style="color:var(--muted)">${s.unit}</span>
+            <button class="btn btn-check" onclick="checkStory(${s.id})">Cek Jawaban</button>
+            <button class="btn btn-explain" onclick="toggleExplain('sexp-${s.id}')">Pembahasan</button>
+            <span class="feedback" id="sfb-${s.id}"></span>
+          </div>
+          <div class="explanation" id="sexp-${s.id}"><strong style="color:var(--cyan)">Pembahasan:</strong> ${s.exp}</div>
+        </div>
+      `).join('')}
+      <div class="flex justify-between items-center mt-6 fade-in-up">
+        <button onclick="changeSlide(-1)" class="btn btn-explain">← Sebelumnya</button>
+        ${page<5 ? `<button onclick="changeSlide(1)" class="btn btn-check">Soal Selanjutnya →</button>` : `<button onclick="finishExam()" class="finish-btn">Finish Exam ✓</button>`}
+      </div>
+    `;
+  }
+}
+
+/* ============ CHECK FUNCTIONS ============ */
+window.checkVol = function(id){
+  const q = volumeQuestions.find(x=>x.id===id);
+  const input = document.getElementById(`vinput-${id}`);
+  const fb = document.getElementById(`vfb-${id}`);
+  const card = document.getElementById(`vcard-${id}`);
+  if(!input || !q) return;
+  const raw = input.value.trim().replace(',', '.').replace(/\./g, '');
+  // Parse: handle "1.000" Indonesian style and "1000" plain
+  let val = parseFloat(input.value.trim().replace(/\./g,'').replace(',', '.'));
+  if(input.value.trim()===''){ val = NaN; }
+  if(isNaN(val)){
+    fb.className = 'feedback no';
+    fb.innerHTML = 'Belum diisi';
+    return;
+  }
+  const correct = Math.abs(val - q.a) < 0.5;
+  answers['v'+id] = {value: val, correct, type:'vol', qid:id};
+  card.classList.remove('correct','wrong');
+  if(correct){
+    card.classList.add('correct');
+    fb.className = 'feedback ok';
+    fb.innerHTML = '✓ Benar';
+  } else {
+    card.classList.add('wrong');
+    fb.className = 'feedback no';
+    fb.innerHTML = `✗ Salah (jawaban: ${q.a.toLocaleString('id-ID')} ${q.unit})`;
+  }
+  updateLiveStats();
+};
+
+window.checkStory = function(id){
+  const q = storyQuestions.find(x=>x.id===id);
+  const input = document.getElementById(`sinput-${id}`);
+  const fb = document.getElementById(`sfb-${id}`);
+  const card = document.getElementById(`scard-${id}`);
+  if(!input || !q) return;
+  let val = parseFloat(input.value.trim().replace(/\./g,'').replace(',', '.'));
+  if(input.value.trim()===''){ val = NaN; }
+  if(isNaN(val)){
+    fb.className = 'feedback no';
+    fb.innerHTML = 'Belum diisi';
+    return;
+  }
+  const correct = Math.abs(val - q.a) < 0.5;
+  answers['s'+id] = {value: val, correct, type:'story', qid:id};
+  card.classList.remove('correct','wrong');
+  if(correct){
+    card.classList.add('correct');
+    fb.className = 'feedback ok';
+    fb.innerHTML = '✓ Benar';
+  } else {
+    card.classList.add('wrong');
+    fb.className = 'feedback no';
+    fb.innerHTML = `✗ Salah (jawaban: ${q.a.toLocaleString('id-ID')} ${q.unit})`;
+  }
+  updateLiveStats();
+};
+
+window.toggleExplain = function(id){
+  const el = document.getElementById(id);
+  if(el) el.classList.toggle('show');
+};
+
+/* ============ FINISH EXAM ============ */
+window.finishExam = function(){
+  gotoSlide(24);
+  setTimeout(()=>{
+    let correct=0, wrong=0, unanswered=0;
+    let volC=0, storyC=0, easyC=0, medC=0, hardC=0;
+    volumeQuestions.forEach(q=>{
+      const a = answers['v'+q.id];
+      if(!a){ unanswered++; }
+      else if(a.correct){ correct++; volC++; }
+      else { wrong++; }
+    });
+    storyQuestions.forEach(q=>{
+      const a = answers['s'+q.id];
+      if(!a){ unanswered++; }
+      else if(a.correct){
+        correct++; storyC++;
+        if(q.level==='Mudah') easyC++;
+        else if(q.level==='Sedang') medC++;
+        else hardC++;
+      } else { wrong++; }
+    });
+    
+    document.getElementById('statCorrect').textContent = correct;
+    document.getElementById('statWrong').textContent = wrong;
+    document.getElementById('statUnanswered').textContent = unanswered;
+    
+    const pct = Math.round((correct/60)*100);
+    document.getElementById('scorePercent').textContent = pct + '%';
+    const ring = document.getElementById('scoreRing');
+    const circumference = 2*Math.PI*85;
+    ring.setAttribute('stroke-dasharray', circumference);
+    ring.setAttribute('stroke-dashoffset', circumference - (pct/100)*circumference);
+    
+    let msg = '';
+    if(pct>=80) msg = 'Luar biasa! Pemahamanmu sangat baik. Terus tingkatkan!';
+    else if(pct>=60) msg = 'Bagus! Pemahamanmu sudah cukup baik. Berlatih lebih banyak ya.';
+    else if(pct>=40) msg = 'Cukup baik. Review kembali rumus dan coba ulang soal yang salah.';
+    else msg = 'Jangan menyerah! Pelajari kembali materi dan ulangi latihan.';
+    document.getElementById('scoreMsg').textContent = msg;
+    
+    document.getElementById('detailVol').textContent = volC + '/30';
+    document.getElementById('detailStory').textContent = storyC + '/30';
+    document.getElementById('detailEasy').textContent = easyC + '/10';
+    document.getElementById('detailMed').textContent = medC + '/10';
+    document.getElementById('detailHard').textContent = hardC + '/10';
+    document.getElementById('barVol').style.width = (volC/30*100)+'%';
+    document.getElementById('barStory').style.width = (storyC/30*100)+'%';
+  }, 300);
+};
+
+window.resetExam = function(){
+  if(confirm('Yakin ingin mengulang exam? Semua jawaban akan dihapus.')){
+    location.reload();
+  }
+};
+
+/* Live stats update (optional UI hint) */
+function updateLiveStats(){ /* placeholder for live updates if needed */ }
+
+/* ============ SLIDE NAVIGATION ============ */
+const slides = document.querySelectorAll('.slide');
+const totalSlides = slides.length;
+let curSlide = 1;
+document.getElementById('totalSlides').textContent = totalSlides;
+
+/* Build dots */
+const dotsWrap = document.getElementById('dots');
+slides.forEach((s,i)=>{
+  const d = document.createElement('div');
+  d.className = 'dot';
+  const sn = i+1;
+  if(sn>=12 && sn<=17) d.classList.add('section-vol');
+  if(sn>=18 && sn<=23) d.classList.add('section-story');
+  d.onclick = ()=>gotoSlide(sn);
+  dotsWrap.appendChild(d);
+});
+const dots = document.querySelectorAll('.dot');
+
+window.gotoSlide = function(n){
+  if(n<1 || n>totalSlides) return;
+  curSlide = n;
+  slides.forEach((s,i)=>s.classList.toggle('active', i===n-1));
+  dots.forEach((d,i)=>d.classList.toggle('active', i===n-1));
+  document.getElementById('curSlide').textContent = n;
+  document.getElementById('progressFill').style.width = (n/totalSlides*100)+'%';
+  document.getElementById('prevBtn').disabled = n===1;
+  document.getElementById('nextBtn').disabled = n===totalSlides;
+  // Lazy init shape canvas
+  if(n>=5 && n<=10) initShapeForSlide(n);
+  if(n===1) initCoverShape();
+  // Scroll to top
+  slides[n-1].scrollTop = 0;
+};
+
+window.changeSlide = function(dir){
+  const next = curSlide + dir;
+  if(next>=1 && next<=totalSlides) gotoSlide(next);
+};
+
+/* Keyboard navigation */
+document.addEventListener('keydown', (e)=>{
+  if(e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA') return;
+  if(e.key==='ArrowRight' || e.key===' ') changeSlide(1);
+  if(e.key==='ArrowLeft') changeSlide(-1);
+});
+
+/* ============ THREE.JS SHAPES ============ */
+const shapeScenes = {};
+
+function createBaseScene(container){
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, container.clientWidth/container.clientHeight, 0.1, 100);
+  camera.position.set(6, 5, 8);
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 4;
+  controls.maxDistance = 18;
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+  const dl = new THREE.DirectionalLight(0xffffff, 0.9);
+  dl.position.set(5, 8, 6); scene.add(dl);
+  const dl2 = new THREE.DirectionalLight(0xf59e0b, 0.3);
+  dl2.position.set(-5, 3, -4); scene.add(dl2);
+  // Grid
+  const grid = new THREE.GridHelper(20, 20, 0x1a2138, 0x131829);
+  grid.position.y = -2.5;
+  scene.add(grid);
+  return {scene, camera, renderer, controls};
+}
+
+function addVertices(group, verts, color=0x06b6d4){
+  verts.forEach(v=>{
+    const s = new THREE.Mesh(
+      new THREE.SphereGeometry(0.13, 16, 16),
+      new THREE.MeshBasicMaterial({color})
+    );
+    s.position.set(...v);
+    group.add(s);
+  });
+}
+
+function makeLine(p1, p2, color, opacity=1){
+  const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...p1), new THREE.Vector3(...p2)]);
+  const m = new THREE.LineBasicMaterial({color, transparent: opacity<1, opacity});
+  return new THREE.Line(g, m);
+}
+
+function initShapeForSlide(n){
+  const map = {5:'kubus',6:'balok',7:'prisma',8:'limas',9:'tabung',10:'kerucut'};
+  const key = map[n];
+  if(!key || shapeScenes[key]) return;
+  const container = document.getElementById(`canvas-${key}`);
+  if(!container) return;
+  const ctx = createBaseScene(container);
+  const group = new THREE.Group();
+  ctx.scene.add(group);
+  
+  if(key==='kubus'){
+    const s=3;
+    const geo = new THREE.BoxGeometry(s,s,s);
+    group.add(new THREE.Mesh(geo, new THREE.MeshPhongMaterial({color:0xf59e0b, transparent:true, opacity:0.18, side:THREE.DoubleSide, shininess:80})));
+    group.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({color:0x10b981, linewidth:2})));
+    const v=[[-s/2,-s/2,-s/2],[s/2,-s/2,-s/2],[s/2,s/2,-s/2],[-s/2,s/2,-s/2],[-s/2,-s/2,s/2],[s/2,-s/2,s/2],[s/2,s/2,s/2],[-s/2,s/2,s/2]];
+    addVertices(group, v);
+    // Diagonal sisi (sample 4)
+    const ds = [[[ -s/2,-s/2,-s/2],[s/2,s/2,-s/2]],[[-s/2,-s/2,s/2],[s/2,s/2,s/2]],[[-s/2,-s/2,-s/2],[s/2,-s/2,s/2]],[[-s/2,s/2,-s/2],[-s/2,s/2,s/2]]];
+    ds.forEach(d=>group.add(makeLine(d[0],d[1],0xf59e0b)));
+    // Diagonal ruang (4)
+    const dr = [[[-s/2,-s/2,-s/2],[s/2,s/2,s/2]],[[s/2,-s/2,-s/2],[-s/2,s/2,s/2]],[[s/2,s/2,-s/2],[-s/2,-s/2,s/2]],[[-s/2,s/2,-s/2],[s/2,-s/2,s/2]]];
+    dr.forEach(d=>group.add(makeLine(d[0],d[1],0xa78bfa)));
+  }
+  else if(key==='balok'){
+    const p=4, l=2.5, t=3;
+    const geo = new THREE.BoxGeometry(p, t, l);
+    group.add(new THREE.Mesh(geo, new THREE.MeshPhongMaterial({color:0xf59e0b, transparent:true, opacity:0.18, side:THREE.DoubleSide, shininess:80})));
+    group.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({color:0x10b981, linewidth:2})));
+    const v=[[-p/2,-t/2,-l/2],[p/2,-t/2,-l/2],[p/2,t/2,-l/2],[-p/2,t/2,-l/2],[-p/2,-t/2,l/2],[p/2,-t/2,l/2],[p/2,t/2,l/2],[-p/2,t/2,l/2]];
+    addVertices(group, v);
+    const dr = [[[-p/2,-t/2,-l/2],[p/2,t/2,l/2]],[[p/2,-t/2,-l/2],[-p/2,t/2,l/2]],[[p/2,t/2,-l/2],[-p/2,-t/2,l/2]],[[-p/2,t/2,-l/2],[p/2,-t/2,l/2]]];
+    dr.forEach(d=>group.add(makeLine(d[0],d[1],0xa78bfa)));
+  }
+  else if(key==='prisma'){
+    // Prisma segitiga
+    const h=3; // tinggi (z axis)
+    const tri = [[-1.5,-1,0],[1.5,-1,0],[0,1.6,0]];
+    const tri2 = tri.map(p=>[p[0],p[1],h]);
+    // Side faces
+    const sideGeo = new THREE.BufferGeometry();
+    const verts = [];
+    for(let i=0;i<3;i++){
+      const a = tri[i], b = tri[(i+1)%3], c = tri2[(i+1)%3], d = tri2[i];
+      verts.push(...a, ...b, ...c, ...a, ...c, ...d);
+    }
+    sideGeo.setAttribute('position', new THREE.Float32BufferAttribute(verts,3));
+    sideGeo.computeVertexNormals();
+    group.add(new THREE.Mesh(sideGeo, new THREE.MeshPhongMaterial({color:0xf59e0b, transparent:true, opacity:0.18, side:THREE.DoubleSide, shininess:80})));
+    // Edges
+    tri.forEach((p,i)=>group.add(makeLine(p, tri[(i+1)%3], 0x10b981)));
+    tri2.forEach((p,i)=>group.add(makeLine(p, tri2[(i+1)%3], 0x10b981)));
+    tri.forEach((p,i)=>group.add(makeLine(p, tri2[i], 0x10b981)));
+    // Vertices
+    addVertices(group, tri);
+    addVertices(group, tri2);
+  }
+  else if(key==='limas'){
+    // Limas segiempat
+    const base = [[-1.8,-1,-1.8],[1.8,-1,-1.8],[1.8,-1,1.8],[-1.8,-1,1.8]];
+    const apex = [0,2.2,0];
+    // Side faces
+    const sideGeo = new THREE.BufferGeometry();
+    const verts = [];
+    for(let i=0;i<4;i++){
+      const a = base[i], b = base[(i+1)%4];
+      verts.push(...a, ...b, ...apex);
+    }
+    sideGeo.setAttribute('position', new THREE.Float32BufferAttribute(verts,3));
+    sideGeo.computeVertexNormals();
+    group.add(new THREE.Mesh(sideGeo, new THREE.MeshPhongMaterial({color:0xf59e0b, transparent:true, opacity:0.18, side:THREE.DoubleSide, shininess:80})));
+    // Base edges
+    base.forEach((p,i)=>group.add(makeLine(p, base[(i+1)%4], 0x10b981)));
+    // Lateral edges
+    base.forEach(p=>group.add(makeLine(p, apex, 0x10b981)));
+    // Diagonal sisi (di alas)
+    group.add(makeLine(base[0], base[2], 0xf59e0b));
+    group.add(makeLine(base[1], base[3], 0xf59e0b));
+    // Vertices
+    addVertices(group, base);
+    addVertices(group, [apex], 0xf59e0b);
+  }
+  else if(key==='tabung'){
+    const r=1.5, h=4;
+    const geo = new THREE.CylinderGeometry(r, r, h, 48);
+    group.add(new THREE.Mesh(geo, new THREE.MeshPhongMaterial({color:0xf59e0b, transparent:true, opacity:0.2, side:THREE.DoubleSide, shininess:100})));
+    // Edge rings (atas & bawah)
+    const ringGeo1 = new THREE.TorusGeometry(r, 0.04, 8, 48);
+    const ring1 = new THREE.Mesh(ringGeo1, new THREE.MeshBasicMaterial({color:0x10b981}));
+    ring1.rotation.x = Math.PI/2; ring1.position.y = h/2;
+    group.add(ring1);
+    const ring2 = ring1.clone(); ring2.position.y = -h/2;
+    group.add(ring2);
+    // Garis tinggi (sample 1)
+    group.add(makeLine([r,-h/2,0],[r,h/2,0],0xf59e0b));
+    group.add(makeLine([-r,-h/2,0],[-r,h/2,0],0xf59e0b));
+    // Center axis
+    group.add(makeLine([0,-h/2,0],[0,h/2,0],0xa78bfa,0.5));
+  }
+  else if(key==='kerucut'){
+    const r=1.8, h=3.5;
+    const geo = new THREE.ConeGeometry(r, h, 48);
+    group.add(new THREE.Mesh(geo, new THREE.MeshPhongMaterial({color:0xf59e0b, transparent:true, opacity:0.2, side:THREE.DoubleSide, shininess:100})));
+    // Base ring
+    const ringGeo = new THREE.TorusGeometry(r, 0.04, 8, 48);
+    const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({color:0x10b981}));
+    ring.rotation.x = Math.PI/2; ring.position.y = -h/2;
+    group.add(ring);
+    // Garis pelukis (sample)
+    const segs = 6;
+    for(let i=0;i<segs;i++){
+      const a = (i/segs)*Math.PI*2;
+      group.add(makeLine([Math.cos(a)*r,-h/2,Math.sin(a)*r],[0,h/2,0],0xf59e0b));
+    }
+    // Axis
+    group.add(makeLine([0,-h/2,0],[0,h/2,0],0xa78bfa,0.5));
+    // Apex
+    addVertices(group, [[0,h/2,0]], 0xf59e0b);
+  }
+  
+  // Animate
+  function animate(){
+    requestAnimationFrame(animate);
+    group.rotation.y += 0.004;
+    ctx.controls.update();
+    ctx.renderer.render(ctx.scene, ctx.camera);
+  }
+  animate();
+  
+  // Resize handler
+  const onResize = ()=>{
+    if(container.clientWidth === 0) return;
+    ctx.camera.aspect = container.clientWidth/container.clientHeight;
+    ctx.camera.updateProjectionMatrix();
+    ctx.renderer.setSize(container.clientWidth, container.clientHeight);
+  };
+  window.addEventListener('resize', onResize);
+  
+  shapeScenes[key] = ctx;
+}
+
+/* Cover shape - rotating composite */
+function initCoverShape(){
+  if(shapeScenes['cover']) return;
+  const container = document.getElementById('cover-canvas');
+  if(!container) return;
+  const ctx = createBaseScene(container);
+  ctx.camera.position.set(7, 5, 9);
+  const group = new THREE.Group();
+  ctx.scene.add(group);
+  
+  // Composite: kubus + tabung + kerucut
+  const kubus = new THREE.Mesh(
+    new THREE.BoxGeometry(2,2,2),
+    new THREE.MeshPhongMaterial({color:0xf59e0b, transparent:true, opacity:0.35, shininess:80, side:THREE.DoubleSide})
+  );
+  kubus.position.set(-2.5, 0, 0);
+  kubus.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(2,2,2)), new THREE.LineBasicMaterial({color:0xf59e0b})));
+  group.add(kubus);
+  
+  const tabung = new THREE.Mesh(
+    new THREE.CylinderGeometry(1, 1, 2.5, 32),
+    new THREE.MeshPhongMaterial({color:0x06b6d4, transparent:true, opacity:0.35, shininess:100, side:THREE.DoubleSide})
+  );
+  tabung.position.set(0, 0, 0);
+  group.add(tabung);
+  
+  const kerucut = new THREE.Mesh(
+    new THREE.ConeGeometry(1.2, 2.2, 32),
+    new THREE.MeshPhongMaterial({color:0xa78bfa, transparent:true, opacity:0.4, shininess:100, side:THREE.DoubleSide})
+  );
+  kerucut.position.set(2.5, 0, 0);
+  group.add(kerucut);
+  
+  function animate(){
+    requestAnimationFrame(animate);
+    group.rotation.y += 0.006;
+    group.rotation.x = Math.sin(Date.now()*0.0003)*0.15;
+    ctx.controls.update();
+    ctx.renderer.render(ctx.scene, ctx.camera);
+  }
+  animate();
+  
+  const onResize = ()=>{
+    if(container.clientWidth === 0) return;
+    ctx.camera.aspect = container.clientWidth/container.clientHeight;
+    ctx.camera.updateProjectionMatrix();
+    ctx.renderer.setSize(container.clientWidth, container.clientHeight);
+  };
+  window.addEventListener('resize', onResize);
+  shapeScenes['cover'] = ctx;
+}
+
+/* ============ PARTICLES ============ */
+function createParticles(){
+  const container = document.getElementById('particles');
+  const colors = ['#f59e0b', '#06b6d4', '#a78bfa', '#10b981'];
+  for(let i=0;i<30;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random()*100+'%';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDuration = (10 + Math.random()*15)+'s';
+    p.style.animationDelay = (Math.random()*10)+'s';
+    p.style.width = p.style.height = (2 + Math.random()*4)+'px';
+    container.appendChild(p);
+  }
+}
+
+/* ============ INIT ============ */
+renderVolQuestions();
+renderStoryQuestions();
+createParticles();
+initCoverShape();
+
+/* Setup initial state */
+gotoSlide(1);
+</script>
+</body>
+</html>
