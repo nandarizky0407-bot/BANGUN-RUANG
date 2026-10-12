@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Volume — Kelas 4 SD</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBF3E4; --ink:#33261D; --white:#FFFDF6;
+  --coral:#F26D5B; --coral-l:#FAD9CF;
+  --teal:#2AA88C;  --teal-l:#D3EEE5;
+  --sun:#F5B840;   --sun-l:#FBE8BD;
+  --pink:#F08CB1;  --pink-l:#FBDFEA;
+  --leaf:#79B851;  --leaf-l:#E3F2D5;
+  --orange:#F49E4C;--orange-l:#FBE8D2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Nunito',sans-serif;color:var(--ink);background:var(--paper);
+  background-image:radial-gradient(rgba(51,38,29,.05) 1.2px, transparent 1.3px);
+  background-size:24px 24px; overflow:hidden;
+}
+h1,h2,h3,.fredoka{font-family:'Fredoka',sans-serif}
+.ic{width:1.15em;height:1.15em;vertical-align:-.22em}
+.ic.fill{fill:currentColor;stroke:currentColor}
+
+/* ---------- Topbar & Nav ---------- */
+#topbar{position:fixed;top:0;left:0;right:0;height:58px;z-index:50;display:flex;align-items:center;
+  justify-content:space-between;padding:0 20px;background:var(--white);border-bottom:2.5px solid var(--ink)}
+#logo{display:flex;align-items:center;gap:9px;font-family:'Fredoka';font-weight:600;font-size:1.1rem}
+#logo svg{width:30px;height:30px}
+#topRight{display:flex;align-items:center;gap:10px}
+#nameChip{display:none;align-items:center;gap:7px;background:var(--sun-l);border:2px solid var(--ink);
+  border-radius:99px;padding:4px 14px;font-weight:800;font-size:.9rem}
+#nameChip.show{display:flex}
+.icon-btn{width:38px;height:38px;border:2.5px solid var(--ink);border-radius:12px;background:var(--white);
+  box-shadow:3px 3px 0 var(--ink);cursor:pointer;display:grid;place-items:center;color:var(--ink);transition:.15s}
+.icon-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.icon-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.icon-btn svg{width:19px;height:19px}
+#progressWrap{position:fixed;top:58px;left:0;right:0;height:5px;background:rgba(51,38,29,.1);z-index:49}
+#progressBar{height:100%;width:0;background:var(--coral);transition:width .4s cubic-bezier(.2,.8,.3,1)}
+#navbar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:14px;
+  background:var(--white);border:2.5px solid var(--ink);border-radius:99px;padding:7px 12px;box-shadow:4px 4px 0 var(--ink)}
+#navCount{font-family:'Fredoka';font-weight:600;min-width:72px;text-align:center;font-size:.95rem}
+.navArrow{width:44px;height:44px;border-radius:50%}
+.navArrow:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:3px 3px 0 var(--ink)}
+
+/* ---------- Slides ---------- */
+.slide{display:none;position:relative;height:100vh;padding:80px 40px 100px;overflow-y:auto}
+.slide.active{display:block;animation:slideIn .45s cubic-bezier(.2,.8,.3,1)}
+@keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.inner{max-width:1120px;margin:0 auto}
+.kicker{font-family:'Fredoka';font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:.82rem;color:var(--coral)}
+.sl-head{margin-bottom:18px}
+.sl-head h2{font-size:clamp(1.6rem,3.4vw,2.4rem);font-weight:600;margin-top:2px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+mark{background:var(--sun-l);padding:1px 8px;border-radius:8px}
+.btn{font-family:'Fredoka';font-weight:600;font-size:1rem;border:2.5px solid var(--ink);border-radius:14px;
+  background:var(--white);color:var(--ink);box-shadow:3px 3px 0 var(--ink);padding:10px 20px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;transition:.15s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn-pri{background:var(--sun)}
+.btn-big{font-size:1.15rem;padding:13px 26px;border-radius:16px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ---------- Cover ---------- */
+.s-cover .inner{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center;min-height:calc(100vh - 190px)}
+.chip{display:inline-flex;align-items:center;gap:7px;background:var(--white);border:2px solid var(--ink);border-radius:99px;
+  padding:5px 15px;font-weight:800;font-size:.85rem;box-shadow:2px 2px 0 var(--ink)}
+.s-cover h1{font-size:clamp(2.6rem,6vw,4.2rem);font-weight:700;line-height:1.05;margin:16px 0 12px}
+.s-cover h1 em{font-style:normal;color:var(--coral);display:inline-block;transform:rotate(-2deg)}
+.s-cover .lead{font-size:1.12rem;font-weight:600;max-width:44ch;margin-bottom:22px}
+.name-row{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch}
+.name-row input{flex:1;min-width:210px;font-family:'Fredoka';font-size:1.15rem;font-weight:500;padding:12px 18px;
+  border:2.5px solid var(--ink);border-radius:14px;background:var(--white);box-shadow:3px 3px 0 var(--ink);outline:none}
+.name-row input:focus{background:#FFF6DE}
+.name-row input.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.cover-art{position:relative;height:420px}
+.cover-art>div{position:absolute;transition:transform .3s}
+.cover-art svg{width:100%;height:auto;overflow:visible}
+.bob{animation:bob 3.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
+
+/* ---------- Daily & Luas ---------- */
+.pick-wrap{display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:start}
+.pick-list{display:flex;flex-direction:column;gap:10px}
+.pick-btn{display:flex;align-items:center;gap:11px;padding:9px 13px;border:2.5px solid var(--ink);border-radius:15px;
+  background:var(--white);box-shadow:3px 3px 0 var(--ink);cursor:pointer;font-family:'Fredoka';font-weight:600;
+  font-size:1rem;color:var(--ink);transition:.15s;text-align:left}
+.pick-btn svg{width:42px;height:42px;flex:none}
+.pick-btn.on{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
+.pick-btn.on .pick-dot{background:var(--ink);color:var(--white)}
+.pick-dot{margin-left:auto;width:22px;height:22px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;flex:none}
+.pick-dot svg{width:13px;height:13px}
+.panel-card{background:var(--white);border:2.5px solid var(--ink);border-radius:22px;box-shadow:5px 5px 0 var(--ink);
+  padding:22px;display:grid;grid-template-columns:1fr 1.05fr;gap:22px;align-items:center;animation:popIn .35s cubic-bezier(.2,.8,.3,1)}
+@keyframes popIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+.panel-card .fig svg{width:100%;max-height:280px;overflow:visible}
+.panel-card h3{font-size:1.6rem;font-weight:600;display:flex;align-items:center;gap:10px}
+.panel-card .pdesc{margin:8px 0 12px;font-weight:600}
+.pitems{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.pitems li{display:flex;align-items:center;gap:9px;font-weight:700}
+.pitems .bullet{width:13px;height:13px;border-radius:4px;border:2px solid var(--ink);flex:none}
+.fact{background:var(--sun-l);border:2px dashed var(--ink);border-radius:14px;padding:10px 14px;font-weight:700;
+  font-size:.95rem;display:flex;gap:9px;align-items:flex-start}
+.formula-big{font-family:'Fredoka';font-weight:700;font-size:1.5rem;background:var(--paper);border:2px solid var(--ink);
+  border-radius:12px;padding:8px 14px;display:inline-block;margin:6px 0}
+.bridge{margin-top:16px;background:var(--teal-l);border:2.5px solid var(--ink);border-radius:16px;padding:13px 18px;
+  font-weight:800;display:flex;gap:10px;align-items:center;box-shadow:3px 3px 0 var(--ink)}
+
+/* ---------- Missions ---------- */
+.missions{display:flex;flex-direction:column;gap:13px;max-width:760px}
+.mission{display:flex;align-items:center;gap:15px;background:var(--white);border:2.5px solid var(--ink);border-radius:16px;
+  box-shadow:4px 4px 0 var(--ink);padding:13px 18px;transition:.3s}
+.m-num{width:44px;height:44px;flex:none;border-radius:50%;border:2.5px solid var(--ink);display:grid;place-items:center;
+  font-family:'Fredoka';font-weight:700;font-size:1.25rem;color:var(--white)}
+.m-txt{flex:1;font-weight:700;font-size:1.02rem}
+.m-txt small{display:block;font-weight:600;opacity:.75;font-size:.85rem}
+.m-tick{width:36px;height:36px;flex:none;border:2.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;
+  background:var(--white);color:transparent;transition:.3s}
+.mission.done{background:var(--teal-l)}
+.mission.done .m-tick{background:var(--teal);color:var(--white);transform:scale(1.1)}
+
+/* ---------- Materi ---------- */
+.mat-wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:start}
+.rumus-chip{font-size:1rem;background:var(--coral-l);border:2px solid var(--ink);border-radius:99px;padding:5px 16px;
+  font-weight:600;box-shadow:2px 2px 0 var(--ink)}
+.mat-visual{background:var(--white);border:2.5px solid var(--ink);border-radius:22px;box-shadow:5px 5px 0 var(--ink);padding:18px}
+.vis-stage{display:grid;place-items:center;min-height:270px}
+.vis-stage svg{width:100%;max-width:360px;max-height:280px;overflow:visible}
+.vis-ctrl{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.ctrl-row{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:.92rem}
+.ctrl-row b{font-family:'Fredoka';color:var(--coral)}
+input[type=range]{width:100%;accent-color:var(--coral);cursor:pointer}
+.live{margin-top:6px;background:var(--paper);border:2px dashed var(--ink);border-radius:13px;padding:10px 14px;
+  font-weight:700;line-height:1.7}
+.live b{font-family:'Fredoka';color:var(--coral);font-size:1.08em}
+.pi-chip{align-self:flex-start;background:var(--leaf-l);border:2px solid var(--ink);border-radius:99px;
+  padding:4px 13px;font-weight:800;font-size:.85rem}
+.fun-line{margin-top:8px;font-size:.92rem;font-weight:700;background:var(--pink-l);border-radius:12px;padding:8px 13px;border:2px solid var(--ink)}
+.vis-hint{margin-top:10px;font-size:.88rem;font-weight:700;display:flex;gap:7px;align-items:center;opacity:.85}
+.scene3d{width:230px;height:230px;perspective:820px;display:grid;place-items:center;cursor:grab;touch-action:none}
+.scene3d:active{cursor:grabbing}
+.obj3{position:relative;width:var(--w);height:var(--h);transform-style:preserve-3d}
+.face{position:absolute;left:0;top:0;width:var(--w);height:var(--h);display:grid;place-items:center;
+  border:2.5px solid var(--ink);border-radius:7px;background:var(--fc);backface-visibility:hidden;
+  font-family:'Fredoka';font-weight:600;font-size:19px;color:rgba(51,38,29,.5)}
+.fL,.fR{width:var(--d);left:calc((var(--w) - var(--d))/2)}
+.fT,.fD{height:var(--d);top:calc((var(--h) - var(--d))/2)}
+.fF{transform:translateZ(calc(var(--d)/2))}
+.fB{transform:rotateY(180deg) translateZ(calc(var(--d)/2));filter:brightness(.72)}
+.fL{transform:rotateY(-90deg) translateZ(calc(var(--w)/2));filter:brightness(.72)}
+.fR{transform:rotateY(90deg) translateZ(calc(var(--w)/2));filter:brightness(.85)}
+.fT{transform:rotateX(90deg) translateZ(calc(var(--h)/2));filter:brightness(1.14)}
+.fD{transform:rotateX(-90deg) translateZ(calc(var(--h)/2));filter:brightness(.72)}
+.mat-info{background:var(--white);border:2.5px solid var(--ink);border-radius:22px;box-shadow:5px 5px 0 var(--ink);padding:20px}
+.mat-info .def{font-weight:700;margin-bottom:12px}
+.sifat{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.sifat li{border:2px solid var(--ink);border-radius:99px;padding:4px 13px;font-weight:800;font-size:.88rem;background:var(--paper)}
+.contoh{background:var(--teal-l);border:2.5px solid var(--ink);border-radius:15px;padding:13px 16px}
+.contoh b{font-family:'Fredoka';font-weight:600;display:block;margin-bottom:6px}
+.contoh span{display:block;font-weight:700;padding:2px 0;font-variant-numeric:tabular-nums}
+.mat-cta{margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.mat-cta span{font-weight:800}
+
+/* ---------- Panel Latihan ---------- */
+.ex-panel{position:absolute;inset:0;background:var(--paper);z-index:40;padding:80px 40px 40px;overflow-y:auto;
+  transform:translateX(103%);transition:transform .45s cubic-bezier(.2,.8,.3,1);border-left:3px solid var(--ink)}
+.ex-panel.open{transform:none}
+.ex-inner{max-width:880px;margin:0 auto}
+.ex-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.ex-top b{font-family:'Fredoka';font-weight:600;font-size:1.4rem;flex:1}
+.ex-count{font-weight:800;background:var(--white);border:2px solid var(--ink);border-radius:99px;padding:4px 14px}
+.dots{display:flex;gap:8px;margin-bottom:16px}
+.dots span{width:15px;height:15px;border-radius:50%;border:2.5px solid var(--ink);background:var(--white);transition:.25s}
+.dots .cur{background:var(--sun);transform:scale(1.25)}
+.dots .ok{background:var(--teal)}
+.dots .no{background:var(--coral)}
+.ex-card{background:var(--white);border:2.5px solid var(--ink);border-radius:22px;box-shadow:5px 5px 0 var(--ink);
+  padding:22px;display:grid;grid-template-columns:1fr 1.1fr;gap:22px;align-items:start}
+.ex-fig{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:12px}
+.ex-fig svg{width:100%;height:auto;overflow:visible}
+.ex-text{font-family:'Fredoka';font-weight:500;font-size:1.18rem;line-height:1.45;margin-bottom:10px}
+.known{display:inline-block;background:var(--sun-l);border:2px solid var(--ink);border-radius:12px;padding:5px 13px;
+  font-weight:800;margin-bottom:16px}
+.ex-answer{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.ex-answer input{flex:1;min-width:130px;font-family:'Fredoka';font-size:1.25rem;font-weight:600;padding:10px 16px;
+  border:2.5px solid var(--ink);border-radius:13px;outline:none;background:var(--white)}
+.ex-unit{display:grid;place-items:center;font-family:'Fredoka';font-weight:600;font-size:1.1rem;padding:0 4px}
+.ex-answer:disabled,.ex-answer.locked input{background:#F3EBDB}
+.fb{margin-top:14px;border-radius:13px;padding:11px 15px;font-weight:700;line-height:1.55;display:none}
+.fb.show{display:block;animation:popIn .3s}
+.fb.good{background:#DFF3E4;border:2.5px solid var(--teal);color:#1F6B4A}
+.fb.bad{background:#FBE0DA;border:2.5px solid var(--coral);color:#A63A28}
+.ex-next{margin-top:14px;display:none}
+.ex-next.show{display:inline-flex}
+.ex-final{text-align:center;padding:30px 10px}
+.ex-final h3{font-size:1.7rem;margin-bottom:8px}
+.stars-big{font-size:2.2rem;color:var(--sun);margin:8px 0;letter-spacing:4px}
+.stars-big .off{color:rgba(51,38,29,.18)}
+
+/* ---------- Game ---------- */
+.game-stage{display:grid;grid-template-columns:290px 1fr;gap:22px;align-items:start}
+.game-cust{background:var(--teal-l);border:2.5px solid var(--ink);border-radius:22px;box-shadow:5px 5px 0 var(--ink);
+  padding:18px;text-align:center}
+.game-cust svg{width:150px;height:auto}
+.bubble{background:var(--white);border:2.5px solid var(--ink);border-radius:16px;padding:12px 15px;font-weight:700;
+  text-align:left;position:relative;margin-top:14px;min-height:86px}
+.bubble .hl{font-family:'Fredoka';color:var(--coral);font-size:1.15em}
+.bubble:after{content:'';position:absolute;top:-11px;left:50%;width:18px;height:18px;background:var(--white);
+  border-left:2.5px solid var(--ink);border-top:2.5px solid var(--ink);transform:translateX(-50%) rotate(45deg)}
+.game-main{display:flex;flex-direction:column;gap:14px}
+.game-meta{display:flex;gap:10px;flex-wrap:wrap}
+.meta-chip{background:var(--white);border:2.5px solid var(--ink);border-radius:99px;padding:6px 16px;font-weight:800;box-shadow:2px 2px 0 var(--ink)}
+.cakes{display:flex;gap:14px;flex-wrap:wrap}
+.cake{flex:1;min-width:150px;background:var(--white);border:2.5px solid var(--ink);border-radius:18px;
+  box-shadow:4px 4px 0 var(--ink);padding:12px 10px 10px;cursor:pointer;text-align:center;transition:.15s;font-family:'Nunito'}
+.cake:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.cake svg{width:100%;max-width:150px;height:auto;overflow:visible}
+.cake .c-lab{font-weight:900;font-size:.95rem;margin-top:6px}
+.cake .c-sub{font-weight:700;font-size:.82rem;opacity:.75}
+.cake.off{opacity:.4;pointer-events:none}
+.cake.right{background:var(--teal-l);border-color:var(--teal);border-width:3px}
+.game-fb{min-height:52px;border-radius:14px;padding:11px 15px;font-weight:700;display:none}
+.game-fb.show{display:block;animation:popIn .3s}
+.game-fb.good{background:#DFF3E4;border:2.5px solid var(--teal);color:#1F6B4A}
+.game-fb.bad{background:#FBE0DA;border:2.5px solid var(--coral);color:#A63A28}
+.c-happy .m-flat,.c-happy .m-sad,.c-happy .brow,.c-happy .tear{display:none}
+.c-sad .m-flat,.c-sad .m-smile,.c-sad .brow{display:none}
+.c-neutral .m-smile,.c-neutral .m-sad,.c-neutral .brow,.c-neutral .tear{display:none}
+
+/* ---------- Kuis ---------- */
+.quiz-card{background:var(--white);border:2.5px solid var(--ink);border-radius:22px;box-shadow:5px 5px 0 var(--ink);
+  padding:24px;max-width:780px}
+.q-text{font-family:'Fredoka';font-weight:500;font-size:1.22rem;line-height:1.5;margin-bottom:18px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:13px;padding:12px 15px;border:2.5px solid var(--ink);border-radius:15px;
+  background:var(--white);box-shadow:3px 3px 0 var(--ink);cursor:pointer;font-family:'Nunito';font-weight:800;
+  font-size:1.02rem;color:var(--ink);text-align:left;transition:.15s}
+.opt:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.opt-key{width:32px;height:32px;flex:none;border-radius:50%;border:2.5px solid var(--ink);display:grid;place-items:center;
+  font-family:'Fredoka';font-weight:600;background:var(--paper)}
+.opt.selected{background:var(--sun-l)}
+.opt.correct{background:#DFF3E4;border-color:var(--teal)}
+.opt.wrong{background:#FBE0DA;border-color:var(--coral)}
+.quiz-card.locked .opt{pointer-events:none;box-shadow:2px 2px 0 var(--ink)}
+.quiz-actions{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+#quizEnd{text-align:center;padding:26px}
+#quizEnd h3{font-size:1.8rem;margin-bottom:6px}
+
+/* ---------- Hasil ---------- */
+.res-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:22px;align-items:start}
+.res-card{background:var(--white);border:2.5px solid var(--ink);border-radius:22px;box-shadow:5px 5px 0 var(--ink);padding:20px}
+.res-card h3{font-size:1.25rem;margin-bottom:12px;display:flex;gap:9px;align-items:center}
+.rex{display:flex;align-items:center;gap:11px;padding:9px 4px;border-bottom:2px dashed rgba(51,38,29,.25)}
+.rex:last-child{border-bottom:none}
+.rex svg{width:34px;height:34px;flex:none}
+.rex .rn{font-weight:900;width:96px}
+.rex .rdots{display:flex;gap:5px;flex:1}
+.rex .rdots i{width:11px;height:11px;border-radius:50%;border:2px solid var(--ink);background:var(--white)}
+.rex .rdots i.ok{background:var(--teal)} .rex .rdots i.no{background:var(--coral)}
+.rex .rs{font-family:'Fredoka';font-weight:600;white-space:nowrap}
+.rex .rstars{color:var(--sun);white-space:nowrap;font-size:1.05rem}
+.rex .rstars .off{color:rgba(51,38,29,.18)}
+.ring-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.ring{transform:rotate(-90deg)}
+.ring .bg{stroke:var(--paper)} .ring .fg{stroke:var(--teal);transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.3,1)}
+.ring-num{font-family:'Fredoka';font-weight:700;font-size:2rem;margin-top:-84px;margin-bottom:52px}
+.pred{font-weight:900;font-size:1.1rem;text-align:center}
+.res-total{margin-top:22px;background:var(--sun-l);border:2.5px solid var(--ink);border-radius:18px;
+  box-shadow:4px 4px 0 var(--ink);padding:16px 22px;font-weight:800;font-size:1.05rem;display:flex;gap:12px;align-items:center}
+.res-total b{font-family:'Fredoka';color:var(--coral)}
+
+/* ---------- Kesimpulan / Refleksi / Thanks ---------- */
+.keypoints{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
+.keypoint{background:var(--white);border:2.5px solid var(--ink);border-radius:16px;box-shadow:4px 4px 0 var(--ink);
+  padding:13px 18px;font-family:'Fredoka';font-weight:500;font-size:1.12rem;display:flex;gap:12px;align-items:center}
+.keypoint .ic{flex:none;width:26px;height:26px;color:var(--coral)}
+.notes{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+.note{width:172px;padding:14px 15px;border:2.5px solid var(--ink);border-radius:12px;box-shadow:4px 4px 0 var(--ink);
+  transform:rotate(var(--r,0deg));transition:.2s}
+.note:hover{transform:rotate(0) translateY(-4px)}
+.note small{font-weight:900;letter-spacing:.06em;text-transform:uppercase;font-size:.68rem;opacity:.7}
+.note b{display:block;font-family:'Fredoka';font-weight:600;font-size:1.28rem;margin:3px 0 2px}
+.note span{font-weight:800;font-size:.95rem}
+.ref-card{background:var(--white);border:2.5px solid var(--ink);border-radius:22px;box-shadow:5px 5px 0 var(--ink);
+  padding:24px;max-width:820px;display:flex;flex-direction:column;gap:20px}
+.ref-q b{font-family:'Fredoka';font-weight:600;font-size:1.15rem;display:block;margin-bottom:10px}
+.faces{display:flex;gap:14px;flex-wrap:wrap}
+.f-opt{border:2.5px solid var(--ink);border-radius:16px;background:var(--white);box-shadow:3px 3px 0 var(--ink);
+  padding:10px 14px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-weight:800;font-size:.85rem;color:var(--ink);transition:.15s}
+.f-opt svg{width:56px;height:56px}
+.f-opt.sel{background:var(--sun-l);transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
+.ref-chips{display:flex;gap:9px;flex-wrap:wrap}
+.ref-chip{border:2px solid var(--ink);border-radius:99px;background:var(--white);padding:7px 16px;font-weight:800;
+  cursor:pointer;font-family:'Nunito';color:var(--ink);font-size:.92rem}
+.ref-chip.sel{background:var(--pink-l);box-shadow:2px 2px 0 var(--ink)}
+textarea{width:100%;min-height:90px;resize:vertical;font-family:'Nunito';font-weight:700;font-size:1rem;
+  border:2.5px solid var(--ink);border-radius:14px;padding:12px 15px;outline:none;background:var(--white)}
+textarea:focus{background:#FFF6DE}
+#refOut{background:var(--teal-l);border:2.5px solid var(--ink);border-radius:16px;padding:15px 18px;font-weight:700;display:none}
+#refOut.show{display:block;animation:popIn .35s}
+.s-thanks{text-align:center}
+.s-thanks h1{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:700;margin:14px 0 6px}
+.thx-shapes{display:flex;gap:16px;justify-content:center;margin:20px 0 6px;flex-wrap:wrap}
+.thx-shapes svg{width:64px;height:64px}
+.thx-card{display:inline-block;background:var(--white);border:2.5px solid var(--ink);border-radius:20px;
+  box-shadow:5px 5px 0 var(--ink);padding:20px 34px;margin:16px 0;font-weight:800;font-size:1.05rem}
+.thx-card b{font-family:'Fredoka';color:var(--coral);font-size:1.3em}
+
+/* ---------- Toast & Confetti ---------- */
+#toast{position:fixed;bottom:88px;left:50%;transform:translate(-50%,20px);background:var(--ink);color:var(--paper);
+  padding:12px 22px;border-radius:14px;font-weight:800;z-index:100;opacity:0;pointer-events:none;transition:.3s;max-width:88vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.cf{position:fixed;width:11px;height:11px;border-radius:3px;z-index:200;pointer-events:none}
+
+/* ---------- Menu overlay ---------- */
+#menuOv{position:fixed;inset:0;background:rgba(51,38,29,.45);z-index:80;display:none;place-items:center;padding:20px}
+#menuOv.show{display:grid}
+.menu-box{background:var(--white);border:3px solid var(--ink);border-radius:22px;box-shadow:6px 6px 0 var(--ink);
+  padding:22px;width:min(430px,94vw);max-height:82vh;overflow:auto}
+.menu-box h3{font-size:1.4rem;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.menu-box button.mi{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:2px solid var(--ink);
+  background:var(--white);border-radius:12px;padding:9px 13px;margin-bottom:8px;font-family:'Nunito';font-weight:800;
+  cursor:pointer;color:var(--ink);font-size:.95rem;transition:.12s}
+.menu-box button.mi:hover{background:var(--sun-l);transform:translateX(3px)}
+.menu-box .mi i{font-style:normal;font-family:'Fredoka';width:26px;height:26px;border-radius:50%;border:2px solid var(--ink);
+  display:grid;place-items:center;font-size:.8rem;flex:none}
+
+@media(max-width:920px){
+  .slide{padding:76px 18px 104px}
+  .s-cover .inner,.pick-wrap,.mat-wrap,.game-stage,.res-grid,.panel-card{grid-template-columns:1fr}
+  .cover-art{height:280px;order:-1}
+  .ex-card{grid-template-columns:1fr}
+  .game-cust{display:flex;gap:14px;align-items:center;text-align:left}
+  .game-cust svg{width:90px}
+  .bubble{margin-top:0;flex:1}
+  .bubble:after{top:50%;left:-11px;transform:translateY(-50%) rotate(-45deg)}
+}
+</style>
+</head>
+<body>
+
+<header id="topbar">
+  <div id="logo">
+    <svg viewBox="0 0 40 40"><g stroke="#33261D" stroke-width="2.2" stroke-linejoin="round"><path d="M6 14 L20 6 L34 14 L34 28 L20 36 L6 28 Z" fill="#F5B840"/><path d="M6 14 L20 22 L34 14" fill="none"/><path d="M20 22 V36" fill="none"/></g></svg>
+    Petualangan Volume
+  </div>
+  <div id="topRight">
+    <span id="nameChip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#33261D" stroke-width="2.4"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span id="chipName"></span></span>
+    <button class="icon-btn" id="menuBtn" title="Daftar isi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</header>
+<div id="progressWrap"><div id="progressBar"></div></div>
+
+<main id="deck">
+
+<!-- 1. COVER -->
+<section class="slide s-cover active" data-title="Sampul">
+  <div class="inner">
+    <div>
+      <span class="chip">Matematika · Kelas 4 SD</span>
+      <h1>Petualangan<br><em>Volume</em> Bangun Ruang</h1>
+      <p class="lead">Ayo jelajahi kubus, balok, prisma, limas, tabung, dan kerucut! Ada latihan seru, game toko kue, dan kuis menantangan menanti.</p>
+      <div class="name-row">
+        <input id="nameInput" placeholder="Tulis namamu di sini..." maxlength="20" autocomplete="off">
+        <button class="btn btn-pri btn-big" id="startBtn">Mulai Petualangan</button>
+      </div>
+    </div>
+    <div class="cover-art" id="coverArt"></div>
+  </div>
+</section>
+
+<!-- 2. BANGUN DI SEKITAR KITA -->
+<section class="slide" data-title="Bangun di Sekitar Kita">
+  <div class="inner">
+    <div class="sl-head">
+      <span class="kicker">Ayo Kenalan Dulu</span>
+      <h2>Bangun Ruang <mark>di Sekitar Kita</mark></h2>
+    </div>
+    <div class="pick-wrap">
+      <div class="pick-list" id="dailyList"></div>
+      <div id="dailyPanel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. REVIEW LUAS BANGUN DATAR -->
+<section class="slide" data-title="Bekalan: Luas Bangun Datar">
+  <div class="inner">
+    <div class="sl-head">
+      <span class="kicker">Bekalan Sebelum Berangkat</span>
+      <h2>Ingat Lagi: <mark>Luas Bangun Datar</mark></h2>
+    </div>
+    <div class="pick-wrap">
+      <div class="pick-list" id="flatList"></div>
+      <div>
+        <div id="flatPanel"></div>
+        <div class="bridge" id="flatBridge"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. TUJUAN PEMBELAJARAN -->
+<section class="slide" data-title="Tujuan Pembelajaran">
+  <div class="inner">
+    <div class="sl-head">
+      <span class="kicker">Peta Misi Hari Ini</span>
+      <h2>Tujuan <mark>Pembelajaran</mark></h2>
+    </div>
+    <div class="missions">
+      <div class="mission" id="m1"><span class="m-num" style="background:var(--coral)">1</span>
+        <span class="m-txt">Mengenali 6 bangun ruang dan contohnya di kehidupan sehari-hari<small>Kubus, balok, prisma, limas, tabung, kerucut</small></span>
+        <span class="m-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M4 12.5l5 5L20 6.5"/></svg></span></div>
+      <div class="mission" id="m2"><span class="m-num" style="background:var(--teal)">2</span>
+        <span class="m-txt">Memahami cara menemukan rumus volume setiap bangun ruang<small>Dengan bantuan visual interaktif di materi</small></span>
+        <span class="m-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M4 12.5l5 5L20 6.5"/></svg></span></div>
+      <div class="mission" id="m3"><span class="m-num" style="background:var(--sun);color:var(--ink)">3</span>
+        <span class="m-txt">Menghitung volume bangun ruang dengan teliti<small>Selesaikan latihan sampai 15 jawaban benar!</small></span>
+        <span class="m-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M4 12.5l5 5L20 6.5"/></svg></span></div>
+      <div class="mission" id="m4"><span class="m-num" style="background:var(--pink)">4</span>
+        <span class="m-txt">Menggunakan volume untuk memecahkan masalah sehari-hari<small>Menangkan Toko Kue Manis &amp; taklukkan kuis soal cerita</small></span>
+        <span class="m-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M4 12.5l5 5L20 6.5"/></svg></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5-10 : SLIDE MATERI DIINJEKSI LEBIH JS -->
+
+<!-- 11. GAME -->
+<section class="slide" data-title="Game: Toko Kue Manis">
+  <div class="inner">
+    <div class="sl-head">
+      <span class="kicker">Waktunya Bermain</span>
+      <h2>Toko Kue <mark>Manis</mark></h2>
+    </div>
+    <div id="gameIntro" style="max-width:640px">
+      <p style="font-weight:700;font-size:1.08rem;margin-bottom:14px">Kamu seorang kepala pemberani di toko kue! Setiap pelanggan datang dengan pesanan spesial: kue dengan <b>volume yang pas</b>. Hitung dulu volume tiap kue, lalu pilih yang tepat — jangan sampai pelanggan kecewa, ya!</p>
+      <button class="btn btn-pri btn-big" id="gameStart"></button>
+    </div>
+    <div id="gamePlay" class="game-stage" style="display:none">
+      <div class="game-cust">
+        <div id="custChar"></div>
+        <div class="bubble" id="orderBubble"></div>
+      </div>
+      <div class="game-main">
+        <div class="game-meta">
+          <span class="meta-chip" id="gameOrderNo"></span>
+          <span class="meta-chip" id="gameScoreChip"></span>
+        </div>
+        <div class="cakes" id="cakeRow"></div>
+        <div class="game-fb" id="gameFb"></div>
+        <div><button class="btn btn-pri" id="gameNext" style="display:none"></button></div>
+      </div>
+    </div>
+    <div id="gameEnd" style="display:none;max-width:520px;text-align:center" class="res-card">
+      <h3 style="justify-content:center">Toko Tutup!</h3>
+      <div class="stars-big" id="gameStars"></div>
+      <p id="gameEndMsg" style="font-weight:800;margin-bottom:16px"></p>
+      <button class="btn btn-pri" id="gameAgain"></button>
+    </div>
+  </div>
+</section>
+
+<!-- 12. KUIS -->
+<section class="slide" data-title="Kuis Soal Cerita">
+  <div class="inner">
+    <div class="sl-head">
+      <span class="kicker">Ujian Terakhir, Semangat!</span>
+      <h2>Kuis <mark>Soal Cerita</mark></h2>
+    </div>
+    <div class="dots" id="quizDots"></div>
+    <div id="quizBody"></div>
+  </div>
+</section>
+
+<!-- 13. HASIL -->
+<section class="slide" data-title="Hasil Belajarku">
+  <div class="inner">
+    <div class="sl-head">
+      <span class="kicker">Papan Prestasi</span>
+      <h2>Hasil Belajarmu, <mark id="resName">Sahabat Volume</mark>!</h2>
+    </div>
+    <div id="resContent"></div>
+  </div>
+</section>
+
+<!-- 14. KESIMPULAN -->
+<section class="slide" data-title="Kesimpulan">
+  <div class="inner">
+    <div class="sl-head">
+      <span class="kicker">Harta Karun Pengetahuan</span>
+      <h2>Kesimpulan <mark>Hari Ini</mark></h2>
+    </div>
+    <div class="keypoints">
+      <div class="keypoint"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 3.7 10.7c-.7.6-.7 1.5-.7 2.3h-6c0-.8 0-1.7-.7-2.3A6 6 0 0 1 12 3z"/></svg>
+        Volume bangun ruang = <b>&nbsp;Luas alas × Tinggi&nbsp;</b> — itulah kenapa kita mengulang luas bangun datar tadi!</div>
+      <div class="keypoint"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.4l6.1-.8z"/></svg>
+        <span>Limas &amp; kerucut memakai <b>&nbsp;⅓&nbsp;</b> — volumenya sepertiga balok/tabung yang alas dan tingginya sama.</span></div>
+    </div>
+    <div class="notes" id="noteRow"></div>
+  </div>
+</section>
+
+<!-- 15. REFLEKSI -->
+<section class="slide" data-title="Refleksi">
+  <div class="inner">
+    <div class="sl-head">
+      <span class="kicker">Ceritakan Perasaanmu</span>
+      <h2>Refleksi <mark>Pembelajaran</mark></h2>
+    </div>
+    <div class="ref-card">
+      <div class="ref-q"><b>1. Bagaimana perasaanmu belajar volume hari ini?</b>
+        <div class="faces" id="faceRow"></div>
+      </div>
+      <div class="ref-q"><b>2. Bangun ruang mana yang paling menantang untukmu?</b>
+        <div class="ref-chips" id="chipRow"></div>
+      </div>
+      <div class="ref-q"><b>3. Tulis satu hal baru yang kamu pelajari hari ini!</b>
+        <textarea id="refText" placeholder="Contoh: Aku baru tahu kalau volume kerucut sepertiga volume tabung..."></textarea>
+      </div>
+      <div><button class="btn btn-pri btn-big" id="refSend"></button></div>
+      <div id="refOut"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 16. THANKS -->
+<section class="slide s-thanks" data-title="Terima Kasih">
+  <div class="inner" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 190px)">
+    <div class="thx-shapes" id="thxShapes"></div>
+    <h1>Terima kasih untuk hari ini,<br><span id="thanksName" style="color:var(--coral)"></span>!</h1>
+    <p style="font-weight:700;font-size:1.08rem">Kamu sudah menjadi penjelajah volume yang hebat. Sampai jumpa di petualangan berikutnya!</p>
+    <div class="thx-card" id="thxCard"></div>
+    <div><button class="btn btn-pri btn-big" id="restartBtn"></button></div>
+  </div>
+</section>
+
+</main>
+
+<nav id="navbar">
+  <button class="icon-btn navArrow" id="prevBtn" title="Sebelumnya"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+  <span id="navCount">1 / 16</span>
+  <button class="icon-btn navArrow" id="nextBtn" title="Berikutnya"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+</nav>
+
+<div id="menuOv"><div class="menu-box">
+  <h3>Daftar Isi <button class="icon-btn" id="menuClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h3>
+  <div id="menuList"></div>
+</div></div>
+
+<div id="toast"></div>
+
+<script>
+/* ================= UTIL ================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const INK='#33261D';
+const fmt=n=>{const r=Math.round(n*100)/100;return r.toLocaleString('id-ID',{maximumFractionDigits:2});};
+function parseNum(v){v=String(v).trim();if(!v)return NaN;let s=v.replace(/\s/g,'');
+  if(/,/.test(s))s=s.replace(/\./g,'').replace(/,/g,'.');
+  else if(/^\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,'');
+  const n=parseFloat(s);return isNaN(n)?NaN:n;}
+function el(html){const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstElementChild;}
+let toastT;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600);}
+function confetti(x,y,n=16){const cols=['#F26D5B','#2AA88C','#F5B840','#F08CB1','#79B851','#F49E4C'];
+  for(let i=0;i<n;i++){const s=document.createElement('span');s.className='cf';
+    s.style.background=cols[i%cols.length];s.style.left=x+'px';s.style.top=y+'px';document.body.appendChild(s);
+    const a=Math.random()*Math.PI*2,d=60+Math.random()*90;
+    s.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d+70}px) rotate(${Math.random()*540}deg)`,opacity:0}],
+      {duration:750+Math.random()*450,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove();}}
+function confettiCenter(){confetti(innerWidth/2,innerHeight/2-60,20);}
+let AC=null;
+function tone(kind){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  const seq=kind==='good'?[[523,0],[659,.09],[784,.18]]:kind==='bad'?[[233,0],[174,.13]]:[[440,0]];
+  seq.forEach(([f,t])=>{const o=AC.createOscillator(),g=AC.createGain();o.type='triangle';o.frequency.value=f;
+    g.gain.setValueAtTime(.001,AC.currentTime+t);g.gain.exponentialRampToValueAtTime(.07,AC.currentTime+t+.02);
+    g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+.22);o.connect(g);g.connect(AC.destination);
+    o.start(AC.currentTime+t);o.stop(AC.currentTime+t+.25);});}catch(e){}}
+function popBtn(btn){btn.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:280});}
+
+/* ================= IKON ================= */
+const IC={
+ arrowR:'<path d="M5 12h14M13 6l6 6-6 6"/>', arrowL:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+ check:'<path d="M4 12.5l5 5L20 6.5"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 3.7 10.7c-.7.6-.7 1.5-.7 2.3h-6c0-.8 0-1.7-.7-2.3A6 6 0 0 1 12 3z"/>',
+ hand:'<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12m0-6.5v-1a1.5 1.5 0 0 1 3 0V12m0-5.5a1.5 1.5 0 0 1 3 0V13m0-4a1.5 1.5 0 0 1 3 0v6a7 7 0 0 1-7 7h-1c-2.5 0-4-1-5.3-3.2L4.5 15a1.6 1.6 0 0 1 2.7-1.6L8 15"/>',
+ trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0V4zM8 5H4.5a3.5 3.5 0 0 0 3.6 3.5M16 5h3.5a3.5 3.5 0 0 1-3.6 3.5M12 13v4m-4 4h8m-8 0c0-2.2 1.8-4 4-4s4 1.8 4 4"/>',
+ star:'<path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.4l6.1-.8z"/>',
+ pencil:'<path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1z"/>',
+ send:'<path d="M4 12l16-8-5 16-3.5-6.5L4 12z"/>',
+ refresh:'<path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4"/>',
+ cake:'<path d="M4 20h16M5 20v-6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6M12 12V8m0 0a2 2 0 1 0-2-2"/><path d="M8 15.5h.01M12 17h.01M16 15.5h.01"/>',
+ book:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5V5.5zM20 18v3H6.5"/>'};
+const icon=(n,cls='')=>`<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+
+/* ================= WARNA & SVG BANGUN ================= */
+const COLORS={
+ kubus:{m:'#F26D5B',l:'#F8A38F',d:'#D95340',p:'#FADCD3'},
+ balok:{m:'#2AA88C',l:'#6FCBB2',d:'#1F8A72',p:'#D9EFE7'},
+ prisma:{m:'#F5B840',l:'#FBD37E',d:'#DB9820',p:'#FBEFD2'},
+ limas:{m:'#F08CB1',l:'#F6B8CE',d:'#D96A94',p:'#FBDFEA'},
+ tabung:{m:'#79B851',l:'#A3D285',d:'#5E9C3C',p:'#E9F5DB'},
+ kerucut:{m:'#F49E4C',l:'#F8C088',d:'#DB7F2E',p:'#FBE8D2'}};
+const F1=v=>(+v).toFixed(1).replace(/\.0$/,'');
+const piPick=r=>r%7===0?{s:'22/7',v:22/7}:{s:'3,14',v:3.14};
+const T=(x,y,str,o={})=>`<text x="${F1(x)}" y="${F1(y)}" font-family="Nunito" font-weight="800" font-size="${o.sz||15}" fill="${o.f||INK}" text-anchor="${o.a||'middle'}"${o.rot?` transform="rotate(${o.rot} ${F1(x)} ${F1(y)})"`:''}>${str}</text>`;
+const LN=(x1,y1,x2,y2,o={})=>`<line x1="${F1(x1)}" y1="${F1(y1)}" x2="${F1(x2)}" y2="${F1(y2)}" stroke="${o.s||INK}" stroke-width="${o.w||2.5}" ${o.da?`stroke-dasharray="${o.da}"`:''} stroke-linecap="round"/>`;
+const PG=(pts,fill,o={})=>`<polygon points="${pts.map(p=>F1(p[0])+','+F1(p[1])).join(' ')}" fill="${fill}" stroke="${o.s||INK}" stroke-width="${o.w||2.5}" stroke-linejoin="round" ${o.da?`stroke-dasharray="${o.da}"`:''}${o.op?` opacity="${o.op}"`:''}/>`;
+
+/* Gambar bangun ruang berlabel ukuran (dipakai materi, latihan, kuis) */
+function svgShape(type,d,o={}){
+ const C=COLORS[type];let s='';
+ if(type==='kubus'||type==='balok'){
+  let w,h,dep;
+  if(type==='kubus'){const n=d[0];dep=w=h=Math.max(42,Math.min(13*n,116));}
+  else{const[p,l,t]=d;const u=Math.min(15,135/(p+.5*l),100/(t+.45*l));w=p*u;h=t*u;dep=l*u;}
+  const ox=dep*.5,oy=dep*.42,x0=(240-(w+ox))/2,fy=(210-(h+oy))/2+oy,fb=fy+h;
+  const A=[x0,fy],B=[x0+w,fy],C2=[x0+w+ox,fy-oy],D=[x0+ox,fy-oy],E=[x0+w+ox,fy-oy+h];
+  s+=PG([A,B,E,C2],C.p)+PG([A,D,[D[0]+w,D[1]],[B[0],B[1]]],C.p);            // belakang & bawah (pucat)
+  s+=PG([B,C2,E,[B[0],fb]],C.l);                                           // sisi kanan
+  s+=PG([A,B,[B[0],fb],[A[0],fb]],C.m);                                    // depan
+  s+=PG([A,D,C2,B],C.l);                                                   // atas
+  s+=LN(x0,fb,x0+ox,fy-oy+h,{da:'5 5',w:2})+LN(D[0],D[1],x0+ox,fy-oy+h,{da:'5 5',w:2}); // rusuk tersembunyi
+  if(o.labels!==false){
+   if(type==='kubus'){const n=d[0];
+    s+=T(x0+w/2,fb+18,'s = '+n)+T(x0+w+ox/2+14,fb-oy/2+2,'s',{a:'start'})+T(x0+ox/2,fy-oy/2-8,'s');}
+   else{const[p,l,t]=d;
+    s+=T(x0+w/2,fb+18,'p = '+p)+T(x0-12,fy+h/2,'t = '+t,{rot:-90})+T(x0+w+ox/2+13,fb-oy/2,'l = '+l,{a:'start'});}
+  }
+ }
+ else if(type==='prisma'){
+  const[a,ts,Tt]=d,u=Math.min(15,135/(a+.55*Tt),100/(ts+.5*Tt));
+  const ox=.5*Tt*u,oy=.42*Tt*u,x0=(240-(a*u+ox))/2,yb=(210+ts*u+oy)/2+6;
+  const A=[x0,yb],B=[x0+a*u,yb],C=[x0+a*u/2,yb-ts*u],A2=[x0+ox,yb-oy],B2=[x0+a*u+ox,yb-oy],C2=[x0+a*u/2+ox,yb-ts*u-oy];
+  s+=PG([A2,B2,C2],C.p)+PG([A,C,C2,A2],C.p)+PG([A,B,B2,A2],C.p);           // sisi tersembunyi (pucat)
+  s+=PG([B,C,C2,B2],C.l);                                                  // sisi tegak kanan
+  s+=PG([A,B,C],C.m);                                                      // segitiga depan
+  s+=LN(A[0],A[1],A2[0],A2[1],{da:'5 5',w:2})+LN(A2[0],A2[1],C2[0],C2[1],{da:'5 5',w:2})+LN(A[0],A[1],B2[0],B2[1],{w:2});
+  if(o.labels!==false){
+   s+=T(x0+a*u/2,yb+18,'a = '+a);
+   s+=LN(C[0],C[1],C[0],yb,{da:'4 5',w:2,s:'rgba(51,38,29,.55)'});
+   s+=T(C[0]+13,(C[1]+yb)/2,'t = '+ts,{a:'start'})+T((C[0]+C2[0])/2+11,(C[1]+C2[1])/2-6,'T = '+Tt,{a:'start'});}
+ }
+ else if(type==='limas'){
+  const[sa,tt]=d,u=Math.min(15,110/sa,85/tt);
+  const ox=sa*u*.45,oy=sa*u*.38,x0=(240-(sa*u+ox))/2,yb=178;
+  const P1=[x0,yb],P2=[x0+sa*u,yb],P3=[x0+sa*u+ox,yb-oy],P4=[x0+ox,yb-oy];
+  const cx=(P1[0]+P3[0])/2,cy=(yb+yb-oy)/2,Ap=[cx,cy-tt*u];
+  s+=PG([P1,P2,P3,P4],C.p);                                                // dasar (pucat)
+  s+=PG([P4,P1,Ap],C.p)+PG([P4,P3,Ap],C.p);                                // sisi kiri & belakang
+  s+=PG([P2,P3,Ap],C.l);                                                   // sisi kanan
+  s+=PG([P1,P2,Ap],C.m);                                                   // sisi depan
+  s+=LN(P4[0],P4[1],Ap[0],Ap[1],{da:'5 5',w:2});
+  if(o.labels!==false){
+   s+=T(x0+sa*u/2,yb+18,'s = '+sa);
+   s+=LN(cx,cy,Ap[0],Ap[1],{da:'4 5',w:2,s:'rgba(51,38,29,.55)'});
+   s+=T(cx+13,(cy+Ap[1])/2,'t = '+tt,{a:'start'});}
+ }
+ else if(type==='tabung'){
+  const[r,tt]=d,u=Math.min(9,62/r,105/tt),rx=r*u,ry=rx*.28,h=tt*u,cx=120,top=(210-h)/2+8,bot=top+h;
+  s+=`<path d="M${F1(cx-rx)} ${F1(top)} V${F1(bot)} A${F1(rx)} ${F1(ry)} 0 0 0 ${F1(cx+rx)} ${F1(bot)} V${F1(top)}" fill="${C.m}" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  s+=`<ellipse cx="${F1(cx)}" cy="${F1(bot)}" rx="${F1(rx)}" ry="${F1(ry)}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 5"/>`;
+  s+=`<ellipse cx="${F1(cx)}" cy="${F1(top)}" rx="${F1(rx)}" ry="${F1(ry)}" fill="${C.l}" stroke="${INK}" stroke-width="2.5"/>`;
+  if(o.labels!==false){
+   s+=`<circle cx="${F1(cx)}" cy="${F1(top)}" r="3" fill="${INK}"/>`;
+   s+=LN(cx,top,cx+rx,top,{w:2.2});
+   s+=T(cx+rx/2,top-9,'r = '+r);
+   s+=LN(cx+rx+16,top,cx+rx+16,bot,{w:2,da:'4 5'})+LN(cx+rx+11,top,cx+rx+21,top,{w:2})+LN(cx+rx+11,bot,cx+rx+21,bot,{w:2});
+   s+=T(cx+rx+30,(top+bot)/2,'t = '+tt,{a:'start'});}
+ }
+ else if(type==='kerucut'){
+  const[r,tt]=d,u=Math.min(9,58/r,108/tt),rx=r*u,ry=rx*.28,cx=120,bot=176,apY=bot-tt*u;
+  s+=`<path d="M${F1(cx-rx)} ${F1(bot)} A${F1(rx)} ${F1(ry)} 0 0 0 ${F1(cx+rx)} ${F1(bot)} L${F1(cx)} ${F1(apY)} Z" fill="${C.m}" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  s+=`<path d="M${F1(cx-rx)} ${F1(bot)} A${F1(rx)} ${F1(ry)} 0 0 1 ${F1(cx+rx)} ${F1(bot)}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 5"/>`;
+  s+=LN(cx-rx,bot,cx,apY,{w:2.5})+LN(cx+rx,bot,cx,apY,{w:2.5});
+  if(o.labels!==false){
+   s+=`<circle cx="${F1(cx)}" cy="${F1(bot)}" r="3" fill="${INK}"/>`;
+   s+=LN(cx,bot,cx+rx,bot,{w:2.2})+T(cx+rx/2,bot-9,'r = '+r);
+   s+=T(cx-16,(bot+apY)/2,'t = '+tt);}
+ }
+ if(o.cap)s+=T(120,206,o.cap,{sz:14,f:'rgba(51,38,29,.75)'});
+ return `<svg viewBox="0 0 240 212" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+}
+
+/* Mini-ikon bangun untuk daftar & dekorasi */
+function shapeMini(type){
+ const C=COLORS[type];const st=`stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"`;
+ switch(type){
+  case 'kubus':return `<svg viewBox="0 0 44 44"><g ${st}><path d="M8 18h20v18H8z" fill="${C.m}"/><path d="M8 18l8-8h20l-8 8z" fill="${C.l}"/><path d="M28 18l8-8v18l-8 8z" fill="${C.d}"/></g></svg>`;
+  case 'balok':return `<svg viewBox="0 0 44 44"><g ${st}><path d="M4 21h26v13H4z" fill="${C.m}"/><path d="M4 21l7-7h29l-7 7z" fill="${C.l}"/><path d="M30 21l7-7v13l-7 7z" fill="${C.d}"/></g></svg>`;
+  case 'prisma':return `<svg viewBox="0 0 44 44"><g ${st}><path d="M16 26L36 26L26 6z" fill="${C.p}"/><path d="M28 34L36 26L26 6L18 14z" fill="${C.l}"/><path d="M8 34L28 34L18 14z" fill="${C.m}"/></g></svg>`;
+  case 'limas':return `<svg viewBox="0 0 44 44"><g ${st}><path d="M10 32L30 32L38 24L18 24z" fill="${C.p}"/><path d="M18 24L38 24L24 7z" fill="${C.l}"/><path d="M10 32L30 32L24 7z" fill="${C.m}"/><path d="M10 32L18 24L24 7" fill="none" stroke-dasharray="3 3"/></g></svg>`;
+  case 'tabung':return `<svg viewBox="0 0 44 44"><g ${st}><path d="M10 11v21a12 4.6 0 0 0 24 0V11" fill="${C.m}"/><ellipse cx="22" cy="11" rx="12" ry="4.6" fill="${C.l}"/></g></svg>`;
+  case 'kerucut':return `<svg viewBox="0 0 44 44"><g ${st}><path d="M9 33A13 4.8 0 0 0 35 33L22 7z" fill="${C.m}"/><path d="M9 33A13 4.8 0 0 1 35 33" fill="none" stroke-dasharray="3 3"/></g></svg>`;}
+}
+const volOf=(t,d)=>{switch(t){
+ case 'kubus':return d[0]**3;
+ case 'balok':return d[0]*d[1]*d[2];
+ case 'prisma':return .5*d[0]*d[1]*d[2];
+ case 'limas':return d[0]*d[0]*d[1]/3;
+ case 'tabung':{const p=piPick(d[0]);return p.v*d[0]*d[0]*d[1];}
+ case 'kerucut':{const p=piPick(d[0]);return p.v*d[0]*d[0]*d[1]/3;}}};
+
+/* ================= STATE ================= */
+const state={name:'',slide:0,sawMateri:false,ex:{},quiz:{i:0,ans:Array(10).fill(null),correct:0,done:false},
+ game:{i:0,score:0,opened:false},ref:null};
+const totalEx=()=>Object.values(state.ex).flat().filter(v=>v===true).length;
+
+/* ================= DATA HARIAN & LUAS ================= */
+function dailyScene(type){
+ const st=`stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"`;
+ switch(type){
+  case 'kubus':return `<svg viewBox="0 0 300 230"><ellipse cx="150" cy="200" rx="120" ry="16" fill="#EFE3C6" ${st}/>
+   <g ${st}><path d="M60 95h80v80H60z" fill="#FFFDF6"/><path d="M60 95l20-20h80l-20 20z" fill="#F3EBDB"/><path d="M140 95l20-20v80l-20 20z" fill="#E8DCC2"/>
+   <g fill="${INK}"><circle cx="80" cy="115" r="6"/><circle cx="120" cy="155" r="6"/><circle cx="120" cy="115" r="6"/><circle cx="80" cy="155" r="6"/><circle cx="100" cy="135" r="6"/></g></g>
+   <g ${st}><path d="M195 130h48v48H195z" fill="#FFFDF6"/><path d="M195 130l14-14h48l-14 14z" fill="#F3EBDB"/><path d="M243 130l14-14v48l-14 14z" fill="#E8DCC2"/>
+   <g fill="${INK}"><circle cx="209" cy="144" r="4.5"/><circle cx="229" cy="164" r="4.5"/><circle cx="219" cy="154" r="4.5"/></g></g>
+   <path d="M255 55l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#F5B840" ${st}/></svg>`;
+  case 'balok':return `<svg viewBox="0 0 300 230"><ellipse cx="150" cy="200" rx="115" ry="16" fill="#EFE3C6" ${st}/>
+   <g ${st}><rect x="55" y="130" width="120" height="28" rx="4" fill="#F26D5B"/><rect x="55" y="130" width="120" height="8" rx="4" fill="#FAD9CF"/></g>
+   <g ${st}><rect x="65" y="100" width="100" height="28" rx="4" fill="#2AA88C"/><rect x="65" y="100" width="100" height="8" rx="4" fill="#CDEDE2"/></g>
+   <g ${st}><rect x="75" y="72" width="80" height="26" rx="4" fill="#F5B840"/><rect x="75" y="72" width="80" height="8" rx="4" fill="#FBE8BD"/></g>
+   <g ${st}><rect x="200" y="118" width="52" height="40" rx="4" fill="#FFFDF6"/><rect x="196" y="110" width="60" height="10" rx="5" fill="#F08CB1"/><circle cx="226" cy="104" r="5" fill="#F26D5B"/></g></svg>`;
+  case 'prisma':return `<svg viewBox="0 0 300 230"><ellipse cx="150" cy="198" rx="125" ry="18" fill="#DDF0CB" ${st}/>
+   <circle cx="245" cy="48" r="20" fill="#F5B840" ${st}/>
+   <g ${st}><path d="M70 178 L165 178 L117 88 Z" fill="#F26D5B"/><path d="M165 178 L192 156 L144 66 L117 88 Z" fill="#D95340"/>
+   <path d="M102 178 L134 178 L118 142 Z" fill="#8C4A38"/><path d="M117 88V62" fill="none"/><path d="M117 62l22 7-22 7z" fill="#F5B840"/></g></svg>`;
+  case 'limas':return `<svg viewBox="0 0 300 230"><circle cx="52" cy="46" r="19" fill="#F5B840" ${st}/>
+   <ellipse cx="150" cy="196" rx="128" ry="16" fill="#EFE3C6" ${st}/>
+   <g ${st}><path d="M70 178 L192 178 L226 148 L104 148 Z" fill="#FBEFD2"/>
+   <path d="M104 148 L226 148 L148 58 Z" fill="#FBD37E"/><path d="M70 178 L192 178 L148 58 Z" fill="#F5B840"/>
+   <path d="M104 148 L148 58" fill="none" stroke-dasharray="5 5"/></g></svg>`;
+  case 'tabung':return `<svg viewBox="0 0 300 230"><ellipse cx="140" cy="198" rx="118" ry="15" fill="#EFE3C6" ${st}/>
+   <g ${st}><path d="M96 70 v92 a26 9 0 0 0 52 0 V70" fill="#BFE6EF"/><ellipse cx="122" cy="70" rx="26" ry="9" fill="#FFFDF6"/>
+   <path d="M112 66 L138 26 L150 30" fill="none" stroke="#F26D5B" stroke-width="6" stroke-linecap="round"/>
+   <circle cx="112" cy="120" r="4" fill="#FFFDF6"/><circle cx="130" cy="140" r="5" fill="#FFFDF6"/></g>
+   <g ${st}><path d="M196 118 v52 a18 6 0 0 0 36 0 v-52" fill="#F26D5B"/><ellipse cx="214" cy="118" rx="18" ry="6" fill="#FAD9CF"/><rect x="200" y="132" width="28" height="12" rx="3" fill="#FFFDF6"/></g></svg>`;
+  case 'kerucut':return `<svg viewBox="0 0 300 230"><ellipse cx="150" cy="200" rx="118" ry="15" fill="#EFE3C6" ${st}/>
+   <g ${st}><path d="M80 108 A40 12 0 0 0 160 108 L120 192 Z" fill="#E0B067"/>
+   <path d="M96 128 L134 150 M112 116 L146 136" stroke="#C08A45" stroke-width="2" fill="none"/>
+   <circle cx="120" cy="86" r="31" fill="#F08CB1"/>
+   <g fill="#FFFDF6"><circle cx="108" cy="78" r="3"/><circle cx="126" cy="72" r="3"/><circle cx="134" cy="92" r="3"/><circle cx="114" cy="96" r="3"/></g>
+   <path d="M120 52 q2 -10 10 -12" fill="none" stroke="#7A4A33" stroke-width="3" stroke-linecap="round"/><circle cx="120" cy="52" r="8" fill="#F26D5B"/></g></svg>`;
+ }
+}
+const DAILY=[
+ {id:'kubus',nama:'Kubus',desc:'Semua sisinya berbentuk persegi dan sama besar. Punya 6 sisi, 12 rusuk, dan 8 titik sudut.',
+  items:['Dadu permainan','Rubik','Kado berbentuk kubus'],fact:'Setiap sisi dadu diberi titik dari 1 sampai 6. Total semua titiknya = 21!'},
+ {id:'balok',nama:'Balok',desc:'Punya 6 sisi persegi panjang. Sisi yang berhadapan selalu sama besar, seperti kotak sepatu!',
+  items:['Kotak sepatu','Buku dan pencil case','Kulkas dan lemari'],fact:'Batu bata dibuat berbentuk balok agar mudah dipegang dan tersusun kuat.'},
+ {id:'prisma',nama:'Prisma Segitiga',desc:'Alas dan atapnya berbentuk segitiga, dengan sisi tegak seperti dinding. Lihat tenda camping!',
+  items:['Tenda camping','Atap rumah segitiga','Potongan keju segitiga'],fact:'Atap berbentuk prisma membuat air hujan cepat mengalir ke bawah.'},
+ {id:'limas',nama:'Limas Segiempat',desc:'Alasnya persegi dan puncaknya satu titik di atas. Mirip piramida di negeri Mesir!',
+  items:['Piramida Mesir','Atap menara jam','Tenda piramida'],fact:'Piramida di Mesir sudah berdiri tegak lebih dari 4.500 tahun!'},
+ {id:'tabung',nama:'Tabung',desc:'Alas dan tutupnya berbentuk lingkaran, dengan selimut yang bisa dibuka menjadi persegi panjang.',
+  items:['Gelas dan botol','Kaleng susu','Drum penampung air'],fact:'Drum air berbentuk tabung karena bentuk ini kuat menahan tekanan air dari segala arah.'},
+ {id:'kerucut',nama:'Kerucut',desc:'Alasnya lingkaran dengan satu puncak runcing di atas — seperti es krim cone favoritmu!',
+  items:['Cone es krim','Topi ulang tahun','Corong dan tumpukan pasir'],fact:'Tumpukan pasir di proyek rumah selalu membentuk kerucut secara alami.'}];
+const FLAT=[
+ {id:'persegi',nama:'Persegi',rumus:'L = s × s',ex:'Contoh: sisi 5 cm → L = 5 × 5 = 25 cm²',note:'Nanti dipakai sebagai alas kubus dan limas!',
+  svg:()=>{const st=`stroke="${INK}" stroke-width="2.5"`;return `<svg viewBox="0 0 240 200"><rect x="55" y="30" width="130" height="130" fill="#F5B840" ${st} rx="4"/>${T(120,182,'s = 5 cm')}${T(42,95,'s = 5 cm',{rot:-90})}</svg>`;}},
+ {id:'panjang',nama:'Persegi Panjang',rumus:'L = p × l',ex:'Contoh: p = 8 cm, l = 3 cm → L = 8 × 3 = 24 cm²',note:'Alas balok — dan bentuk selimut tabung!',
+  svg:()=>{const st=`stroke="${INK}" stroke-width="2.5"`;return `<svg viewBox="0 0 240 200"><rect x="30" y="55" width="180" height="90" fill="#2AA88C" ${st} rx="4"/>${T(120,168,'p = 8 cm')}${T(16,100,'l = 3 cm',{rot:-90})}</svg>`;}},
+ {id:'segitiga',nama:'Segitiga',rumus:'L = ½ × a × t',ex:'Contoh: a = 10 cm, t = 6 cm → L = ½ × 10 × 6 = 30 cm²',note:'Alas prisma segitiga!',
+  svg:()=>{const st=`stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"`;return `<svg viewBox="0 0 240 200"><path d="M55 160 L185 160 L120 40 Z" fill="#F26D5B" ${st}/>${LN(120,40,120,160,{da:'4 5',w:2})}${T(120,182,'a = 10 cm')}${T(133,105,'t = 6 cm',{a:'start'})}</svg>`;}},
+ {id:'lingkaran',nama:'Lingkaran',rumus:'L = π × r × r',ex:'Contoh: r = 7 cm → L = 22/7 × 7 × 7 = 154 cm²',note:'Alas tabung dan kerucut!',
+  svg:()=>{const st=`stroke="${INK}" stroke-width="2.5"`;return `<svg viewBox="0 0 240 200"><circle cx="120" cy="100" r="78" fill="#F08CB1" ${st}/><circle cx="120" cy="100" r="4" fill="${INK}"/>${LN(120,100,198,100,{da:'4 5',w:2})}${T(158,88,'r = 7 cm')}</svg>`;}}];
+
+/* ================= DATA MATERI ================= */
+function makeSpin(sc,obj){const st={sc,obj,rx:-18,ry:-26,drag:false};
+ sc.addEventListener('pointerdown',e=>{st.drag=true;st.px=e.clientX;st.py=e.clientY;sc.setPointerCapture(e.pointerId);});
+ sc.addEventListener('pointermove',e=>{if(!st.drag)return;st.ry+=(e.clientX-st.px)*.5;st.rx-=(e.clientY-st.py)*.5;
+  st.rx=Math.max(-88,Math.min(88,st.rx));st.px=e.clientX;st.py=e.clientY;});
+ ['pointerup','pointercancel'].forEach(ev=>sc.addEventListener(ev,()=>st.drag=false));
+ spinners.push(st);}
+const spinners=[];
+(function loop(){spinners.forEach(s=>{if(!s.drag)s.ry+=.12;
+  s.obj.style.transform=`rotateX(${s.rx}deg) rotateY(${s.ry}deg)`;});requestAnimationFrame(loop);})();
+
+const MAT=[
+ {id:'kubus',nama:'Kubus',rumus:'V = s × s × s',
+  def:'Kubus adalah bangun ruang yang semua sisinya berbentuk persegi dan sama besar — seperti dadu atau rubik kesukaanmu!',
+  sifat:['6 sisi persegi','12 rusuk sama panjang','8 titik sudut'],
+  contoh:{judul:'Contoh Menghitung',steps:['Rusuk kubus = 3 cm','V = 3 × 3 × 3','V = 27 cm³']},
+  vis:{html:`<div class="vis-stage"><div class="scene3d" id="kubus-scene"><div class="obj3" id="kubus-obj" style="--fc:rgba(242,109,91,.93)">
+    <div class="face fF">s</div><div class="face fB">s</div><div class="face fL">s</div><div class="face fR">s</div><div class="face fT">s</div><div class="face fD">s</div></div></div></div>
+   <div class="vis-ctrl"><div class="ctrl-row"><span>Panjang rusuk (s)</span><b id="kubus-sv">3 satuan</b></div>
+   <input type="range" id="kubus-s" min="2" max="6" value="3"><div class="live" id="kubus-live"></div></div>
+   <p class="vis-hint">${icon('hand')} Geser kubus dengan mouse atau jarimu untuk memutarnya!</p>`,
+  wire(root){const obj=root.querySelector('#kubus-obj'),sc=root.querySelector('#kubus-scene'),U=34;
+   const upd=v=>{const s=+v;['--w','--h','--d'].forEach(p=>obj.style.setProperty(p,s*U+'px'));
+    root.querySelector('#kubus-sv').textContent=s+' satuan';
+    root.querySelector('#kubus-live').innerHTML=`V = s × s × s = ${s} × ${s} × ${s} = <b>${fmt(s**3)}</b> satuan³`;};
+   root.querySelector('#kubus-s').addEventListener('input',e=>upd(e.target.value));upd(3);makeSpin(sc,obj);}},
+  latihan:[
+   {q:'Kotak kado dari Kakak berbentuk kubus dengan panjang rusuk 4 cm. Berapa volume kotak kado itu?',d:[4],unit:'cm',u3:'cm³',ans:64,pemb:'Kubus: V = s × s × s = 4 × 4 × 4 = 64 cm³.'},
+   {q:'Sebuah dadu raksasa memiliki panjang rusuk 3 cm. Berapa volume dadu itu?',d:[3],unit:'cm',u3:'cm³',ans:27,pemb:'V = s × s × s = 3 × 3 × 3 = 27 cm³.'},
+   {q:'Rubik versi jumbo berbentuk kubus dengan rusuk 7 cm. Hitunglah volumenya!',d:[7],unit:'cm',u3:'cm³',ans:343,pemb:'V = 7 × 7 × 7 = 343 cm³.'},
+   {q:'Bak tanaman berbentuk kubus dengan panjang rusuk 10 dm. Berapa volume bak tanaman itu?',d:[10],unit:'dm',u3:'dm³',ans:1000,pemb:'V = 10 × 10 × 10 = 1.000 dm³.'},
+   {q:'Kubus ajaib di buku paket memiliki panjang rusuk 5 cm. Berapa volumenya?',d:[5],unit:'cm',u3:'cm³',ans:125,pemb:'V = 5 × 5 × 5 = 125 cm³.'}]},
+ {id:'balok',nama:'Balok',rumus:'V = p × l × t',
+  def:'Balok punya 6 sisi persegi panjang. Sisi yang berhadapan selalu sama besar — bayangkan kotak sepatu atau kulkas!',
+  sifat:['6 sisi persegi panjang','12 rusuk (4 kelompok)','8 titik sudut'],
+  contoh:{judul:'Contoh Menghitung',steps:['p = 5 cm, l = 3 cm, t = 2 cm','V = 5 × 3 × 2','V = 30 cm³']},
+  vis:{html:`<div class="vis-stage"><div class="scene3d" id="balok-scene"><div class="obj3" id="balok-obj" style="--fc:rgba(42,168,140,.92)">
+    <div class="face fF">p × t</div><div class="face fB"></div><div class="face fL"></div><div class="face fR">l × t</div><div class="face fT">p × l</div><div class="face fD"></div></div></div></div>
+   <div class="vis-ctrl">
+   <div class="ctrl-row"><span>Panjang (p)</span><b id="balok-pv">5 satuan</b></div><input type="range" id="balok-p" min="2" max="7" value="5">
+   <div class="ctrl-row"><span>Lebar (l)</span><b id="balok-lv">3 satuan</b></div><input type="range" id="balok-l" min="2" max="5" value="3">
+   <div class="ctrl-row"><span>Tinggi (t)</span><b id="balok-tv">2 satuan</b></div><input type="range" id="balok-t" min="2" max="5" value="2">
+   <div class="live" id="balok-live"></div></div>
+   <p class="vis-hint">${icon('hand')} Putar baloknya, lalu geser ketiga slider dan lihat volumenya berubah!</p>`,
+  wire(root){const obj=root.querySelector('#balok-obj'),sc=root.querySelector('#balok-scene'),U=30;
+   const upd=()=>{const p=+root.querySelector('#balok-p').value,l=+root.querySelector('#balok-l').value,t=+root.querySelector('#balok-t').value;
+    obj.style.setProperty('--w',p*U+'px');obj.style.setProperty('--d',l*U+'px');obj.style.setProperty('--h',t*U+'px');
+    root.querySelector('#balok-pv').textContent=p+' satuan';root.querySelector('#balok-lv').textContent=l+' satuan';root.querySelector('#balok-tv').textContent=t+' satuan';
+    root.querySelector('#balok-live').innerHTML=`V = p × l × t = ${p} × ${l} × ${t} = <b>${fmt(p*l*t)}</b> satuan³`;};
+   ['balok-p','balok-l','balok-t'].forEach(id=>root.querySelector('#'+id).addEventListener('input',upd));upd();makeSpin(sc,obj);}},
+  latihan:[
+   {q:'Kotak pensil berbentuk balok berukuran panjang 6 cm, lebar 4 cm, dan tinggi 3 cm. Berapa volume kotak pensil?',d:[6,4,3],unit:'cm',u3:'cm³',ans:72,pemb:'V = p × l × t = 6 × 4 × 3 = 72 cm³.'},
+   {q:'Kado dari Pak RT dibungkus kotak balok berukuran 8 cm × 5 cm × 2 cm. Berapa volume kotaknya?',d:[8,5,2],unit:'cm',u3:'cm³',ans:80,pemb:'V = 8 × 5 × 2 = 80 cm³.'},
+   {q:'Tumpukan kertas berbentuk balok berukuran 10 cm × 3 cm × 4 cm. Hitunglah volumenya!',d:[10,3,4],unit:'cm',u3:'cm³',ans:120,pemb:'V = 10 × 3 × 4 = 120 cm³.'},
+   {q:'Kotak bekal berbentuk balok dengan ukuran 5 dm × 5 dm × 6 dm. Berapa volume kotak bekal itu?',d:[5,5,6],unit:'dm',u3:'dm³',ans:150,pemb:'V = 5 × 5 × 6 = 150 dm³.'},
+   {q:'Kotak sepatu berukuran panjang 6 dm, lebar 6 dm, dan tinggi 4 dm. Volume kotak sepatu adalah…',d:[6,6,4],unit:'dm',u3:'dm³',ans:144,pemb:'V = 6 × 6 × 4 = 144 dm³.'}]},
+ {id:'prisma',nama:'Prisma Segitiga',rumus:'V = luas alas × tinggi',
+  def:'Prisma segitiga punya alas dan atap berbentuk segitiga dengan sisi tegak seperti dinding — persis seperti tenda camping!',
+  sifat:['Alas &amp; atap segitiga','3 sisi tegak','9 rusuk'],
+  contoh:{judul:'Contoh Menghitung',steps:['a = 6 cm, t = 4 cm, T = 10 cm','Luas alas = ½ × 6 × 4 = 12 cm²','V = 12 × 10 = 120 cm³']},
+  vis:{html:`<div class="vis-stage" id="prisma-stage">${svgShape('prisma',[6,4,10])}</div>
+   <div class="vis-ctrl">
+   <div class="ctrl-row"><span>Alas segitiga (a)</span><b id="prisma-av">6</b></div><input type="range" id="prisma-a" min="2" max="12" value="6">
+   <div class="ctrl-row"><span>Tinggi segitiga (t)</span><b id="prisma-tv">4</b></div><input type="range" id="prisma-t" min="2" max="8" value="4">
+   <div class="ctrl-row"><span>Tinggi prisma (T)</span><b id="prisma-Tv">10</b></div><input type="range" id="prisma-T" min="2" max="10" value="10">
+   <div class="live" id="prisma-live"></div></div>`,
+  wire(root){const upd=()=>{const a=+root.querySelector('#prisma-a').value,t=+root.querySelector('#prisma-t').value,T=+root.querySelector('#prisma-T').value;
+    root.querySelector('#prisma-stage').innerHTML=svgShape('prisma',[a,t,T]);
+    root.querySelector('#prisma-av').textContent=a;root.querySelector('#prisma-tv').textContent=t;root.querySelector('#prisma-Tv').textContent=T;
+    const L=.5*a*t;
+    root.querySelector('#prisma-live').innerHTML=`Luas alas = ½ × a × t = ½ × ${a} × ${t} = <b>${fmt(L)}</b><br>V = luas alas × T = ${fmt(L)} × ${T} = <b>${fmt(L*T)}</b> satuan³`;};
+   ['prisma-a','prisma-t','prisma-T'].forEach(id=>root.querySelector('#'+id).addEventListener('input',upd));upd();}},
+  latihan:[
+   {q:'Tenda camping berbentuk prisma segitiga. Alas segitiganya 6 m dengan tinggi 4 m, dan panjang tenda 10 m. Berapa volume udara di dalam tenda?',d:[6,4,10],unit:'m',u3:'m³',ans:120,pemb:'Luas alas = ½ × 6 × 4 = 12 m². V = 12 × 10 = 120 m³.'},
+   {q:'Bongkahan keju berbentuk prisma segitiga: alas 8 cm, tinggi 3 cm, panjang 5 cm. Volumenya?',d:[8,3,5],unit:'cm',u3:'cm³',ans:60,pemb:'Luas alas = ½ × 8 × 3 = 12 cm². V = 12 × 5 = 60 cm³.'},
+   {q:'Kolam renang anak berbentuk prisma segitiga: alas 10 m, tinggi 6 m, panjang 8 m. Volume kolam?',d:[10,6,8],unit:'m',u3:'m³',ans:240,pemb:'Luas alas = ½ × 10 × 6 = 30 m². V = 30 × 8 = 240 m³.'},
+   {q:'Atap kandang berbentuk prisma segitiga: alas 14 m, tinggi 4 m, panjang 5 m. Volume atap?',d:[14,4,5],unit:'m',u3:'m³',ans:140,pemb:'Luas alas = ½ × 14 × 4 = 28 m². V = 28 × 5 = 140 m³.'},
+   {q:'Prisma kaca hias: alas segitiga 6 cm, tinggi segitiga 8 cm, panjang prisma 7 cm. Berapa volumenya?',d:[6,8,7],unit:'cm',u3:'cm³',ans:168,pemb:'Luas alas = ½ × 6 × 8 = 24 cm². V = 24 × 7 = 168 cm³.'}]},
+ {id:'limas',nama:'Limas Segiempat',rumus:'V = ⅓ × s × s × t',
+  def:'Limas segiempat punya alas persegi dan satu titik puncak di atas. Bentuknya seperti piramida di Mesir!',
+  sifat:['1 alas persegi','4 sisi segitiga','8 rusuk','5 titik sudut'],
+  contoh:{judul:'Contoh Menghitung',steps:['s = 6 cm, t = 10 cm','V = ⅓ × 6 × 6 × 10','V = ⅓ × 360 = 120 cm³']},
+  vis:{html:`<div class="vis-stage" id="limas-stage">${svgShape('limas',[6,10])}</div>
+   <div class="vis-ctrl">
+   <div class="ctrl-row"><span>Sisi alas (s)</span><b id="limas-sv">6</b></div><input type="range" id="limas-s" min="2" max="10" value="6">
+   <div class="ctrl-row"><span>Tinggi limas (t)</span><b id="limas-tv">10</b></div><input type="range" id="limas-t" min="2" max="12" value="10">
+   <div class="live" id="limas-live"></div></div>
+   <div class="fun-line" id="limas-fun"></div>`,
+  wire(root){const upd=()=>{const s=+root.querySelector('#limas-s').value,t=+root.querySelector('#limas-t').value;
+    root.querySelector('#limas-stage').innerHTML=svgShape('limas',[s,t]);
+    root.querySelector('#limas-sv').textContent=s;root.querySelector('#limas-tv').textContent=t;
+    root.querySelector('#limas-live').innerHTML=`V = ⅓ × s × s × t = ⅓ × ${s} × ${s} × ${t} = ⅓ × ${fmt(s*s*t)} = <b>${fmt(s*s*t/3)}</b> satuan³`;
+    root.querySelector('#limas-fun').innerHTML=`Rahasia: butuh <b>3 limas</b> untuk mengisi 1 balok yang alas dan tingginya sama (${s}×${s}×${t} = ${fmt(s*s*t)})!`;};
+   ['limas-s','limas-t'].forEach(id=>root.querySelector('#'+id).addEventListener('input',upd));upd();}},
+  latihan:[
+   {q:'Miniatur piramida berbentuk limas segiempat dengan sisi alas 6 cm dan tinggi 10 cm. Berapa volumenya?',d:[6,10],unit:'cm',u3:'cm³',ans:120,pemb:'V = ⅓ × 6 × 6 × 10 = ⅓ × 360 = 120 cm³.'},
+   {q:'Alat peraga limas di kelas memiliki sisi alas 3 cm dan tinggi 8 cm. Hitunglah volume alat peraga itu!',d:[3,8],unit:'cm',u3:'cm³',ans:24,pemb:'V = ⅓ × 3 × 3 × 8 = ⅓ × 72 = 24 cm³.'},
+   {q:'Tenda piramida memiliki sisi alas 9 dm dan tinggi 5 dm. Berapa volume ruang di dalam tenda?',d:[9,5],unit:'dm',u3:'dm³',ans:135,pemb:'V = ⅓ × 9 × 9 × 5 = ⅓ × 405 = 135 dm³.'},
+   {q:'Hiasan limas dari kaca memiliki sisi alas 6 cm dan tinggi 7 cm. Berapa volumenya?',d:[6,7],unit:'cm',u3:'cm³',ans:84,pemb:'V = ⅓ × 6 × 6 × 7 = ⅓ × 252 = 84 cm³.'},
+   {q:'Patok taman berbentuk limas dengan sisi alas 3 dm dan tinggi 14 dm. Volume patok itu adalah…',d:[3,14],unit:'dm',u3:'dm³',ans:42,pemb:'V = ⅓ × 3 × 3 × 14 = ⅓ × 126 = 42 dm³.'}]},
+ {id:'tabung',nama:'Tabung',rumus:'V = π × r × r × t',
+  def:'Tabung punya alas dan tutup berbentuk lingkaran. Selimutnya bisa dibuka menjadi persegi panjang — seperti kaleng susu!',
+  sifat:['2 sisi lingkaran','1 selimut persegi panjang','Tidak punya rusuk'],
+  contoh:{judul:'Contoh Menghitung',steps:['r = 7 cm, t = 10 cm, π = 22/7','V = 22/7 × 7 × 7 × 10','V = 1.540 cm³']},
+  vis:{html:`<div class="vis-stage"><div style="position:relative;width:100%;max-width:360px" id="tabung-wrap">
+   <div id="tabung-tube" style="transition:.45s">${svgShape('tabung',[7,10])}</div>
+   <div id="tabung-net" style="position:absolute;inset:0;opacity:0;transform:scale(.94);transition:.45s;pointer-events:none"></div></div></div>
+   <div class="vis-ctrl">
+   <div class="ctrl-row"><span>Jari-jari (r)</span><b id="tabung-rv">7</b></div><input type="range" id="tabung-r" min="2" max="10" value="7">
+   <div class="ctrl-row"><span>Tinggi (t)</span><b id="tabung-tv">10</b></div><input type="range" id="tabung-t" min="2" max="12" value="10">
+   <span class="pi-chip" id="tabung-pi"></span>
+   <div class="live" id="tabung-live"></div>
+   <button class="btn" id="tabung-netbtn" style="align-self:flex-start">Buka Jaring-Jaring</button></div>`,
+  wire(root){const upd=()=>{const r=+root.querySelector('#tabung-r').value,t=+root.querySelector('#tabung-t').value,pi=piPick(r);
+    root.querySelector('#tabung-tube').innerHTML=svgShape('tabung',[r,t]);
+    root.querySelector('#tabung-net').innerHTML=svgNet(r,t,pi);
+    root.querySelector('#tabung-rv').textContent=r;root.querySelector('#tabung-tv').textContent=t;
+    root.querySelector('#tabung-pi').textContent=`π = ${pi.s} `+(r%7===0?'(r kelipatan 7)':'(r bukan kelipatan 7)');
+    root.querySelector('#tabung-live').innerHTML=`V = π × r × r × t = ${pi.s} × ${r} × ${r} × ${t} = <b>${fmt(pi.v*r*r*t)}</b> satuan³`;};
+   ['tabung-r','tabung-t'].forEach(id=>root.querySelector('#'+id).addEventListener('input',upd));upd();
+   const btn=root.querySelector('#tabung-netbtn'),wrap=root.querySelector('#tabung-wrap');
+   btn.addEventListener('click',()=>{const on=wrap.classList.toggle('net');
+    wrap.querySelector('#tabung-tube').style.opacity=on?0:1;
+    wrap.querySelector('#tabung-net').style.opacity=on?1:0;wrap.querySelector('#tabung-net').style.transform=on?'none':'scale(.94)';
+    btn.textContent=on?'Tutup Jaring-Jaring':'Buka Jaring-Jaring';});}},
+  latihan:[
+   {q:'Kaleng susu berbentuk tabung dengan jari-jari 7 cm dan tinggi 10 cm. Berapa volume kaleng itu? (π = 22/7)',d:[7,10],unit:'cm',u3:'cm³',ans:1540,pemb:'V = 22/7 × 7 × 7 × 10 = 22 × 7 × 10 = 1.540 cm³.'},
+   {q:'Drum kecil berbentuk tabung dengan jari-jari 10 dm dan tinggi 8 dm. Volume drum? (π = 3,14)',d:[10,8],unit:'dm',u3:'dm³',ans:2512,pemb:'V = 3,14 × 10 × 10 × 8 = 2.512 dm³.'},
+   {q:'Tabung kaca memiliki jari-jari 14 cm dan tinggi 5 cm. Hitunglah volumenya! (π = 22/7)',d:[14,5],unit:'cm',u3:'cm³',ans:3080,pemb:'V = 22/7 × 14 × 14 × 5 = 22 × 2 × 14 × 5 = 3.080 cm³.'},
+   {q:'Gelas tinggi berbentuk tabung: jari-jari 7 cm, tinggi 15 cm. Volume gelas? (π = 22/7)',d:[7,15],unit:'cm',u3:'cm³',ans:2310,pemb:'V = 22/7 × 7 × 7 × 15 = 22 × 7 × 15 = 2.310 cm³.'},
+   {q:'Lilin berbentuk tabung dengan jari-jari 5 cm dan tinggi 12 cm. Berapa volume lilin? (π = 3,14)',d:[5,12],unit:'cm',u3:'cm³',ans:942,pemb:'V = 3,14 × 5 × 5 × 12 = 942 cm³.'}]},
+ {id:'kerucut',nama:'Kerucut',rumus:'V = ⅓ × π × r × r × t',
+  def:'Kerucut punya alas lingkaran dan satu puncak runcing — seperti topi ulang tahun atau cone es krim!',
+  sifat:['1 alas lingkaran','1 selimut berbentuk juring','1 titik puncak'],
+  contoh:{judul:'Contoh Menghitung',steps:['r = 7 cm, t = 12 cm, π = 22/7','V = ⅓ × 22/7 × 7 × 7 × 12','V = ⅓ × 1.848 = 616 cm³']},
+  vis:{html:`<div class="vis-stage" id="kerucut-stage">${svgShape('kerucut',[7,12])}</div>
+   <div class="vis-ctrl">
+   <div class="ctrl-row"><span>Jari-jari (r)</span><b id="kerucut-rv">7</b></div><input type="range" id="kerucut-r" min="2" max="10" value="7">
+   <div class="ctrl-row"><span>Tinggi (t)</span><b id="kerucut-tv">12</b></div><input type="range" id="kerucut-t" min="2" max="12" value="12">
+   <span class="pi-chip" id="kerucut-pi"></span>
+   <div class="live" id="kerucut-live"></div></div>
+   <div class="fun-line">Isi air ke kerucut sampai penuh, tuang ke tabung — butuh <b>3 kerucut</b> penuh untuk memenuhi 1 tabung yang alas &amp; tingginya sama!</div>`,
+  wire(root){const upd=()=>{const r=+root.querySelector('#kerucut-r').value,t=+root.querySelector('#kerucut-t').value,pi=piPick(r);
+    root.querySelector('#kerucut-stage').innerHTML=svgShape('kerucut',[r,t]);
+    root.querySelector('#kerucut-rv').textContent=r;root.querySelector('#kerucut-tv').textContent=t;
+    root.querySelector('#kerucut-pi').textContent=`π = ${pi.s}`;
+    root.querySelector('#kerucut-live').innerHTML=`V = ⅓ × π × r × r × t = ⅓ × ${pi.s} × ${r} × ${r} × ${t} = <b>${fmt(pi.v*r*r*t/3)}</b> satuan³`;};
+   ['kerucut-r','kerucut-t'].forEach(id=>root.querySelector('#'+id).addEventListener('input',upd));upd();}},
+  latihan:[
+   {q:'Topi ulang tahun berbentuk kerucut dengan jari-jari 7 cm dan tinggi 12 cm. Berapa volume topi itu? (π = 22/7)',d:[7,12],unit:'cm',u3:'cm³',ans:616,pemb:'V = ⅓ × 22/7 × 7 × 7 × 12 = ⅓ × 1.848 = 616 cm³.'},
+   {q:'Hiasan kerucut dari kertas karton: jari-jari 7 cm, tinggi 3 cm. Volume hiasan? (π = 22/7)',d:[7,3],unit:'cm',u3:'cm³',ans:462,pemb:'V = ⅓ × 22/7 × 7 × 7 × 3 = 22 × 7 × 3 = 462 cm³.'},
+   {q:'Cone es krim memiliki jari-jari 3 cm dan tinggi 10 cm. Berapa volume cone itu? (π = 3,14)',d:[3,10],unit:'cm',u3:'cm³',ans:94.2,pemb:'V = ⅓ × 3,14 × 3 × 3 × 10 = 94,2 cm³.'},
+   {q:'Penutup tangki air berbentuk kerucut: jari-jari 6 dm, tinggi 10 dm. Volume penutup? (π = 3,14)',d:[6,10],unit:'dm',u3:'dm³',ans:376.8,pemb:'V = ⅓ × 3,14 × 6 × 6 × 10 = ⅓ × 1.130,4 = 376,8 dm³.'},
+   {q:'Tumpukan pasir berbentuk kerucut: jari-jari 14 m, tinggi 6 m. Volume pasir? (π = 22/7)',d:[14,6],unit:'m',u3:'m³',ans:1232,pemb:'V = ⅓ × 22/7 × 14 × 14 × 6 = ⅓ × 3.696 = 1.232 m³.'}]}];
+
+function svgNet(r,t,pi){
+ const C=COLORS.tabung;
+ const u2=Math.min(9,140/(2*Math.PI*r+t+2*r)),rc=r*u2,w=2*pi.v*r*u2,h=t*u2;
+ const x=(240-w)/2,y=(210-(h+2*rc))/2+rc;
+ let s=`<rect x="${F1(x)}" y="${F1(y)}" width="${F1(w)}" height="${F1(h)}" fill="${C.m}" stroke="${INK}" stroke-width="2.5" rx="2"/>`;
+ s+=`<circle cx="120" cy="${F1(y)}" r="${F1(rc)}" fill="${C.l}" stroke="${INK}" stroke-width="2.5"/>`;
+ s+=`<circle cx="120" cy="${F1(y+h)}" r="${F1(rc)}" fill="${C.l}" stroke="${INK}" stroke-width="2.5"/>`;
+ s+=`<circle cx="120" cy="${F1(y+h)}" r="2.6" fill="${INK}"/>`+LN(120,y+h,120+rc,y+h,{w:2})+T(120+rc/2,y+h-8,'r = '+r,{sz:14});
+ s+=T(120,y-rc-8,'2 × π × r',{sz:14})+LN(x-12,y,x-12,y+h,{w:2,da:'4 5'})+LN(x-17,y,x-7,y,{w:2})+LN(x-17,y+h,x-7,y+h,{w:2})+T(x-22,y+h/2,'t',{a:'end',rot:-90});
+ s+=T(120,208,`Keliling lingkaran = 2 × π × r = 2 × ${pi.s} × ${r} = ${fmt(2*pi.v*r)}`,{sz:13.5,f:'rgba(51,38,29,.75)'});
+ return `<svg viewBox="0 0 240 212" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+}
+
+/* ================= DATA KUIS & GAME ================= */
+const QUIZ=[
+ {q:'Rara memiliki bak pensil berbentuk kubus dengan panjang rusuk 6 cm. Berapa volume bak pensil Rara?',o:['18 cm³','36 cm³','216 cm³','126 cm³'],a:2,p:'Kubus: V = s × s × s = 6 × 6 × 6 = 216 cm³.'},
+ {q:'Ayah membuat kotak kado berbentuk balok berukuran panjang 4 dm, lebar 2 dm, dan tinggi 3 dm. Volume kotak kado itu adalah…',o:['9 dm³','24 dm³','12 dm³','26 dm³'],a:1,p:'Balok: V = p × l × t = 4 × 2 × 3 = 24 dm³.'},
+ {q:'Akuarium Bu Sari berbentuk balok berukuran 50 cm × 30 cm × 40 cm. Volume akuarium itu adalah…',o:['6.000 cm³','12.000 cm³','60.000 cm³','120.000 cm³'],a:2,p:'V = 50 × 30 × 40 = 60.000 cm³. Wah, sama dengan 60 liter air!'},
+ {q:'Kaleng susu berbentuk tabung dengan jari-jari 7 cm dan tinggi 10 cm (π = 22/7). Volume kaleng susu adalah…',o:['220 cm³','440 cm³','1.540 cm³','2.200 cm³'],a:2,p:'V = 22/7 × 7 × 7 × 10 = 22 × 7 × 10 = 1.540 cm³.'},
+ {q:'Tenda camping berbentuk prisma segitiga. Alas segitiganya 8 m dengan tinggi 3 m, dan panjang tenda 5 m. Volume udara di dalam tenda adalah…',o:['24 m³','40 m³','60 m³','120 m³'],a:2,p:'Luas alas = ½ × 8 × 3 = 12 m². V = 12 × 5 = 60 m³.'},
+ {q:'Topi ulang tahun Dina berbentuk kerucut dengan jari-jari 7 cm dan tinggi 12 cm (π = 22/7). Volume topi itu adalah…',o:['264 cm³','308 cm³','616 cm³','1.848 cm³'],a:2,p:'V = ⅓ × 22/7 × 7 × 7 × 12 = ⅓ × 1.848 = 616 cm³.'},
+ {q:'Miniatur piramida berbentuk limas segiempat dengan sisi alas 6 cm dan tinggi 10 cm. Volumenya adalah…',o:['60 cm³','120 cm³','360 cm³','600 cm³'],a:1,p:'V = ⅓ × s × s × t = ⅓ × 6 × 6 × 10 = ⅓ × 360 = 120 cm³.'},
+ {q:'Segelas jus berbentuk tabung dengan jari-jari 5 cm dan tinggi 8 cm (π = 3,14). Jika penuh, volume jusnya adalah…',o:['125,6 ml','200 ml','628 ml','1.256 ml'],a:2,p:'V = 3,14 × 5 × 5 × 8 = 628 cm³ = 628 ml.'},
+ {q:'Balok kayu berukuran 8 cm × 4 cm × 4 cm akan diisi kubus-kubus kecil dengan rusuk 2 cm. Banyak kubus kecil yang dibutuhkan adalah…',o:['8 buah','16 buah','32 buah','64 buah'],a:1,p:'Volume balok = 8 × 4 × 4 = 128 cm³. Volume kubus kecil = 2 × 2 × 2 = 8 cm³. Banyaknya = 128 ÷ 8 = 16 buah.'},
+ {q:'Tumpukan pasir berbentuk kerucut dengan jari-jari 7 m dan tinggi 6 m (π = 22/7). Volume pasir itu adalah…',o:['77 m³','154 m³','264 m³','308 m³'],a:3,p:'V = ⅓ × 22/7 × 7 × 7 × 6 = ⅓ × 924 = 308 m³.'}];
+const GAME=[
+ {t:72,c:[['balok',[6,4,3]],['balok',[8,3,2]],['kubus',[4]]],a:0,n:'Bu Rina'},
+ {t:64,c:[['balok',[5,4,3]],['kubus',[4]],['balok',[8,2,3]]],a:1,n:'Kak Dinda'},
+ {t:1000,c:[['kubus',[9]],['balok',[20,10,4]],['kubus',[10]]],a:2,n:'Ayu'},
+ {t:150,c:[['balok',[10,5,2]],['kubus',[5]],['balok',[5,5,6]]],a:2,n:'Tante Mia'},
+ {t:1540,c:[['tabung',[7,10]],['tabung',[7,9]],['tabung',[14,5]]],a:0,n:'Kak Salsa'},
+ {t:120,c:[['prisma',[8,3,5]],['prisma',[6,4,10]],['prisma',[6,4,8]]],a:1,n:'Pak Beni'},
+ {t:84,c:[['limas',[6,10]],['limas',[3,8]],['limas',[6,7]]],a:2,n:'Laras'},
+ {t:616,c:[['kubus',[8]],['kerucut',[7,12]],['tabung',[7,10]]],a:1,n:'Kak Fira'},
+ {t:240,c:[['kubus',[6]],['balok',[8,5,5]],['prisma',[10,6,8]]],a:2,n:'Om Dodi'},
+ {t:512,c:[['balok',[16,8,2]],['balok',[10,8,6]],['kubus',[8]]],a:2,n:'Nayla'}];
+const SHAPE_NAME={kubus:'Kubus',balok:'Balok',prisma:'Prisma',limas:'Limas',tabung:'Tabung',kerucut:'Kerucut'};
+
+/* ================= KUE (GAME) ================= */
+function cakeSVG(t,d){
+ const ch='stroke="'+INK+'" stroke-width="2.5" stroke-linejoin="round"';
+ let s='';
+ if(t==='kubus'||t==='balok'){
+  const w=t==='kubus'?Math.max(56,Math.min(11*d[0],108)):Math.min(118,30+d[0]*5);
+  const h=t==='kubus'?w:Math.max(34,Math.min(66,22+d[2]*6));
+  const ox=Math.min(30,(t==='kubus'?d[0]*3:12+d[1]*4)),oy=ox*.85,x0=(170-w-ox)/2,fy=118-h;
+  const sc='M'+x0+' '+fy;
+  s+=`<path d="M${x0} ${fy} L${x0+ox} ${fy-oy} L${x0+ox+w} ${fy-oy} L${x0+w} ${fy} Z" fill="#F9C3D6" ${ch}/>`;
+  s+=`<path d="M${x0+w} ${fy} L${x0+ox+w} ${fy-oy} L${x0+ox+w} ${fy-oy+h} L${x0+w} ${fy+h} Z" fill="#96613A" ${ch}/>`;
+  s+=`<rect x="${x0}" y="${fy}" width="${w}" height="${h}" fill="#B47B4B" ${ch}/>`;
+  let dr=sc;for(let i=0;i<4;i++)dr+=` q ${w/8} ${Math.min(12,h*.24)}, ${w/4} 0`;
+  s+=`<path d="${dr}" fill="#F9C3D6" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>`;
+  s+=`<circle cx="${x0+ox+w/2}" cy="${fy-oy/2}" r="6" fill="#E23E57" ${ch}/><path d="M${x0+ox+w/2} ${fy-oy/2-6} q 2 -6 7 -7" fill="none" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>`;
+  [[.2,.5,'#FFFDF6'],[.45,.68,'#F5B840'],[.7,.55,'#79B851'],[.3,.82,'#2AA88C'],[.6,.85,'#F26D5B']].forEach(p=>{
+   s+=`<rect x="${x0+w*p[0]}" y="${fy+h*.4+h*p[1]*.5}" width="7" height="3.4" rx="1.7" fill="${p[2]}" transform="rotate(-18 ${x0+w*p[0]} ${fy+h*.4+h*p[1]*.5})" stroke="${INK}" stroke-width="1"/>`;});
+ }
+ else if(t==='tabung'){
+  const rx=Math.min(48,15+d[0]*3.4),h=Math.max(46,Math.min(92,24+d[1]*4.4)),cx=85,top=126-h;
+  s+=`<path d="M${cx-rx} ${top} V118 A${rx} ${rx*.3} 0 0 0 ${cx+rx} 118 V${top}" fill="#B47B4B" ${ch}/>`;
+  let dr='M'+(cx-rx)+' '+top;for(let i=0;i<4;i++)dr+=` q ${rx/4} 10, ${rx/2} 0`;
+  s+=`<path d="${dr}" fill="#F9C3D6" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>`;
+  s+=`<ellipse cx="${cx}" cy="${top}" rx="${rx}" ry="${rx*.3}" fill="#F9C3D6" ${ch}/>`;
+  s+=`<circle cx="${cx}" cy="${top-8}" r="6" fill="#E23E57" ${ch}/><path d="M${cx} ${top-14} q 2 -6 7 -7" fill="none" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>`;
+ }
+ else if(t==='prisma'){
+  const w=Math.min(100,40+d[0]*4),h=Math.min(74,26+d[1]*4.4),x0=(170-w-24)/2,yb=124,ap=[x0+w/2,yb-h];
+  s+=`<path d="M${x0+w} ${yb} L${x0+w+24} ${yb-18} L${x0+w/2+24} ${yb-h-18} L${ap[0]} ${ap[1]} Z" fill="#96613A" ${ch}/>`;
+  s+=`<path d="M${x0} ${yb} L${x0+w} ${yb} L${ap[0]} ${ap[1]} Z" fill="#B47B4B" ${ch}/>`;
+  s+=`<path d="M${x0+4} ${yb-3} h ${w-8} l ${-(w*.06)} -13 h ${-(w-8-w*.12)} Z" fill="#F9C3D6" ${ch}/>`;
+  s+=`<circle cx="${ap[0]}" cy="${ap[1]-9}" r="6" fill="#E23E57" ${ch}/>`;
+ }
+ else if(t==='limas'){
+  const w=Math.min(104,36+d[0]*4.4),h=Math.min(80,24+d[1]*4),x0=(170-w-26)/2,yb=126;
+  const P3=[x0+w+26,yb-19],Ap=[x0+w/2+13,yb-h-19];
+  s+=`<path d="M${x0} ${yb} L${x0+w} ${yb} L${P3[0]} ${yb-19} L${x0+26} ${yb-19} Z" fill="#E7D3B3" ${ch}/>`;
+  s+=`<path d="M${x0+26} ${yb-19} L${P3[0]} ${yb-19} L${Ap[0]} ${Ap[1]} Z" fill="#F9C3D6" ${ch}/>`;
+  s+=`<path d="M${x0} ${yb} L${x0+w} ${yb} L${Ap[0]} ${Ap[1]} Z" fill="#B47B4B" ${ch}/>`;
+  s+=`<circle cx="${Ap[0]}" cy="${Ap[1]-8}" r="6" fill="#E23E57" ${ch}/>`;
+ }
+ else if(t==='kerucut'){
+  const rx=Math.min(42,14+d[0]*2.8),h=Math.max(46,Math.min(86,20+d[1]*3.6)),cx=85,by=126;
+  s+=`<path d="M${cx-rx} ${by} A${rx} ${rx*.3} 0 0 0 ${cx+rx} ${by} L${cx} ${by-h} Z" fill="#E0B067" ${ch}/>`;
+  s+=`<path d="M${cx-rx*.5} ${by-h*.35} L${cx+rx*.35} ${by-h*.1} M${cx-rx*.25} ${by-h*.6} L${cx+rx*.55} ${by-h*.35}" stroke="#C08A45" stroke-width="2" fill="none"/>`;
+  s+=`<circle cx="${cx}" cy="${by-h-16}" r="22" fill="#F9C3D6" ${ch}/>`;
+  s+=`<circle cx="${cx}" cy="${by-h-46}" r="6" fill="#E23E57" ${ch}/><path d="M${cx} ${by-h-52} q 2 -6 7 -7" fill="none" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>`;
+ }
+ return `<svg viewBox="0 0 170 150" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+}
+function cakeLabel(t,d){
+ if(t==='kubus')return ['Kubus','rusuk '+d[0]+' cm'];
+ if(t==='balok')return ['Balok',d.join(' × ')+' cm'];
+ if(t==='tabung')return ['Tabung','r = '+d[0]+', t = '+d[1]];
+ if(t==='prisma')return ['Prisma','a='+d[0]+', t='+d[1]+', T='+d[2]];
+ if(t==='limas')return ['Limas','s = '+d[0]+', t = '+d[1]];
+ return ['Kerucut','r = '+d[0]+', t = '+d[1]];
+}
+function custSVG(){
+ return `<svg viewBox="0 0 120 118" class="c-neutral" id="custFace">
+  <path d="M22 60 C22 30 42 16 60 16 C78 16 98 30 98 60 L98 74 L22 74 Z" fill="#6B4A2F" stroke="${INK}" stroke-width="2.5"/>
+  <circle cx="60" cy="58" r="34" fill="#FFD9B8" stroke="${INK}" stroke-width="2.5"/>
+  <path d="M28 46 C32 30 48 24 60 24 C72 24 88 30 92 46 C80 38 68 36 60 36 C52 36 40 38 28 46 Z" fill="#6B4A2F"/>
+  <path d="M43 56 q5 -6 10 0" class="e e1" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+  <path d="M67 56 q5 -6 10 0" class="e e2" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+  <circle class="m-flat-e e1" cx="47" cy="56" r="3" fill="${INK}"/><circle class="m-flat-e e2" cx="73" cy="56" r="3" fill="${INK}"/>
+  <circle cx="38" cy="66" r="5" fill="#F5A9A0" opacity=".8"/><circle cx="82" cy="66" r="5" fill="#F5A9A0" opacity=".8"/>
+  <path class="m-smile" d="M46 68 q14 12 28 0" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+  <path class="m-flat" d="M50 70 h20" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+  <path class="m-sad" d="M48 74 q12 -9 24 0" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+  <path class="tear" d="M78 62 q4 6 0 10 q-4 -4 0 -10" fill="#7CC6D6" stroke="${INK}" stroke-width="1.5"/>
+  <path class="brow" d="M40 46 l12 4 M80 46 l-12 4" stroke="${INK}" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M30 116 q0 -26 30 -26 q30 0 30 26 Z" fill="#F26D5B" stroke="${INK}" stroke-width="2.5"/>
+  <circle cx="60" cy="102" r="6" fill="#F5B840" stroke="${INK}" stroke-width="2"/></svg>`;
+}
+
+/* ================= INISIALISASI SLIDE ================= */
+/* Cover art */
+(function(){
+ const art=$('#coverArt');
+ const put=(type,d,style,delay,w)=>{const dv=el(`<div class="bob" style="${style};animation-delay:${delay}s;width:${w}px">${svgShape(type,d,{labels:false})}</div>`);art.appendChild(dv);};
+ put('balok',[7,4,4],'left:2%;top:52%',0,200);
+ put('kubus',[5],'left:36%;top:8%',.5,170);
+ put('tabung',[6,8],'right:4%;top:40%',1,160);
+ put('limas',[6,8],'left:12%;top:0',1.4,150);
+ put('kerucut',[6,9],'right:22%;top:0',.8,130);
+ put('prisma',[7,5,6],'right:0;top:70%',.3,180);
+})();
+
+/* Daftar bangun harian */
+(function(){
+ const list=$('#dailyList'),panel=$('#dailyPanel');
+ DAILY.forEach((d,i)=>{
+  const b=el(`<button class="pick-btn ${i===0?'on':''}" style="--c:${COLORS[d.id].m}">${shapeMini(d.id)}${d.nama}<span class="pick-dot">${icon('check')}</span></button>`);
+  b.addEventListener('click',()=>{$$('#dailyList .pick-btn').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderDaily(d.id);tone('click');});
+  list.appendChild(b);});
+ window.renderDaily=id=>{const d=DAILY.find(x=>x.id===id),C=COLORS[id];
+  panel.innerHTML=`<div class="panel-card"><div class="fig">${dailyScene(id)}</div>
+   <div><h3>${shapeMini(id)} ${d.nama}</h3><p class="pdesc">${d.desc}</p>
+   <ul class="pitems">${d.items.map(it=>`<li><span class="bullet" style="background:${C.m}"></span>${it}</li>`).join('')}</ul>
+   <div class="fact">${icon('bulb')}<span>${d.fact}</span></div></div></div>`;};
+ renderDaily('kubus');
+})();
+
+/* Daftar luas bangun datar */
+(function(){
+ const list=$('#flatList'),panel=$('#flatPanel');
+ FLAT.forEach((f,i)=>{
+  const b=el(`<button class="pick-btn ${i===0?'on':''}">${f.svg().replace('viewBox','width="42" height="42" viewBox')}<span style="flex:1">${f.nama}</span><span class="pick-dot">${icon('check')}</span></button>`);
+  b.addEventListener('click',()=>{$$('#flatList .pick-btn').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderFlat(f.id);tone('click');});
+  list.appendChild(b);});
+ window.renderFlat=id=>{const f=FLAT.find(x=>x.id===id);
+  panel.innerHTML=`<div class="panel-card"><div class="fig">${f.svg()}</div>
+   <div><h3>${f.nama}</h3><div class="formula-big">${f.rumus}</div><p class="pdesc">${f.ex}</p>
+   <div class="fact">${icon('bulb')}<span>${f.note}</span></div></div></div>`;};
+ renderFlat('persegi');
+ $('#flatBridge').innerHTML=`${icon('bulb')} Kunci pentingnya: <b>&nbsp;Volume = Luas Alas × Tinggi&nbsp;</b> — jadi luas ini adalah "alas" dari semua petualangan kita!`;
+})();
+
+/* Slide materi + panel latihan */
+MAT.forEach((m,i)=>{
+ const sec=el(`<section class="slide" data-title="Materi: ${m.nama}">
+  <div class="inner">
+   <div class="sl-head"><span class="kicker">Materi Inti · Bangun ${i+1} dari 6</span>
+    <h2>${m.nama} <span class="rumus-chip">${m.rumus}</span></h2></div>
+   <div class="mat-wrap">
+    <div class="mat-visual">${m.vis.html}</div>
+    <div class="mat-info"><p class="def">${m.def}</p>
+     <ul class="sifat">${m.sifat.map(s=>`<li>${s}</li>`).join('')}</ul>
+     <div class="contoh"><b>${m.contoh.judul}</b>${m.contoh.steps.map(s=>`<span>${s}</span>`).join('')}</div></div>
+   </div>
+   <div class="mat-cta"><button class="btn btn-pri btn-big ex-open">${icon('pencil')} Ayo Latihan!</button><span>5 soal bergambar ukuran siap mengujimu!</span></div>
+  </div>
+  <div class="ex-panel"><div class="ex-inner">
+   <div class="ex-top"><b>Latihan ${m.nama}</b><span class="ex-count"></span>
+    <button class="icon-btn ex-close" title="Tutup latihan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+   <div class="dots ex-dots"></div><div class="ex-body"></div>
+  </div></div></section>`);
+ m.vis.wire(sec);
+ sec.querySelector('.ex-open').addEventListener('click',()=>openEx(sec,m));
+ sec.querySelector('.ex-close').addEventListener('click',()=>{sec.querySelector('.ex-panel').classList.remove('open');tone('click');});
+ $('#deck').insertBefore(sec,$('#deck').children[4+i]);
+});
+
+/* Kesimpulan notes */
+(function(){
+ const notes=[['Kubus','V = s × s × s','#FAD9CF'],['Balok','V = p × l × t','#D3EEE5'],
+  ['Prisma','V = luas alas × t','#FBE8BD'],['Limas','V = ⅓ × s × s × t','#FBDFEA'],
+  ['Tabung','V = π × r² × t','#E3F2D5'],['Kerucut','V = ⅓ × π × r² × t','#FBE8D2'],
+  ['Pi (π)','22/7 atau 3,14','#FFFDF6']];
+ const rot=[-3,2.5,-2,3,-2.5,1.8,-1];
+ $('#noteRow').innerHTML=notes.map((n,i)=>`<div class="note" style="background:${n[2]};--r:${rot[i]}deg"><small>${n[0]}</small><b>${n[0]}</b><span>${n[1]}</span></div>`).join('');
+})();
+
+/* Refleksi */
+(function(){
+ const faces=[
+  ['Senang','<path d="M20 27q4-6 8 0M36 27q4-6 8 0" fill="none" stroke="#33261D" stroke-width="3" stroke-linecap="round"/><path d="M21 37q11 11 22 0" fill="none" stroke="#33261D" stroke-width="3" stroke-linecap="round"/>'],
+  ['Oke','<circle cx="24" cy="27" r="2.8" fill="#33261D"/><circle cx="40" cy="27" r="2.8" fill="#33261D"/><path d="M24 39h16" fill="none" stroke="#33261D" stroke-width="3" stroke-linecap="round"/>'],
+  ['Bingung','<circle cx="24" cy="28" r="2.8" fill="#33261D"/><circle cx="40" cy="28" r="2.8" fill="#33261D"/><path d="M18 20l9 3M46 20l-9 3" stroke="#33261D" stroke-width="2.6" stroke-linecap="round"/><circle cx="32" cy="41" r="4.5" fill="none" stroke="#33261D" stroke-width="3"/>'],
+  ['Lelah','<path d="M20 26l8 3M44 26l-8 3" stroke="#33261D" stroke-width="2.6" stroke-linecap="round"/><path d="M23 42q9-7 18 0" fill="none" stroke="#33261D" stroke-width="3" stroke-linecap="round"/>']];
+ $('#faceRow').innerHTML=faces.map((f,i)=>`<button class="f-opt" data-v="${f[0]}"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#FFD66B" stroke="#33261D" stroke-width="2.5"/>${f[1]}</svg>${f[0]}</button>`).join('');
+ $$('#faceRow .f-opt').forEach(b=>b.addEventListener('click',()=>{$$('#faceRow .f-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');tone('click');}));
+ $('#chipRow').innerHTML=Object.keys(SHAPE_NAME).map(k=>`<button class="ref-chip" data-v="${SHAPE_NAME[k]}">${SHAPE_NAME[k]}</button>`).join('');
+ $$('#chipRow .ref-chip').forEach(b=>b.addEventListener('click',()=>{$$('#chipRow .ref-chip').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');tone('click');}));
+ $('#refSend').innerHTML=icon('send')+' Kirim Refleksi';
+ $('#refSend').addEventListener('click',()=>{
+  const f=$('#faceRow .f-opt.sel'),c=$('#chipRow .ref-chip.sel'),t=$('#refText').value.trim();
+  if(!f){toast('Pilih dulu perasaanmu ya!');return;}
+  if(!t){toast('Tulis satu hal yang kamu pelajari ya!');$('#refText').focus();return;}
+  state.ref={face:f.dataset.v,shape:c?c.dataset.v:'-',text:t};
+  const out=$('#refOut');
+  out.innerHTML=`${icon('check')} <b>Terima kasih, ${state.name||'Sahabat Volume'}!</b> Kamu merasa <b>${state.ref.face}</b>, materi tersulit menurutmu: <b>${state.ref.shape}</b>, dan kamu belajar: “${t}”. Sampai jumpa di petualangan berikutnya!`;
+  out.classList.add('show');confettiCenter();tone('good');});
+ $('#restartBtn').innerHTML=icon('refresh')+' Ulangi dari Awal';
+ $('#restartBtn').addEventListener('click',()=>location.reload());
+})();
+
+/* Thanks shapes */
+ $('#thxShapes').innerHTML=Object.keys(COLORS).map(k=>shapeMini(k)).join('');
+ $('#gameStart').innerHTML=icon('cake')+' Buka Toko!';
+ $('#gameAgain').innerHTML=icon('refresh')+' Main Lagi';
+
+/* ================= LATIHAN ================= */
+const exSession={};
+function openEx(sec,m){
+ const panel=sec.querySelector('.ex-panel');
+ if(!state.ex[m.id])state.ex[m.id]=Array(5).fill(null);
+ exSession[m.id]={i:0,locked:Array(5).fill(false)};
+ panel.classList.add('open');tone('click');
+ renderExQ(sec,m);
+}
+function renderExQ(sec,m){
+ const S=exSession[m.id],it=m.latihan[S.i];
+ sec.querySelector('.ex-count').textContent=`Soal ${S.i+1} dari 5`;
+ const dots=sec.querySelector('.ex-dots');
+ dots.innerHTML=state.ex[m.id].map((v,i)=>`<span class="${v===true?'ok':v===false?'no':i===S.i?'cur':''}"></span>`).join('');
+ const cap=(m.id==='tabung'||m.id==='kerucut')?`π = ${piPick(it.d[0]).s}`:null;
+ sec.querySelector('.ex-body').innerHTML=`<div class="ex-card">
+  <div class="ex-fig">${svgShape(m.id,it.d,{cap})}</div>
+  <div><p class="ex-text">${S.i+1}. ${it.q}</p>
+   <span class="known">Diketahui: ${knownOf(m.id,it)}</span>
+   <div class="ex-answer"><input type="text" inputmode="decimal" placeholder="Volume = ..." ${S.locked[S.i]?'disabled':''}><span class="ex-unit">${it.u3}</span>
+   <button class="btn btn-pri ex-check" ${S.locked[S.i]?'disabled':''}>Cek Jawaban</button></div>
+   <div class="fb"></div>
+   <button class="btn ex-next">${S.i<4?'Soal Berikutnya':'Lihat Skor Latihan'} ${icon('arrowR')}</button>
+  </div></div>`;
+ const inp=sec.querySelector('.ex-answer input'),check=sec.querySelector('.ex-check'),
+  fb=sec.querySelector('.fb'),next=sec.querySelector('.ex-next');
+ if(!S.locked[S.i]){inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter')check.click();});}
+ check.addEventListener('click',()=>{
+  if(S.locked[S.i])return;
+  const val=parseNum(inp.value);
+  if(isNaN(val)){toast('Tulis jawabanmu dulu ya!');inp.focus();return;}
+  S.locked[S.i]=true;
+  const good=Math.abs(val-it.ans)<0.011;
+  state.ex[m.id][S.i]=good;
+  inp.disabled=true;check.disabled=true;sec.querySelector('.ex-answer').classList.add('locked');
+  fb.className='fb show '+(good?'good':'bad');
+  if(good){fb.innerHTML=`${icon('check')} <b>Hebat, jawabanmu benar!</b><br>${it.pemb}`;tone('good');
+   const r=inp.getBoundingClientRect();confetti(r.left+r.width/2,r.top,14);}
+  else{fb.innerHTML=`${icon('x')} <b>Belum tepat.</b> Jawaban yang benar: <b>${fmt(it.ans)} ${it.u3}</b>.<br>${it.pemb}`;tone('bad');}
+  dots.children[S.i].className=good?'ok':'no';next.classList.add('show');
+  popBtn(next);updateMissions();});
+ next.addEventListener('click',()=>{
+  if(S.i<4){S.i++;renderExQ(sec,m);tone('click');}
+  else renderExFinal(sec,m);});
+}
+function renderExFinal(sec,m){
+ const r=state.ex[m.id],n=r.filter(v=>v===true).length;
+ const st=n===5?3:n===4?2:n===3?1:0;
+ sec.querySelector('.ex-count').textContent='Selesai';
+ sec.querySelector('.ex-body').innerHTML=`<div class="ex-card" style="display:block;text-align:center">
+  <div class="ex-final"><h3>Latihan ${m.nama} Selesai!</h3>
+  <div class="stars-big">${[0,1,2].map(i=>icon('star','fill'+(i<st?'':' off'))).join(' ')}</div>
+  <p style="font-weight:800;font-size:1.15rem">Jawaban benar: <b>${n} dari 5</b> soal</p>
+  <p style="font-weight:700;opacity:.8;margin:6px 0 16px">${st===3?'Sempurna! Kamu menguasai '+m.nama+'!':st===2?'Hebat! Sedikit lagi sempurna!':st===1?'Bagus, terus berlatih ya!':'Jangan menyerah, coba pelajari lagi materinya ya!'}</p>
+  <button class="btn btn-pri btn-big ex-done">Selesai &amp; Kembali ${icon('check')}</button></div></div>`;
+ if(st>=2)confettiCenter();
+ sec.querySelector('.ex-done').addEventListener('click',()=>{
+  sec.querySelector('.ex-panel').classList.remove('open');tone('click');updateMissions();});
+}
+function knownOf(id,it){
+ const u=it.unit,d=it.d;
+ switch(id){
+  case 'kubus':return `s = ${d[0]} ${u}`;
+  case 'balok':return `p = ${d[0]} ${u}, l = ${d[1]} ${u}, t = ${d[2]} ${u}`;
+  case 'prisma':return `a = ${d[0]} ${u}, t = ${d[1]} ${u}, tinggi prisma = ${d[2]} ${u}`;
+  case 'limas':return `s = ${d[0]} ${u}, t = ${d[1]} ${u}`;
+  default:return `r = ${d[0]} ${u}, t = ${d[1]} ${u}, π = ${piPick(d[0]).s}`;}
+}
+
+/* ================= GAME ================= */
+ $('#gameStart').addEventListener('click',()=>{
+ state.game={i:0,score:0,opened:true};
+ $('#gameIntro').style.display='none';$('#gameEnd').style.display='none';
+ $('#gamePlay').style.display='grid';$('#custChar').innerHTML=custSVG();
+ renderOrder();tone('good');});
+ $('#gameAgain').addEventListener('click',()=>$('#gameStart').click());
+function renderOrder(){
+ const g=state.game,o=GAME[g.i];
+ $('#gameOrderNo').textContent=`Pesanan ${g.i+1} / ${GAME.length}`;
+ $('#gameScoreChip').textContent=`Poin: ${g.score}`;
+ $('#orderBubble').innerHTML=`<b>${o.n}</b> berkata:<br>“Aku mau kue dengan volume tepat <span class="hl">${fmt(o.t)} cm³</span>. Kue yang mana, ya?”`;
+ const face=$('#custFace');if(face)face.setAttribute('class','c-neutral');
+ $('#gameFb').className='game-fb';$('#gameNext').style.display='none';
+ $('#cakeRow').innerHTML=o.c.map((c,i)=>{
+  const[lab,sub]=cakeLabel(c[0],c[1]);
+  return `<button class="cake" data-i="${i}">${cakeSVG(c[0],c[1])}<div class="c-lab">${lab}</div><div class="c-sub">${sub}</div></button>`;}).join('');
+ $$('#cakeRow .cake').forEach(b=>b.addEventListener('click',()=>pickCake(+b.dataset.i,b)));
+}
+function pickCake(i,btn){
+ const g=state.game,o=GAME[g.i],[t,d]=o.c[i],v=volOf(t,d),fb=$('#gameFb');
+ if(i===o.a){
+  btn.classList.add('right');$$('#cakeRow .cake').forEach(x=>{if(+x.dataset.i!==i)x.classList.add('off');});
+  g.score+=10;$('#custFace').setAttribute('class','c-happy');
+  fb.className='game-fb show good';
+  fb.innerHTML=`${icon('check')} <b>Yeay, pesanan pas!</b> Volume kue ini memang ${fmt(v)} cm³. ${o.n} pulang sambil tersenyum lebar!`;
+  confettiCenter();tone('good');
+  $('#gameScoreChip').textContent=`Poin: ${g.score}`;
+  $('#gameNext').style.display='inline-flex';
+  $('#gameNext').innerHTML=g.i<GAME.length-1?'Pesanan Berikutnya '+icon('arrowR'):'Tutup Toko '+icon('trophy');
+ }else{
+  btn.classList.add('off');$('#custFace').setAttribute('class','c-sad');
+  fb.className='game-fb show bad';
+  fb.innerHTML=`${icon('x')} <b>Ups, belum pas!</b> Volume kue itu ${fmt(v)} cm³, bukan ${fmt(o.t)} cm³. Hitung ulang kue yang lain!`;tone('bad');
+ }
+}
+ $('#gameNext').addEventListener('click',()=>{
+ const g=state.game;
+ if(g.i<GAME.length-1){g.i++;renderOrder();tone('click');}
+ else{
+  $('#gamePlay').style.display='none';$('#gameEnd').style.display='block';
+  const st=g.score>=90?3:g.score>=70?2:g.score>=50?1:0;
+  $('#gameStars').innerHTML=[0,1,2].map(i=>icon('star','fill'+(i<st?'':' off'))).join(' ');
+  $('#gameEndMsg').textContent=`Skor akhir: ${g.score} dari 100 poin. ${st===3?'Pelanggan semua puas — kamu kepala toko kue sejati!':st===2?'Kerja bagus! Tokomu ramai karena kuemu pas volumenya!':st===1?'Lumayan! Ayo latih lagi jagoan hitung volumenya.':'Jangan sedih — buka lagi tokonya dan coba hitung lebih teliti ya!'}`;
+  if(st>=2)confettiCenter();tone('good');updateMissions();
+ }});
+
+/* ================= KUIS ================= */
+function renderQuizDots(){
+ $('#quizDots').innerHTML=state.quiz.ans.map((v,i)=>
+  `<span class="${v===null?(i===state.quiz.i?'cur':''):v===true?'ok':'no'}"></span>`).join('');
+}
+function renderQuiz(){
+ const qz=state.quiz,i=qz.i,q=QUIZ[i];
+ if(qz.done){renderQuizEnd();return;}
+ renderQuizDots();
+ const answered=qz.ans[i]!==null;
+ $('#quizBody').innerHTML=`<div class="quiz-card ${answered?'locked':''}">
+  <p style="font-weight:900;margin-bottom:8px;color:var(--coral)">Soal ${i+1} dari 10</p>
+  <p class="q-text">${q.q}</p>
+  <div class="opts">${q.o.map((o,j)=>`<button class="opt ${answered?(j===q.a?'correct':j===qz.picks[i]?'wrong':''):(qz.picks&&qz.picks[i]===j?'selected':'')}" data-j="${j}">
+   <span class="opt-key">${'ABCD'[j]}</span><span>${o}</span></button>`).join('')}</div>
+  <div class="fb quiz-fb"></div>
+  <div class="quiz-actions">${answered?'':
+   `<button class="btn btn-pri quiz-check">${icon('check')} Cek Jawaban</button>`}
+   <button class="btn quiz-next">${i<9?'Soal Berikutnya':'Lihat Hasil Kuis'} ${icon('arrowR')}</button></div></div>`;
+ if(!qz.picks)qz.picks=Array(10).fill(null);
+ const card=$('#quizBody .quiz-card');
+ $$('#quizBody .opt').forEach(b=>b.addEventListener('click',()=>{
+  if(answered)return;qz.picks[i]=+b.dataset.j;tone('click');
+  $$('#quizBody .opt').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');}));
+ const check=$('#quizBody .quiz-check');
+ if(check)check.addEventListener('click',()=>{
+  if(qz.picks[i]===null){toast('Pilih dulu salah satu jawaban ya!');return;}
+  qz.ans[i]=qz.picks[i]===q.a;
+  if(qz.ans[i])qz.correct++;
+  renderQuiz();
+  const fb=$('#quizBody .quiz-fb'),good=qz.ans[i];
+  fb.className='fb show '+(good?'good':'bad');
+  fb.innerHTML=good?`${icon('check')} <b>Benar sekali!</b> ${q.p}`:`${icon('x')} <b>Belum tepat.</b> Jawaban yang benar: <b>${'ABCD'[q.a]}. ${q.o[q.a]}</b>.<br>${q.p}`;
+  good?tone('good'):tone('bad');
+  const r=fb.getBoundingClientRect();if(good)confetti(r.left+r.width/2,r.top,14);
+  renderQuizDots();updateMissions();});
+ $('#quizBody .quiz-next').addEventListener('click',()=>{
+  if(qz.ans[i]===null){toast('Jawab dulu soal ini, lalu tekan Cek Jawaban!');return;}
+  if(i<9){qz.i++;renderQuiz();tone('click');}
+  else{qz.done=true;renderQuizEnd();updateMissions();confettiCenter();tone('good');}});
+}
+function renderQuizEnd(){
+ renderQuizDots();
+ const c=state.quiz.correct,pred=c>=9?'Luar biasa! Kamu jago volume!':c>=7?'Hebat! Sedikit lagi sempurna!':c>=5?'Bagus, ayo terus berlatih!':'Semangat! Ulangi materinya lalu coba lagi ya!';
+ $('#quizBody').innerHTML=`<div id="quizEnd" class="res-card"><h3 style="justify-content:center">Kuis Selesai!</h3>
+  <p style="font-family:Fredoka;font-weight:700;font-size:2.6rem;color:var(--coral)">${c} / 10</p>
+  <p style="font-weight:900;font-size:1.1rem;margin:6px 0 16px">${pred}</p>
+  <button class="btn btn-pri btn-big" id="toResults">Lihat Papan Prestasi ${icon('trophy')}</button></div>`;
+ $('#toResults').addEventListener('click',()=>goTo(slides.findIndex(s=>s.dataset.title==='Hasil Belajarku')));
+}
+renderQuiz();
+
+/* ================= HASIL ================= */
+function starRow(n){return [0,1,2].map(i=>icon('star','fill'+(i<n?'':' off'))).join('');}
+function renderResults(){
+ $('#resName').textContent=state.name||'Sahabat Volume';
+ const rows=MAT.map(m=>{
+  const r=state.ex[m.id],has=r&&r.some(v=>v!==null);
+  const n=has?r.filter(v=>v===true).length:0;
+  const st=n===5?3:n===4?2:n===3?1:0;
+  return `<div class="rex">${shapeMini(m.id)}<span class="rn">${m.nama}</span>
+   <span class="rdots">${r?r.map(v=>`<i class="${v===true?'ok':v===false?'no':''}"></i>`).join(''):Array(5).fill('<i></i>').join('')}</span>
+   <span class="rs">${has?n+' / 5':'—'}</span><span class="rstars">${has?starRow(st):''}</span></div>`;}).join('');
+ const qc=state.quiz.done?state.quiz.correct:null;
+ const ringC=2*Math.PI*54,off=qc===null?ringC:ringC*(1-qc/10);
+ const pred=qc===null?'Belum dikerjakan':qc>=9?'Luar biasa!':qc>=7?'Hebat sekali!':qc>=5?'Bagus, lanjutkan!':'Terus semangat!';
+ const totalExN=totalEx(),gameS=state.game.opened?state.game.score:null;
+ let msg;
+ if(totalExN===0&&qc===null&&gameS===null)msg='Ayo mulai petualanganmu! Selesaikan latihan, mainkan game, dan taklukkan kuis — lalu kembali ke sini!';
+ else{const parts=[];parts.push(`Latihan: <b>${totalExN}/30</b>`);if(qc!==null)parts.push(`Kuis: <b>${qc}/10</b>`);if(gameS!==null)parts.push(`Toko Kue: <b>${gameS} poin</b>`);
+  msg=parts.join(' &nbsp;·&nbsp; ')+(totalExN+ (qc||0)*3 >=45?' Luar biasa, kamu penjelajah volume sejati!':' Sedikit lagi menuju gelar Master Volume!');}
+ $('#resContent').innerHTML=`<div class="res-grid">
+  <div class="res-card"><h3>${icon('pencil')} Hasil Latihan per Bangun</h3>${rows}</div>
+  <div class="res-card"><h3>${icon('trophy')} Skor Kuis Soal Cerita</h3>
+   <div class="ring-wrap">
+    <svg class="ring" width="130" height="130" viewBox="0 0 130 130">
+     <circle class="bg" cx="65" cy="65" r="54" fill="none" stroke-width="14"/>
+     <circle class="fg" cx="65" cy="65" r="54" fill="none" stroke-width="14" stroke-linecap="round"
+      stroke-dasharray="${F1(ringC)}" stroke-dashoffset="${F1(off)}"/></svg>
+    <div class="ring-num">${qc===null?'-':qc+'/10'}</div>
+    <div class="pred">${pred}</div></div></div></div>
+  <div class="res-total">${icon('star','fill')} <span>${msg}</span></div>`;
+}
+
+/* ================= MISI ================= */
+function updateMissions(){
+ const set=(id,ok)=>{const elx=$('#'+id);if(ok&&!elx.classList.contains('done'))tone('click');elx.classList.toggle('done',ok);};
+ set('m1',state.sawMateri);
+ set('m2',Object.values(state.ex).flat().some(v=>v!==null));
+ set('m3',totalEx()>=15);
+ set('m4',state.quiz.done);
+}
+
+/* ================= NAVIGASI ================= */
+const slides=$$('.slide');
+const N=slides.length;
+let nameReady=false;
+function goTo(i){
+ if(i<0||i>=N)return;
+ state.slide=i;
+ slides.forEach((s,j)=>s.classList.toggle('active',j===i));
+ $('#navCount').textContent=`${i+1} / ${N}`;
+ $('#progressBar').style.width=((i+1)/N*100)+'%';
+ $('#prevBtn').disabled=i===0;
+ $('#nextBtn').disabled=i===N-1||(i===0&&!nameReady);
+ if((slides[i].dataset.title||'').startsWith('Materi'))state.sawMateri=true;
+ if(slides[i].dataset.title==='Hasil Belajarku')renderResults();
+ if(slides[i].dataset.title==='Terima Kasih')renderThanks();
+ slides[i].scrollTop=0;
+ updateMissions();
+}
+function renderThanks(){
+ $('#thanksName').textContent=state.name||'Sahabat Volume';
+ const te=totalEx(),qc=state.quiz.done?state.quiz.correct:null,gs=state.game.opened?state.game.score:null;
+ $('#thxCard').innerHTML=`Latihan <b>${te}/30</b> · Kuis <b>${qc===null?'—':qc+'/10'}</b> · Toko Kue <b>${gs===null?'—':gs+' poin'}</b><br>`+
+  (te===0&&qc===null&&gs===null?'Jangan lupa coba latihan, game, dan kuisnya ya!':'Kamu memang hebat!');
+}
+ $('#prevBtn').addEventListener('click',()=>{goTo(state.slide-1);tone('click');});
+ $('#nextBtn').addEventListener('click',()=>{goTo(state.slide+1);tone('click');});
+document.addEventListener('keydown',e=>{
+ if(e.target.matches('input,textarea'))return;
+ if(e.key==='ArrowRight'&&state.slide<N-1)goTo(state.slide+1);
+ if(e.key==='ArrowLeft'&&state.slide>0)goTo(state.slide-1);
+ if(e.key==='Escape'){$('#menuOv').classList.remove('show');$$('.ex-panel.open').forEach(p=>p.classList.remove('open'));}});
+
+/* Daftar isi */
+ $('#menuList').innerHTML=slides.map((s,i)=>`<button class="mi" data-i="${i}"><i>${i+1}</i>${s.dataset.title}</button>`).join('');
+ $$('#menuList .mi').forEach(b=>b.addEventListener('click',()=>{goTo(+b.dataset.i);$('#menuOv').classList.remove('show');}));
+ $('#menuBtn').addEventListener('click',()=>$('#menuOv').classList.add('show'));
+ $('#menuClose').addEventListener('click',()=>$('#menuOv').classList.remove('show'));
+ $('#menuOv').addEventListener('click',e=>{if(e.target.id==='menuOv')$('#menuOv').classList.remove('show');});
+
+/* Cover: nama */
+function checkName(){
+ const v=$('#nameInput').value.trim();
+ state.name=v;nameReady=v.length>0;
+ $('#chipName').textContent=v||'Sahabat Volume';
+ $('#nameChip').classList.toggle('show',nameReady);
+ $('#nextBtn').disabled=!(nameReady&&state.slide===0)||state.slide===N-1;
+ if(nameReady&&state.slide===0)$('#nextBtn').disabled=false;
+}
+ $('#nameInput').addEventListener('input',checkName);
+ $('#nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('#startBtn').click();});
+ $('#startBtn').addEventListener('click',()=>{
+ const v=$('#nameInput').value.trim();
+ if(!v){toast('Tulis dulu namamu ya, supaya petualanganmu tercatat!');
+  const inp=$('#nameInput');inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),450);
+  inp.focus();tone('bad');return;}
+ popBtn($('#startBtn'));confettiCenter();tone('good');goTo(1);});
+
+goTo(0);
+</script>
+</body>
+</html>
