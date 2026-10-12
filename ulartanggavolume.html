@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ular Tangga Volume — Bank Soal Volume Bangun Ruang Kelas 4 SD</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f7eeda;--ink:#3d2c1e;--wood:#7a4a22;--wood2:#5b3a1a;--cream:#fffaf0;--cream2:#f4e8cd;--green:#2f9e44;--greenD:#256b33;--red:#d9480f;--p1:#e8590c;--p2:#0ca678;--gold:#e8b30f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;color:var(--ink);min-height:100vh;background-color:var(--paper);background-image:radial-gradient(rgba(122,74,34,.10) 1.2px,transparent 1.3px);background-size:26px 26px}
+header{text-align:center;padding:18px 12px 4px}
+h1{font-family:'Baloo 2',cursive;font-size:clamp(26px,5vw,44px);color:var(--wood2);line-height:1.05}
+h1 .a{color:#c92a2a}h1 .b{color:var(--greenD)}h1 .c{color:#1971c2}
+.tagline{font-weight:700;color:#8a6a3f;margin-top:2px;font-size:clamp(12px,2vw,16px)}
+.stage{display:flex;gap:22px;justify-content:center;align-items:flex-start;flex-wrap:wrap;padding:14px 16px 40px;max-width:1120px;margin:0 auto}
+.boardWrap{width:min(94vw,620px)}
+.board{position:relative;aspect-ratio:1;border:10px solid var(--wood);border-radius:16px;overflow:hidden;background:var(--cream);box-shadow:0 12px 26px rgba(91,58,26,.28),inset 0 0 0 3px rgba(255,255,255,.35)}
+.grid{position:absolute;inset:0;z-index:1;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr)}
+.cell{position:relative;background:var(--cream);border:.5px solid rgba(122,74,34,.16);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1px;overflow:hidden;text-align:center}
+.cell.alt{background:var(--cream2)}
+.cell.p1{background:#eef7e2}.cell.p1.alt{background:#e4f0d3}
+.cell.p2{background:#fdf6e0}.cell.p2.alt{background:#f6eccd}
+.cell.p3{background:#fdeeea}.cell.p3.alt{background:#f8e2da}
+.cell .num{position:absolute;top:1px;left:3px;font-family:'Baloo 2';font-weight:800;font-size:clamp(7px,1.6vw,12px);color:#9a6a33}
+.cell .q{font-size:clamp(6px,1.3vw,10.5px);line-height:1.08;font-weight:800;color:#5a4527;margin-top:9px;word-break:break-word}
+.cell.lad{background:linear-gradient(180deg,#e6f6dd,#d0efc0)}.cell.lad .q{color:var(--greenD)}
+.cell.snk{background:linear-gradient(180deg,#ffe8e0,#ffd4c8)}.cell.snk .q{color:var(--redD)}
+.cell.start{background:#ffedb0}
+.cell.finish{background:radial-gradient(circle at 50% 42%,#ffe9a0,#ffd43b)}
+.cell .mini{width:36%;max-width:24px;aspect-ratio:1;margin-top:7px}
+.cell.occ0{box-shadow:inset 0 0 0 3px rgba(232,89,12,.65)}
+.cell.occ1{box-shadow:inset 0 0 0 3px rgba(12,166,120,.65)}
+#overlay{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
+.rail{stroke:#8a5a2b;stroke-width:7;stroke-linecap:round}
+.rung{stroke:#c98d4f;stroke-width:5;stroke-linecap:round}
+.pawn{position:absolute;z-index:10;width:6.2%;aspect-ratio:1;border-radius:50%;border:2.5px solid #fff;box-shadow:0 3px 7px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Baloo 2';font-weight:800;font-size:clamp(10px,2.4vw,17px);transition:left .3s ease,top .3s ease}
+.pawn.x0{background:radial-gradient(circle at 32% 28%,#ffa94d,var(--p1) 55%,#a83c04)}
+.pawn.x1{background:radial-gradient(circle at 32% 28%,#4fd8b0,var(--p2) 55%,#057a5b)}
+.pawn.noTrans{transition:none}
+.legend{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px;font-size:12.5px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fffdf6;border:1.5px solid #e5d5b0;border-radius:999px;padding:3px 10px;font-weight:700}
+.chip i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.panel{width:min(94vw,340px);display:flex;flex-direction:column;gap:12px}
+.card{background:#fffdf6;border:2px solid #e5d5b0;border-radius:14px;padding:14px;box-shadow:0 4px 10px rgba(91,58,26,.08)}
+.cardTitle{font-family:'Baloo 2';font-weight:800;font-size:15px;color:#8a6a3f;margin-bottom:6px}
+.who{font-family:'Baloo 2';font-weight:800;font-size:20px}
+.diceRow{display:flex;align-items:center;gap:16px;margin-top:10px}
+.dice{width:64px;height:64px;flex:none;background:#fff;border:2px solid #d9c79b;border-radius:12px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:9px;gap:2px;box-shadow:0 4px 0 #d9c79b}
+.dice.rolling{animation:droll .12s linear infinite}
+@keyframes droll{50%{transform:rotate(7deg) scale(1.05)}}
+.pip{width:9px;height:9px;border-radius:50%;background:#3d2c1e;place-self:center;visibility:hidden}
+.pip.on{visibility:visible}
+.diceSide{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.hintKbd{font-size:11.5px;color:#a08755;font-weight:700}
+.diceVal{font-size:13px;font-weight:800;color:#8a6a3f}
+#msg{min-height:46px;font-weight:700;color:#5b4632;background:#fbf3df;border:1.5px dashed #dcc794;border-radius:10px;padding:8px 10px;margin-top:12px;font-size:14px}
+.playerCard{display:flex;align-items:center;gap:11px;transition:transform .15s}
+.playerCard.active{outline:3px solid #f1d38a;transform:translateY(-1px)}
+.pdot{width:18px;height:18px;border-radius:50%;flex:none;box-shadow:inset -2px -3px 4px rgba(0,0,0,.25)}
+.pname{font-family:'Baloo 2';font-weight:800;font-size:17px}
+.pstat{font-size:13px;color:#6b5335;font-weight:700}
+.st{width:13px;height:13px;vertical-align:-2px}
+.logBox{max-height:150px;overflow:auto;font-size:12.5px;display:flex;flex-direction:column;gap:4px}
+.logBox div{background:#faf4e4;border-radius:8px;padding:4px 8px;border-left:4px solid #e3d2a8}
+.logBox div.lp0{border-left-color:var(--p1)}
+.logBox div.lp1{border-left-color:var(--p2)}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Baloo 2';font-weight:700;border:none;border-radius:12px;padding:11px 20px;font-size:16px;cursor:pointer;background:var(--red);color:#fff;box-shadow:0 4px 0 #a63c05;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a63c05}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn.green{background:var(--green);box-shadow:0 4px 0 #1b6e2c}
+.btn.green:active{box-shadow:0 1px 0 #1b6e2c}
+.btn.ghost{background:#fff;color:#6b4f23;border:2px solid #d9c79b;box-shadow:0 3px 0 #d9c79b}
+.btn.small{padding:7px 12px;font-size:13px}
+.ovl{position:fixed;inset:0;background:rgba(59,42,22,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.ovl.top{z-index:60}
+.hidden{display:none!important}
+.sheet{background:#fffdf6;border-radius:18px;padding:22px;max-width:540px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.35);border:3px solid var(--wood)}
+.sheet h2{font-family:'Baloo 2';color:var(--wood2);font-size:24px;margin-bottom:6px}
+.nameRow{display:flex;align-items:center;gap:10px;margin:10px 0}
+.nameRow label{font-weight:800;width:118px;font-size:14px;display:flex;align-items:center;gap:7px}
+.nameRow .pdot{width:14px;height:14px}
+input[type=text]{padding:10px 12px;border:2px solid #d9c79b;border-radius:10px;font:inherit;font-weight:700;background:#fff}
+input[type=text]:focus{outline:none;border-color:var(--green)}
+.rules{background:#f6efdb;border-radius:12px;padding:12px 14px;font-size:13.5px;margin:12px 0}
+.rules ol{margin-left:18px}
+.rules li{margin:5px 0}
+.tips{margin-top:8px;background:#fdf6d8;border:1.5px dashed #dcb95c;border-radius:8px;padding:8px 10px;font-size:12.5px}
+.center{text-align:center}
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:'Baloo 2';font-weight:800;font-size:12.5px;padding:4px 12px;border-radius:999px}
+.badge svg{width:14px;height:14px}
+.badge.p1{background:#d7efc0;color:#256b33}
+.badge.p2{background:#fbe8b8;color:#8a6410}
+.badge.p3{background:#ffd6c9;color:#a03018}
+.badge.hots{background:#ffe9ae;color:#8a6400}
+#qText{font-size:16.5px;font-weight:700;margin:12px 0 4px;line-height:1.6}
+.qFig{margin:8px 0 4px;display:flex;justify-content:center}
+.qFig svg{width:min(100%,300px);height:auto;background:#faf4e4;border:1.5px solid #e8dcbc;border-radius:10px}
+.optGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.optBtn{display:flex;align-items:center;gap:9px;text-align:left;padding:10px 12px;border:2px solid #d9c79b;border-radius:11px;background:#fff;cursor:pointer;font:inherit;font-weight:700;color:#3d2c1e;transition:.12s}
+.optBtn:hover:not(:disabled){border-color:#b08d3e;background:#fdf6e0;transform:translateY(-1px)}
+.optBtn .key{flex:none;width:26px;height:26px;border-radius:8px;background:#f1e4c3;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2';font-weight:800;color:#6b4f23}
+.optBtn.correct{border-color:#2f9e44;background:#e3f5e1}
+.optBtn.correct .key{background:#2f9e44;color:#fff}
+.optBtn.wrong{border-color:#d64545;background:#fdeaea;opacity:.75}
+.optBtn.wrong .key{background:#d64545;color:#fff}
+.optBtn.reveal{border-color:#2f9e44;box-shadow:0 0 0 2px rgba(47,158,68,.35)}
+.optBtn:disabled{cursor:default}
+.kbdHint{font-size:11.5px;color:#a08755;font-weight:700;margin-top:9px;text-align:center}
+.qFeedback{margin-top:12px;font-weight:800;display:none;gap:8px;align-items:flex-start;font-size:15px;line-height:1.4}
+.qFeedback.show{display:flex}
+.qFeedback.good{color:#2b8a3e}
+.qFeedback.bad{color:#c92a2a}
+.fi{width:20px;height:20px;flex:none;margin-top:1px}
+.explain{margin-top:10px;background:#f6efdb;border-left:4px solid #b08d3e;padding:9px 11px;font-size:13.5px;border-radius:0 8px 8px 0;line-height:1.55;display:none}
+.explain.show{display:block}
+.qactions{display:flex;justify-content:space-between;gap:10px;margin-top:16px;flex-wrap:wrap}
+.shake{animation:shake .28s 2}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+details{margin:4px 0;border:1.5px solid #efe3c4;border-radius:10px;padding:4px 12px;background:#fdf9ef}
+summary{font-family:'Baloo 2';color:var(--wood2);font-size:15px;padding:7px 0;cursor:pointer;list-style-position:inside}
+.kitem{font-size:13px;line-height:1.55;padding:8px 0;border-bottom:1px solid #efe3c4}
+.kitem i{color:#7a6134}
+.wrow{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;background:#faf4e4;border-radius:10px;padding:8px 12px;margin:6px 0;font-size:14px}
+.winTag{background:var(--gold);color:#5b3a1a;font-family:'Baloo 2';font-weight:800;padding:2px 10px;border-radius:999px;font-size:12px}
+.bigTrophy{width:84px;height:84px;filter:drop-shadow(0 5px 7px rgba(0,0,0,.25))}
+.confettiLayer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.confettiLayer i{position:absolute;top:-8%;display:block;animation:cfall linear infinite}
+@keyframes cfall{0%{transform:translateY(-10vh) rotate(0)}100%{transform:translateY(112vh) rotate(760deg)}}
+footer{text-align:center;font-size:12.5px;color:#a08755;padding:0 12px 26px;font-weight:700}
+@media (max-width:600px){.cell .q{display:none}.cell.spec .q{display:block;font-size:6.5px}.optGrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="a">ULAR</span> <span class="b">TANGGA</span> <span class="c">VOLUME</span></h1>
+  <div class="tagline">Volume Bangun Ruang &bull; Kelas 4 SD &bull; Kubus, Balok, Prisma, Tabung, Limas &amp; Kerucut</div>
+</header>
+
+<main class="stage">
+  <section class="boardWrap">
+    <div class="board" id="board">
+      <div class="grid" id="grid"></div>
+      <svg id="overlay" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg>
+    </div>
+    <div class="legend">
+      <span class="chip"><i style="background:#d9ecbf"></i>Kotak 2&ndash;33 &bull; MUDAH (A)</span>
+      <span class="chip"><i style="background:#f3e3ad"></i>Kotak 34&ndash;66 &bull; SEDANG (B)</span>
+      <span class="chip"><i style="background:#f5c4b4"></i>Kotak 67&ndash;99 &bull; SULIT (C)</span>
+      <span class="chip"><i style="background:#bde3ac"></i>Tangga = HOTS (D)</span>
+      <span class="chip"><i style="background:#ffc4b0"></i>Ular = HOTS (D)</span>
+    </div>
+  </section>
+
+  <aside class="panel">
+    <div class="card">
+      <div class="who">Giliran: <span id="turnName">&ndash;</span></div>
+      <div class="diceRow">
+        <div class="dice" id="dice"></div>
+        <div class="diceSide">
+          <button class="btn green" id="btnRoll" disabled>Lempar Dadu</button>
+          <div class="diceVal">Dadu: <b id="diceVal">&ndash;</b></div>
+          <div class="hintKbd">atau tekan tombol Spasi</div>
+        </div>
+      </div>
+      <div id="msg">Isi nama pemain untuk memulai petualangan!</div>
+    </div>
+    <div class="card playerCard" id="pc0"></div>
+    <div class="card playerCard" id="pc1"></div>
+    <div class="card">
+      <div class="cardTitle">Catatan Permainan</div>
+      <div class="logBox" id="log"></div>
+    </div>
+    <div class="tools">
+      <button class="btn ghost small" id="btnKey">Kunci Jawaban (Tutor)</button>
+      <button class="btn ghost small" id="btnSound">Suara: ON</button>
+      <button class="btn ghost small" id="btnHow">Cara Bermain</button>
+    </div>
+  </aside>
+</main>
+
+<footer>Dibuat untuk belajar Volume Bangun Ruang sambil bermain bersama tutor.</footer>
+
+<!-- ============ SETUP ============ -->
+<div class="ovl" id="setupOvl">
+  <div class="sheet">
+    <h2 class="center">Selamat Datang, Petualang Volume!</h2>
+    <p class="center" style="font-weight:700;color:#8a6a3f">Masukkan nama 2 pemain untuk memulai.</p>
+    <div class="nameRow">
+      <label><span class="pdot" style="background:var(--p1)"></span>Pemain 1:</label>
+      <input type="text" id="inName1" maxlength="14" placeholder="Nama pemain pertama" autocomplete="off">
+    </div>
+    <div class="nameRow">
+      <label><span class="pdot" style="background:var(--p2)"></span>Pemain 2:</label>
+      <input type="text" id="inName2" maxlength="14" placeholder="Nama pemain kedua" autocomplete="off">
+    </div>
+    <div class="rules" id="setupRules"></div>
+    <div class="center"><button class="btn green" id="btnStart" onclick="startGame()" style="font-size:19px;padding:13px 34px">Mulai Bermain!</button></div>
+  </div>
+</div>
+
+<!-- ============ MODAL SOAL ============ -->
+<div class="ovl top hidden" id="qOvl">
+  <div class="sheet">
+    <span class="badge p1" id="qBadge">SOAL</span>
+    <h2 id="qTitle" style="margin-top:8px">Kotak</h2>
+    <p id="qText"></p>
+    <div class="qFig hidden" id="qFigWrap"></div>
+    <div class="optGrid" id="opts"></div>
+    <div class="kbdHint">Tips: tekan tombol <b>A</b>&ndash;<b>D</b> (atau 1&ndash;4) di keyboard untuk memilih</div>
+    <div class="qFeedback" id="qFeedback"></div>
+    <div class="explain" id="qExplain"></div>
+    <div class="qactions">
+      <button class="btn ghost small" id="btnSkip">Lewati (putusan tutor)</button>
+      <button class="btn green hidden" id="btnNext">Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ KUNCI JAWABAN ============ -->
+<div class="ovl top hidden" id="keyOvl">
+  <div class="sheet">
+    <h2>Kunci Jawaban &amp; Pembahasan <span style="font-size:13px;color:#a08755">(khusus tutor)</span></h2>
+    <div id="keyBody"></div>
+    <div class="center" style="margin-top:14px"><button class="btn" id="btnKeyClose">Tutup</button></div>
+  </div>
+</div>
+
+<!-- ============ CARA BERMAIN ============ -->
+<div class="ovl top hidden" id="howOvl">
+  <div class="sheet">
+    <h2>Cara Bermain</h2>
+    <div id="howBody"></div>
+    <div class="center" style="margin-top:14px"><button class="btn" id="btnHowClose">Tutup</button></div>
+  </div>
+</div>
+
+<!-- ============ PEMENANG ============ -->
+<div class="ovl hidden" id="winOvl">
+  <div class="confettiLayer" id="confetti"></div>
+  <div class="sheet center">
+    <svg class="bigTrophy" viewBox="0 0 24 24" fill="#e8b30f"><path d="M7 2h10v2h4v3a5 5 0 0 1-5 5h-.4a5.5 5.5 0 0 1-2.6 2.5V17h3v3H8v-3h3v-2.5A5.5 5.5 0 0 1 8.4 12H8a5 5 0 0 1-5-5V4h4V2zm-2 4v1a3 3 0 0 0 3 3V6H5zm14 0h-3v4a3 3 0 0 0 3-3V6z"/></svg>
+    <h2 style="font-size:30px">SELAMAT, <span id="winName"></span>!</h2>
+    <p style="font-weight:700;color:#8a6a3f;margin-bottom:10px">Kamu mencapai kotak 100 dan menjadi pemenangnya!</p>
+    <div id="winStats"></div>
+    <div class="center" style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn green" id="btnAgain">Main Lagi</button>
+      <button class="btn ghost" id="btnNew">Ganti Pemain</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* Pelapor galat: bila ada skrip yang gagal, tampilkan di kotak pesan agar terlihat */
+window.addEventListener('error',function(e){var m=document.getElementById('msg');if(m)m.textContent='Terjadi galat skrip: '+((e&&e.message)||e);});
+
+/* ================= DATA PAPAN ================= */
+var LADDERS={3:24,9:31,21:42,36:55,43:77,62:81,71:92,80:99};
+var SNAKES={98:79,97:64,93:46,89:53,87:57,74:39,66:44,33:13,17:5};
+var PCOL=['#e8590c','#0ca678'];
+var SNAKE_COLORS=[
+ {b:'#2f9e44',d:'#1b6e2c'},{b:'#e8590c',d:'#a83e07'},{b:'#1098ad',d:'#0b6f80'},
+ {b:'#d6336c',d:'#96204a'},{b:'#74b816',d:'#4f7d0e'}
+];
+
+/* ============ BANK SOAL: VOLUME BANGUN RUANG (Kelas 4 SD) ============
+   part: 1 = MUDAH  (Bagian A, soal 1-30)   -> kotak 2-33
+         2 = SEDANG (Bagian B, soal 31-55)  -> kotak 34-66
+         3 = SULIT  (Bagian C, soal 56-80)  -> kotak 67-99
+         4 = HOTS   (Bagian D, soal 81-100) -> kotak tangga & kepala ular
+   Semua jawaban diverifikasi ulang secara matematis. */
+var QUESTIONS=[
+{n:1,part:1,t:"Konsep",q:"Kubus adalah bangun ruang yang semua sisinya berbentuk...",opts:["Persegi panjang","Persegi","Segitiga","Lingkaran"],ans:1,ex:"Sisi kubus berbentuk persegi yang kongruen."},
+{n:2,part:1,t:"Rumus",q:"Rumus untuk menghitung volume sebuah kubus dengan panjang rusuk s adalah...",opts:["s \u00D7 s","6 \u00D7 s \u00D7 s","s \u00D7 s \u00D7 s","4 \u00D7 s"],ans:2,ex:"Rumus volume kubus adalah sisi \u00D7 sisi \u00D7 sisi (s\u00B3)."},
+{n:3,part:1,t:"Kubus",q:"Sebuah kubus memiliki panjang rusuk 4 cm. Berapa volume kubus tersebut?",opts:["16 cm\u00B3","32 cm\u00B3","64 cm\u00B3","24 cm\u00B3"],ans:2,ex:"Volume = 4 \u00D7 4 \u00D7 4 = 64 cm\u00B3."},
+{n:4,part:1,t:"Kubus",q:"Perhatikan gambar kubus berikut! Volume kubus di atas adalah...",opts:["9 cm\u00B3","18 cm\u00B3","27 cm\u00B3","81 cm\u00B3"],ans:2,fig:"cube3",ex:"Volume = 3 \u00D7 3 \u00D7 3 = 27 cm\u00B3."},
+{n:5,part:1,t:"Balok",q:"Bangun ruang yang memiliki 6 sisi berbentuk persegi panjang dengan 3 pasang sisi berhadapan sama luas disebut...",opts:["Kubus","Balok","Tabung","Kerucut"],ans:1,ex:"Sifat bangun balok memiliki 6 sisi persegi panjang."},
+{n:6,part:1,t:"Rumus",q:"Rumus volume balok dengan panjang (p), lebar (l), dan tinggi (t) adalah...",opts:["p \u00D7 l \u00D7 t","p + l + t","2 \u00D7 (p + l + t)","6 \u00D7 p \u00D7 l"],ans:0,ex:"Volume balok = panjang \u00D7 lebar \u00D7 tinggi (p \u00D7 l \u00D7 t)."},
+{n:7,part:1,t:"Balok",q:"Sebuah balok memiliki panjang 5 cm, lebar 3 cm, dan tinggi 2 cm. Volumenya adalah...",opts:["10 cm\u00B3","15 cm\u00B3","30 cm\u00B3","25 cm\u00B3"],ans:2,ex:"Volume = 5 \u00D7 3 \u00D7 2 = 30 cm\u00B3."},
+{n:8,part:1,t:"Satuan",q:"Satuan baku yang biasa digunakan untuk mengukur volume bangun ruang adalah...",opts:["cm","cm\u00B2","cm\u00B3","gram"],ans:2,ex:"Satuan volume kubik menggunakan pangkat tiga (cm\u00B3, m\u00B3)."},
+{n:9,part:1,t:"Balok",q:"Sebuah balok memiliki luas alas 24 cm\u00B2 dan tinggi 5 cm. Volumenya adalah...",opts:["29 cm\u00B3","120 cm\u00B3","96 cm\u00B3","144 cm\u00B3"],ans:1,ex:"Volume = luas alas \u00D7 tinggi = 24 \u00D7 5 = 120 cm\u00B3."},
+{n:10,part:1,t:"Tabung",q:"Tabung adalah bangun ruang yang dibatasi oleh dua buah lingkaran yang kongruen dan sebuah sisi...",opts:["Segitiga","Selimut","Datar","Persegi"],ans:1,ex:"Tabung dibatasi 2 lingkaran dan 1 sisi lengkung (selimut)."},
+{n:11,part:1,t:"Prisma",q:"Prisma segitiga adalah prisma yang alas dan tutupnya berbentuk bangun...",opts:["Sejempat","Segitiga","Lingkaran","Segilima"],ans:1,ex:"Prisma segitiga memiliki alas dan tutup berbentuk segitiga."},
+{n:12,part:1,t:"Limas",q:"Limas segi empat memiliki alas berbentuk...",opts:["Segitiga","Segi empat","Lingkaran","Trapesium"],ans:1,ex:"Limas segi empat alasnya berbentuk segi empat."},
+{n:13,part:1,t:"Kerucut",q:"Bangun ruang sisi lengkung yang menyerupai topi petani atau tumpeng adalah...",opts:["Tabung","Kerucut","Bola","Prisma"],ans:1,ex:"Kerucut menyerupai topi petani atau tumpeng."},
+{n:14,part:1,t:"Limas",q:"Limas segitiga adalah limas yang bagian alasnya berbentuk...",opts:["Segitiga","Segi empat","Segi enam","Lingkaran"],ans:0,ex:"Limas segitiga alasnya berbentuk segitiga."},
+{n:15,part:1,t:"Kubus",q:"Jika sebuah kubus volumenya 125 cm\u00B3, maka panjang rusuk kubus tersebut adalah...",opts:["3 cm","4 cm","5 cm","6 cm"],ans:2,ex:"\u00B3\u221A125 = 5 cm, karena 5 \u00D7 5 \u00D7 5 = 125."},
+{n:16,part:1,t:"Balok",q:"Perhatikan gambar balok berikut! Volume balok dengan p = 4 cm, l = 2 cm, dan t = 3 cm adalah...",opts:["9 cm\u00B3","12 cm\u00B3","24 cm\u00B3","18 cm\u00B3"],ans:2,fig:"balok16",ex:"Volume = 4 \u00D7 2 \u00D7 3 = 24 cm\u00B3."},
+{n:17,part:1,t:"Tabung",q:"Berapakah jumlah sisi pada sebuah tabung?",opts:["2","3","4","5"],ans:1,ex:"Tabung memiliki 3 sisi (2 sisi alas/tutup lingkaran, 1 selimut)."},
+{n:18,part:1,t:"Kerucut",q:"Bangun ruang di bawah ini yang memiliki titik puncak di bagian atas adalah...",opts:["Kubus","Tabung","Kerucut","Balok"],ans:2,ex:"Kerucut memiliki titik puncak di bagian atas."},
+{n:19,part:1,t:"Prisma",q:"Prisma segitiga memiliki alas berbentuk segitiga dengan luas alas 10 cm\u00B2 dan tinggi prisma 8 cm. Volumenya adalah...",opts:["40 cm\u00B3","80 cm\u00B3","18 cm\u00B3","60 cm\u00B3"],ans:1,ex:"Volume = luas alas \u00D7 tinggi = 10 \u00D7 8 = 80 cm\u00B3."},
+{n:20,part:1,t:"Limas",q:"Alas sebuah limas segi empat berbentuk persegi dengan panjang sisi 4 cm. Jika tinggi limas 6 cm, berapakah volumenya?",opts:["96 cm\u00B3","48 cm\u00B3","32 cm\u00B3","24 cm\u00B3"],ans:2,ex:"Volume limas = \u2153 \u00D7 luas alas \u00D7 tinggi = \u2153 \u00D7 (4\u00D74) \u00D7 6 = 32 cm\u00B3."},
+{n:21,part:1,t:"Kubus",q:"Sebuah kotak mainan berbentuk kubus mempunyai panjang rusuk 10 cm. Volume kotak tersebut adalah...",opts:["100 cm\u00B3","1.000 cm\u00B3","30 cm\u00B3","600 cm\u00B3"],ans:1,ex:"Volume = 10 \u00D7 10 \u00D7 10 = 1.000 cm\u00B3."},
+{n:22,part:1,t:"Satuan",q:"Satuan liter sering digunakan untuk menyatakan ukuran...",opts:["Panjang","Luas","Volume/kapasitas","Berat"],ans:2,ex:"Liter adalah satuan kapasitas atau volume cair."},
+{n:23,part:1,t:"Satuan",q:"1 liter setara dengan...",opts:["1 cm\u00B3","10 cm\u00B3","100 cm\u00B3","1.000 cm\u00B3"],ans:3,ex:"1 liter = 1 dm\u00B3 = 1.000 cm\u00B3."},
+{n:24,part:1,t:"Satuan",q:"Air sebanyak 2.000 ml sama dengan ... liter.",opts:["0,2 liter","2 liter","20 liter","200 liter"],ans:1,ex:"2.000 ml dibagi 1.000 = 2 liter."},
+{n:25,part:1,t:"Balok",q:"Sebuah balok memiliki volume 120 cm\u00B3. Jika luas alasnya 20 cm\u00B2, maka tinggi balok tersebut adalah...",opts:["4 cm","5 cm","6 cm","10 cm"],ans:1,ex:"Tinggi = Volume \u00F7 luas alas = 120 \u00F7 20 = 6 cm."},
+{n:26,part:1,t:"Kerucut",q:"Kerucut memiliki berapa buah sisi alas berbentuk lingkaran?",opts:["1","2","3","0"],ans:0,ex:"Kerucut memiliki 1 sisi alas berbentuk lingkaran."},
+{n:27,part:1,t:"Rumus",q:"Rumus umum untuk menghitung volume prisma adalah...",opts:["Luas alas \u00D7 tinggi","Keliling alas \u00D7 tinggi","\u2153 \u00D7 luas alas \u00D7 tinggi","s \u00D7 s \u00D7 s"],ans:0,ex:"Volume prisma = luas alas \u00D7 tinggi."},
+{n:28,part:1,t:"Rumus",q:"Rumus umum untuk menghitung volume limas adalah...",opts:["Luas alas \u00D7 tinggi","\u2153 \u00D7 luas alas \u00D7 tinggi","\u00BD \u00D7 luas alas \u00D7 tinggi","4 \u00D7 s\u00B3"],ans:1,ex:"Volume limas = \u2153 \u00D7 luas alas \u00D7 tinggi."},
+{n:29,part:1,t:"Tabung",q:"Tabung memiliki ... buah rusuk lengkung.",opts:["1","2","3","0"],ans:1,ex:"Tabung memiliki 2 rusuk lengkung (pertemuan alas/tutup & selimut)."},
+{n:30,part:1,t:"Kubus",q:"Sebuah kubus mempunyai volume 8 cm\u00B3. Panjang rusuk kubus tersebut adalah...",opts:["1 cm","2 cm","3 cm","4 cm"],ans:1,ex:"\u00B3\u221A8 = 2 cm."},
+{n:31,part:2,t:"Balok",q:"Sebuah kolam renang berbentuk balok memiliki panjang 10 meter, lebar 5 meter, dan kedalaman 2 meter. Volume air maksimal kolam tersebut adalah...",opts:["50 m\u00B3","100 m\u00B3","17 m\u00B3","200 m\u00B3"],ans:1,ex:"Volume = 10 \u00D7 5 \u00D7 2 = 100 m\u00B3."},
+{n:32,part:2,t:"Kubus",q:"Bak mandi di rumah Siti berbentuk kubus dengan panjang rusuk 80 cm. Berapa liter volume air yang dapat ditampung bak tersebut?",opts:["512 liter","64 liter","51,2 liter","150 liter"],ans:0,ex:"80 cm = 0,8 m. Vol = 0,8\u00B3 = 0,512 m\u00B3 = 512 liter."},
+{n:33,part:2,t:"Prisma",q:"Perhatikan gambar prisma segitiga berikut! Jika luas alas segitiga 15 cm\u00B2 dan tinggi prisma 10 cm, volumenya adalah...",opts:["75 cm\u00B3","150 cm\u00B3","300 cm\u00B3","25 cm\u00B3"],ans:1,fig:"prisma33",ex:"Volume = 15 \u00D7 10 = 150 cm\u00B3."},
+{n:34,part:2,t:"Limas",q:"Sebuah limas segi empat memiliki luas alas 36 cm\u00B2 dan tinggi 9 cm. Volume limas tersebut adalah...",opts:["324 cm\u00B3","108 cm\u00B3","216 cm\u00B3","81 cm\u00B3"],ans:1,ex:"Volume = \u2153 \u00D7 36 \u00D7 9 = 36 \u00D7 3 = 108 cm\u00B3."},
+{n:35,part:2,t:"Tabung",q:"Sebuah tabung memiliki luas alas 50 cm\u00B2 dan tinggi 14 cm. Berapa volume tabung tersebut?",opts:["350 cm\u00B3","700 cm\u00B3","1.400 cm\u00B3","150 cm\u00B3"],ans:1,ex:"Volume tabung = 50 \u00D7 14 = 700 cm\u00B3."},
+{n:36,part:2,t:"Kerucut",q:"Sebuah kerucut mempunyai luas alas 30 cm\u00B2 dan tinggi 12 cm. Volume kerucut tersebut adalah...",opts:["360 cm\u00B3","180 cm\u00B3","120 cm\u00B3","90 cm\u00B3"],ans:2,ex:"Volume kerucut = \u2153 \u00D7 luas alas \u00D7 tinggi = \u2153 \u00D7 30 \u00D7 12 = 120 cm\u00B3."},
+{n:37,part:2,t:"Kubus",q:"Diketahui volume sebuah kubus adalah 216 cm\u00B3. Panjang rusuk kubus tersebut adalah...",opts:["4 cm","5 cm","6 cm","8 cm"],ans:2,ex:"\u00B3\u221A216 = 6 cm."},
+{n:38,part:2,t:"Balok",q:"Sebuah wadah berbentuk balok berukuran panjang 12 cm, lebar 8 cm, dan tinggi 5 cm. Setengah dari wadah tersebut diisi air. Volume air dalam wadah adalah...",opts:["480 cm\u00B3","240 cm\u00B3","120 cm\u00B3","300 cm\u00B3"],ans:1,ex:"Total = 12 \u00D7 8 \u00D7 5 = 480 cm\u00B3. Setengahnya = 240 cm\u00B3."},
+{n:39,part:2,t:"Limas",q:"Jika suatu limas segitiga mempunyai luas alas 18 cm\u00B2 dan tinggi 10 cm, maka volumenya adalah...",opts:["180 cm\u00B3","90 cm\u00B3","60 cm\u00B3","30 cm\u00B3"],ans:2,ex:"Volume = \u2153 \u00D7 18 \u00D7 10 = 60 cm\u00B3."},
+{n:40,part:2,t:"Balok",q:"Akuarium di rumah Budi berbentuk balok dengan ukuran panjang 50 cm, lebar 30 cm, dan tinggi 40 cm. Volume maksimal akuarium tersebut adalah...",opts:["60.000 cm\u00B3","6.000 cm\u00B3","1.200 cm\u00B3","12.000 cm\u00B3"],ans:0,ex:"Volume = 50 \u00D7 30 \u00D7 40 = 60.000 cm\u00B3."},
+{n:41,part:2,t:"Tabung",q:"Kaleng susu berbentuk tabung memiliki tinggi 15 cm dan luas alasnya 40 cm\u00B2. Volume susu di dalam kaleng penuh adalah...",opts:["600 cm\u00B3","300 cm\u00B3","450 cm\u00B3","200 cm\u00B3"],ans:0,ex:"Volume = 40 \u00D7 15 = 600 cm\u00B3."},
+{n:42,part:2,t:"Kubus",q:"Sebuah kubus kecil memiliki volume 1 cm\u00B3. Kubus tersebut dimasukkan ke dalam kardus kubus besar berukuran 5 cm. Berapa banyak kubus kecil yang dapat menempati kardus besar hingga penuh?",opts:["25 buah","100 buah","125 buah","625 buah"],ans:2,ex:"Volume kardus = 5\u00B3 = 125 cm\u00B3, memuat 125 kubus 1 cm\u00B3."},
+{n:43,part:2,t:"Kubus",q:"Perbandingan volume kubus berusuk 2 cm dan kubus berusuk 4 cm adalah...",opts:["1 : 2","1 : 4","1 : 8","1 : 16"],ans:2,ex:"Kubus 2 cm = 8 cm\u00B3, kubus 4 cm = 64 cm\u00B3. Perbandingan 8 : 64 = 1 : 8."},
+{n:44,part:2,t:"Prisma",q:"Sebuah tenda pramuka berbentuk prisma segitiga. Luas segitiga alas tenda 2 m\u00B2 dan panjang tenda (tinggi prisma) 3 m. Volume udara di dalam tenda adalah...",opts:["5 m\u00B3","6 m\u00B3","12 m\u00B3","1,5 m\u00B3"],ans:1,ex:"Volume = luas alas \u00D7 tinggi prisma."},
+{n:45,part:2,t:"Kerucut",q:"Sebuah benda berbentuk kerucut memiliki volume 314 cm\u00B3. Jika luas alasnya 78,5 cm\u00B2, maka tinggi kerucut tersebut adalah...",opts:["4 cm","6 cm","12 cm","15 cm"],ans:2,ex:"Tinggi = (3 \u00D7 Volume) \u00F7 luas alas = (3 \u00D7 314) \u00F7 78,5 = 12 cm."},
+{n:46,part:2,t:"Balok",q:"Volume sebuah balok adalah 450 cm\u00B3. Jika panjangnya 15 cm dan lebarnya 5 cm, maka tinggi balok tersebut adalah...",opts:["4 cm","5 cm","6 cm","7 cm"],ans:2,ex:"Tinggi = 450 \u00F7 (15 \u00D7 5) = 450 \u00F7 75 = 6 cm."},
+{n:47,part:2,t:"Limas",q:"Perhatikan gambar limas segi empat! Jika luas alas persegi 36 cm\u00B2 dan tinggi limas 10 cm, volumenya adalah...",opts:["360 cm\u00B3","120 cm\u00B3","90 cm\u00B3","180 cm\u00B3"],ans:1,fig:"limas47",ex:"Volume = \u2153 \u00D7 36 \u00D7 10 = 12 \u00D7 10 = 120 cm\u00B3."},
+{n:48,part:2,t:"Satuan",q:"3,5 liter air setara dengan ... ml.",opts:["35 ml","350 ml","3.500 ml","35.000 ml"],ans:2,ex:"3,5 liter = 3,5 \u00D7 1.000 = 3.500 ml."},
+{n:49,part:2,t:"Tabung",q:"Sebuah wadah silinder (tabung) berisi minyak 750 ml. Volume minyak tersebut dalam cm\u00B3 adalah...",opts:["75 cm\u00B3","750 cm\u00B2","750 cm\u00B3","750 ml"],ans:2,ex:"1 ml = 1 cm\u00B3, maka 750 ml = 750 cm\u00B3."},
+{n:50,part:2,t:"Balok",q:"Jika sebuah balok berukuran 10 cm \u00D7 5 cm \u00D7 4 cm volumenya diperbesar dua kali lipat dengan memperbesar panjangnya saja, volume baru balok adalah...",opts:["200 cm\u00B3","400 cm\u00B3","800 cm\u00B3","1.000 cm\u00B3"],ans:1,ex:"Panjang jadi 20 cm, volume baru = 20 \u00D7 5 \u00D7 4 = 400 cm\u00B3."},
+{n:51,part:2,t:"Limas",q:"Sebuah limas segitiga mempunyai volume 80 cm\u00B3. Jika luas alasnya 20 cm\u00B2, berapa tinggi limas tersebut?",opts:["4 cm","8 cm","12 cm","16 cm"],ans:2,ex:"Tinggi = (3 \u00D7 80) \u00F7 20 = 240 \u00F7 20 = 12 cm."},
+{n:52,part:2,t:"Tabung",q:"Bak air berbentuk tabung memiliki jari-jari alas dan tinggi sedemikian rupa sehingga luas alasnya 300 cm\u00B2 dan tingginya 50 cm. Volume air dalam bak adalah...",opts:["1.500 cm\u00B3","15.000 cm\u00B3","150.000 cm\u00B3","1.500.000 cm\u00B3"],ans:1,ex:"Volume = 300 \u00D7 50 = 15.000 cm\u00B3."},
+{n:53,part:2,t:"Gabungan",q:"Sebuah bangun ruang gabungan terdiri dari kubus di bawah dan balok di atas. Jika volume kubus 64 cm\u00B3 dan volume balok 96 cm\u00B3, volume total adalah...",opts:["160 cm\u00B3","32 cm\u00B3","128 cm\u00B3","150 cm\u00B3"],ans:0,ex:"Total = 64 + 96 = 160 cm\u00B3."},
+{n:54,part:2,t:"Kubus",q:"Sebuah kotak kado kubus membungkus kertas kado. Jika volumenya 512 cm\u00B3, berapakah panjang rusuk kotak tersebut?",opts:["6 cm","7 cm","8 cm","9 cm"],ans:2,ex:"\u00B3\u221A512 = 8 cm."},
+{n:55,part:2,t:"Kerucut",q:"Sebuah kerucut mainan anak mempunyai volume 100 cm\u00B3. Jika bagian alas dan bentuknya diubah sedemikian rupa menjadi tabung dengan luas alas dan tinggi yang sama persis, volume tabung tersebut adalah...",opts:["50 cm\u00B3","100 cm\u00B3","200 cm\u00B3","300 cm\u00B3"],ans:3,ex:"Tabung bernilai 3 kali lipat kerucut jika alas dan tinggi sama = 300 cm\u00B3."},
+{n:56,part:3,t:"Tabung",q:"Sebuah tangki minyak berbentuk tabung memiliki volume 3.140 cm\u00B3. Jika jari-jari alas menghasilkan luas 314 cm\u00B2, maka tinggi tangki minyak tersebut adalah...",opts:["5 cm","10 cm","20 cm","31,4 cm"],ans:1,ex:"Tinggi = 3.140 \u00F7 314 = 10 cm."},
+{n:57,part:3,t:"Prisma",q:"Perbandingan volume prisma segitiga A dan B adalah 2 : 3. Jika volume prisma B adalah 150 cm\u00B3, maka volume prisma A adalah...",opts:["50 cm\u00B3","75 cm\u00B3","100 cm\u00B3","225 cm\u00B3"],ans:2,ex:"Vol A = (2/3) \u00D7 150 = 100 cm\u00B3."},
+{n:58,part:3,t:"Balok",q:"Sebuah balok kayu berukuran 20 cm \u00D7 10 cm \u00D7 5 cm dipotong-potong menjadi kubus kecil berukuran 2 cm \u00D7 2 cm \u00D7 2 cm sebanyak mungkin. Sisa kayu yang tidak terbentuk kubus adalah...",opts:["0 cm\u00B3","100 cm\u00B3","200 cm\u00B3","400 cm\u00B3"],ans:2,ex:"20\u00F72=10, 10\u00F72=5, 5\u00F72=2 sisa 1 cm. Kubus yang muat = 10\u00D75\u00D72 = 100 buah (800 cm\u00B3). Sisa kayu = 1.000 \u2212 800 = 200 cm\u00B3."},
+{n:59,part:3,t:"Kerucut",q:"Dua buah kerucut X dan Y memiliki tinggi yang sama. Kerucut X mempunyai luas alas 40 cm\u00B2, sedangkan kerucut Y mempunyai luas alas 80 cm\u00B2. Perbandingan volume kerucut X dan Y adalah...",opts:["1 : 1","1 : 2","2 : 1","1 : 4"],ans:1,ex:"Perbandingan luas alas 40 : 80 = 1 : 2."},
+{n:60,part:3,t:"Limas",q:"Sebuah limas segi empat memiliki volume 400 cm\u00B3. Jika tinggi limas diperkecil setengahnya dari tinggi semula sementara alasnya tetap, volume baru limas tersebut adalah...",opts:["800 cm\u00B3","400 cm\u00B3","200 cm\u00B3","100 cm\u00B3"],ans:3,ex:"Tinggi setengah \u2192 volume setengah \u00D7 setengah = \u00BC \u00D7 400 = 100 cm\u00B3."},
+{n:61,part:3,t:"Tabung",q:"Sebuah wadah berbentuk tabung berisi air setinggi setengah dari tinggi totalnya. Jika tinggi tabung 20 cm dan luas alasnya 50 cm\u00B2, volume air di dalam tabung adalah...",opts:["1.000 cm\u00B3","500 cm\u00B3","250 cm\u00B3","150 cm\u00B3"],ans:1,ex:"Tinggi air = 10 cm. Vol = 50 \u00D7 10 = 500 cm\u00B3."},
+{n:62,part:3,t:"Prisma",q:"Sebuah prisma segitiga memiliki volume 450 cm\u00B3. Luas alas segitiga tersebut adalah 30 cm\u00B2. Tinggi prisma tersebut adalah...",opts:["10 cm","15 cm","20 cm","25 cm"],ans:1,ex:"Tinggi = 450 \u00F7 30 = 15 cm."},
+{n:63,part:3,t:"Balok",q:"Bak penampungan air berbentuk balok berukuran 2 m \u00D7 1,5 m \u00D7 1 m. Air di dalam bak baru terisi \u00BE bagian. Volume air dalam bak tersebut adalah...",opts:["3 m\u00B3","2,25 m\u00B3","1,5 m\u00B3","0,75 m\u00B3"],ans:1,ex:"Total = 2 \u00D7 1,5 \u00D7 1 = 3 m\u00B3. \u00BE \u00D7 3 = 2,25 m\u00B3."},
+{n:64,part:3,t:"Kerucut",q:"Sebuah kerucut dan sebuah tabung memiliki jari-jari dan tinggi yang sama. Jika volume kerucut adalah 250 cm\u00B3, maka volume tabung adalah...",opts:["125 cm\u00B3","250 cm\u00B3","500 cm\u00B3","750 cm\u00B3"],ans:3,ex:"Tabung 3 kali kerucut = 3 \u00D7 250 = 750 cm\u00B3."},
+{n:65,part:3,t:"Limas",q:"Sebuah limas segitiga mempunyai alas berbentuk segitiga siku-siku dengan panjang sisi siku-siku 6 cm dan 8 cm. Jika tinggi limas 15 cm, volumenya adalah...",opts:["360 cm\u00B3","240 cm\u00B3","120 cm\u00B3","720 cm\u00B3"],ans:2,ex:"Luas alas = \u00BD \u00D7 6 \u00D7 8 = 24 cm\u00B2. Vol = \u2153 \u00D7 24 \u00D7 15 = 120 cm\u00B3."},
+{n:66,part:3,t:"Kubus",q:"Jika panjang rusuk sebuah kubus diperbesar 3 kali lipat dari ukuran semula, maka volume kubus tersebut akan menjadi ... kali lipat.",opts:["3 kali","9 kali","27 kali","81 kali"],ans:2,ex:"Diperbesar 3 kali, volume menjadi 3\u00B3 = 27 kali lipat."},
+{n:67,part:3,t:"Tabung",q:"Sebuah tangki berbentuk tabung berisi 3,14 liter air. Jari-jari alas tabung menghasilkan luas lingkaran 314 cm\u00B2, berapakah tinggi air dalam tangki tersebut?",opts:["1 cm","5 cm","10 cm","100 cm"],ans:2,ex:"3,14 liter = 3.140 cm\u00B3. Tinggi = 3.140 \u00F7 314 = 10 cm."},
+{n:68,part:3,t:"Balok",q:"Sebuah balok memiliki perbandingan panjang : lebar : tinggi = 3 : 2 : 1. Jika panjang balok adalah 15 cm, berapakah volume balok tersebut?",opts:["90 cm\u00B3","375 cm\u00B3","750 cm\u00B3","225 cm\u00B3"],ans:2,ex:"p=15, l=10, t=5. Vol = 15 \u00D7 10 \u00D7 5 = 750 cm\u00B3."},
+{n:69,part:3,t:"Prisma",q:"Kolam ikan berbentuk prisma segitiga memiliki luas alas 1,2 m\u00B2 dan kedalaman (tinggi prisma) 80 cm. Volume air maksimal dalam kolam adalah...",opts:["96 liter","960 liter","9.600 liter","96.000 liter"],ans:1,ex:"80 cm = 0,8 m. Vol = 1,2 \u00D7 0,8 = 0,96 m\u00B3 = 960 liter."},
+{n:70,part:3,t:"Limas",q:"Sebuah limas segi empat beraturan mempunyai volume 256 cm\u00B3. Jika tinggi limas adalah 12 cm, berapakah luas alas limas tersebut?",opts:["32 cm\u00B2","64 cm\u00B2","128 cm\u00B2","192 cm\u00B2"],ans:1,ex:"Luas alas = (3 \u00D7 Volume) \u00F7 tinggi = (3 \u00D7 256) \u00F7 12 = 64 cm\u00B2."},
+{n:71,part:3,t:"Kerucut",q:"Sebuah kerucut memiliki tinggi 9 cm dan volume 300 cm\u00B3. Luas alas kerucut tersebut adalah...",opts:["30 cm\u00B2","50 cm\u00B2","100 cm\u00B2","300 cm\u00B2"],ans:2,ex:"Luas alas = (3 \u00D7 300) \u00F7 9 = 100 cm\u00B2."},
+{n:72,part:3,t:"Kubus",q:"Sebuah wadah berbentuk kubus dengan rusuk 30 cm berisi penuh air. Air tersebut dituangkan ke dalam botol-botol kecil berkapasitas 450 cm\u00B3. Banyak botol yang diperlukan adalah...",opts:["20 botol","30 botol","40 botol","60 botol"],ans:3,ex:"Volume kubus = 30\u00B3 = 27.000 cm\u00B3. Botol = 27.000 \u00F7 450 = 60 botol."},
+{n:73,part:3,t:"Balok",q:"Sebuah balok memiliki volume sama dengan sebuah kubus yang memiliki rusuk 6 cm. Jika panjang balok 9 cm dan lebarnya 4 cm, tinggi balok tersebut adalah...",opts:["6 cm","8 cm","12 cm","24 cm"],ans:0,ex:"Vol kubus = 6\u00B3 = 216 cm\u00B3. Tinggi balok = 216 \u00F7 (9 \u00D7 4) = 6 cm."},
+{n:74,part:3,t:"Limas",q:"Sebuah hiasan rumah berbentuk limas segitiga memiliki volume 150 cm\u00B3. Jika tinggi limas 10 cm, maka luas alas limas tersebut adalah...",opts:["15 cm\u00B2","30 cm\u00B2","45 cm\u00B2","60 cm\u00B2"],ans:2,ex:"Luas alas = (3 \u00D7 150) \u00F7 10 = 45 cm\u00B2."},
+{n:75,part:3,t:"Tabung",q:"Sebuah tabung memiliki jari-jari dan tinggi yang sama. Jika tingginya 10 cm dan luas alasnya 314 cm\u00B2, maka volume tabung adalah...",opts:["1.570 cm\u00B3","3.140 cm\u00B3","6.280 cm\u00B3","31.400 cm\u00B3"],ans:1,ex:"Volume = 314 \u00D7 10 = 3.140 cm\u00B3."},
+{n:76,part:3,t:"Kubus",q:"Dua buah kubus P dan Q memiliki jumlah volume 576 cm\u00B3. Selisih panjang rusuk kubus P dan Q adalah...",opts:["1 cm","2 cm","4 cm","8 cm"],ans:2,ex:"Kubus P rusuk 8 cm (8\u00B3 = 512) dan kubus Q rusuk 4 cm (4\u00B3 = 64). Jumlah = 512 + 64 = 576 cm\u00B3. Selisih rusuk = 8 \u2212 4 = 4 cm."},
+{n:77,part:3,t:"Prisma",q:"Sebuah prisma segitiga mempunyai volume 600 cm\u00B3. Jika alas segitiga prisma tersebut adalah 10 cm dan tinggi segitiga 6 cm, berapakah tinggi prisma tersebut?",opts:["10 cm","15 cm","20 cm","25 cm"],ans:2,ex:"Luas alas = \u00BD \u00D7 10 \u00D7 6 = 30 cm\u00B2. Tinggi = 600 \u00F7 30 = 20 cm."},
+{n:78,part:3,t:"Tabung",q:"Sebuah kerucut tingginya 15 cm dan luas alasnya 60 cm\u00B2. Semutukkan ke dalam tabung yang memiliki luas alas dan tinggi yang sama persis. Sisa ruang kosong di dalam tabung adalah...",opts:["300 cm\u00B3","600 cm\u00B3","900 cm\u00B3","450 cm\u00B3"],ans:1,ex:"Tabung = 60 \u00D7 15 = 900 cm\u00B3. Kerucut = \u2153 \u00D7 900 = 300 cm\u00B3. Sisa = 600 cm\u00B3."},
+{n:79,part:3,t:"Tabung",q:"Sebanyak 3 liter jus buah dituangkan sama rata ke dalam 5 gelas berbentuk tabung kecil. Jika tiap gelas menampung jus setinggi 10 cm, luas alas setiap gelas tabung adalah...",opts:["30 cm\u00B2","60 cm\u00B2","300 cm\u00B2","600 cm\u00B2"],ans:1,ex:"3 liter = 3.000 cm\u00B3 \u00F7 5 gelas = 600 cm\u00B3 per gelas. Luas alas = 600 \u00F7 10 = 60 cm\u00B2."},
+{n:80,part:3,t:"Limas",q:"Sebuah limas segi empat tingginya 12 cm dan volumenya 400 cm\u00B3. Perbandingan tinggi limas terhadap luas alasnya adalah...",opts:["3 : 25","1 : 8","2 : 15","4 : 33"],ans:0,ex:"Luas alas = (3 \u00D7 400) \u00F7 12 = 100. Perbandingan 12 : 100 = 3 : 25."},
+{n:81,part:4,t:"Balok",q:"Ibu membuat kue nagasari dan mencetakknya dalam wadah berbentuk balok berukuran panjang 20 cm, lebar 10 cm, dan tinggi 5 cm. Jika kue tersebut dipotong-potong kuei kecil berukuran 2 cm \u00D7 2 cm \u00D7 1 cm, berapa banyak kue maksimal yang dihasilkan?",opts:["100 buah","150 buah","250 buah","500 buah"],ans:2,ex:"Vol wadah = 2.000 cm\u00B3. Vol kue = 2 \u00D7 2 \u00D7 1 = 4 cm\u00B3. Jumlah = 2.000 \u00F7 4 = 500 buah."},
+{n:82,part:4,t:"Tabung",q:"Pak Rudi memiliki tangki air berbentuk tabung berkapasitas 2.000 liter. Air di dalam tangki digunakan untuk menyiram taman hingga tersisa 450 liter. Volume air yang telah digunakan dalam satuan m\u00B3 adalah...",opts:["1,55 m\u00B3","2,45 m\u00B3","15,5 m\u00B3","24,5 m\u00B3"],ans:0,ex:"Sisa = 2.000 \u2212 450 = 1.550 liter terpakai. 1.550 liter = 1,55 m\u00B3."},
+{n:83,part:4,t:"Kubus",q:"Siti mengisi akuarium berbentuk kubus dengan selang air. Jika debit air yang masuk adalah 1.000 cm\u00B3 per menit dan rusuk akuarium adalah 40 cm, berapa lama waktu yang dibutuhkan untuk mengisi akuarium tersebut sampai penuh?",opts:["16 menit","32 menit","64 menit","128 menit"],ans:2,ex:"Vol = 40\u00B3 = 64.000 cm\u00B3. Waktu = 64.000 \u00F7 1.000 = 64 menit."},
+{n:84,part:4,t:"Kerucut",q:"Sebuah pabrik membuat topi ulang tahun dari kertas karton berbentuk kerucut. Jika luas alas kerucut 150 cm\u00B2 dan tingginya 21 cm, berapa volume karton yang membentuk satu topi tersebut?",opts:["3.150 cm\u00B3","1.050 cm\u00B3","525 cm\u00B3","350 cm\u00B3"],ans:1,ex:"Volume = \u2153 \u00D7 150 \u00D7 21 = 150 \u00D7 7 = 1.050 cm\u00B3."},
+{n:85,part:4,t:"Kubus",q:"Gudang penyimpanan logistik berbentuk balok berukuran panjang 12 m, lebar 8 m, dan tinggi 5 m. Atas dasar disi kardus berbentuk kubus berukuran 1 m\u00B3. Berapa jumlah maksimal kardus yang dapat dimuat di gudang tersebut?",opts:["96 kardus","240 kardus","480 kardus","960 kardus"],ans:2,ex:"Vol gudang = 12 \u00D7 8 \u00D7 5 = 480 m\u00B3. Muat 480 kardus 1 m\u00B3."},
+{n:86,part:4,t:"Gabungan",q:"Ani memiliki dua buah wadah. Wadah A berbentuk kubus dengan rusuk 6 cm, wadah B berbentuk balok dengan ukuran 8 cm \u00D7 4 cm \u00D7 5 cm. Wadah manakah yang volumenya lebih besar dan berapa selisihnya?",opts:["Wadah A, selisih 4 cm\u00B3","Wadah B, selisih 8 cm\u00B3","Wadah A, selisih 56 cm\u00B3","Wadah B, selisih 54 cm\u00B3"],ans:2,ex:"A = 6\u00B3 = 216 cm\u00B3. B = 8 \u00D7 4 \u00D7 5 = 160 cm\u00B3. Volume A lebih besar, selisih = 216 \u2212 160 = 56 cm\u00B3."},
+{n:87,part:4,t:"Prisma",q:"Pak Tani membuat atap gudang berbentuk prisma segitiga. Luas penampang segitiga depan adalah 6 m\u00B2 dan panjang gudang ke belakang adalah 8 m. Di dalam gudang tersebut dipasang kipas angin yang membutuhkan udara untuk ruangan maksimal 40 m\u00B3. Apakah volume udara gudang mencukupi?",opts:["Cukup, volume 48 m\u00B3","Kurang, volume 48 m\u00B3","Cukup, volume 36 m\u00B3","Kurang, volume 36 m\u00B3"],ans:0,ex:"Vol = 6 \u00D7 8 = 48 m\u00B3. Cukup karena kapasitas maksimal 40 m\u00B3."},
+{n:88,part:4,t:"Balok",q:"Sebuah akuarium berbentuk balok dengan panjang 80 cm, lebar 40 cm, dan tinggi 50 cm diisi air setinggi 35 cm. Berapa liter volume air yang ada di dalam akuarium tersebut?",opts:["112 liter","160 liter","128 liter","140 liter"],ans:0,ex:"Vol air = 80 \u00D7 40 \u00D7 35 = 112.000 cm\u00B3 = 112 liter."},
+{n:89,part:4,t:"Gabungan",q:"Toko roti menjual kue tart dua jenis: Jenis X berbentuk kubus dengan rusuk 10 cm. Jenis Y berbentuk tabung dengan luas alas 80 cm\u00B2 dan tinggi 12 cm. Kue manakah yang memiliki volume lebih banyak?",opts:["Kue X lebih banyak","Kue Y lebih banyak","Keduanya sama besar","Tidak dapat ditentukan"],ans:0,ex:"X = 10\u00B3 = 1.000 cm\u00B3. Y = 80 \u00D7 12 = 960 cm\u00B3. Kue X lebih banyak (1.000 > 960)."},
+{n:90,part:4,t:"Limas",q:"Sebuah piramida hiasan berbentuk limas segi empat memiliki luas alas 144 cm\u00B2 dan tinggi 15 cm. Hiasan tersebut terbuat dari raca padat. Jika berat 1 cm\u00B3 kaca adalah 2 gram, berapakah berat total hiasan tersebut?",opts:["720 gram","1.440 gram","2.160 gram","4.320 gram"],ans:1,ex:"Vol = \u2153 \u00D7 144 \u00D7 15 = 720 cm\u00B3. Berat = 720 \u00D7 2 = 1.440 gram."},
+{n:91,part:4,t:"Tabung",q:"Ember berbentuk tabung dengan luas alas 200 cm\u00B2 dan tinggi 30 cm penuh berisi air. Air tersebut dituangkan ke dalam kaleng-kaleng kecil berbentuk tabung berkapasitas 600 cm\u00B3. Berapa banyak kaleng kecil yang dibutuhkan agar semua air tertampung?",opts:["5 kaleng","10 kaleng","15 kaleng","20 kaleng"],ans:1,ex:"Vol ember = 200 \u00D7 30 = 6.000 cm\u00B3. Kaleng = 6.000 \u00F7 600 = 10 kaleng."},
+{n:92,part:4,t:"Prisma",q:"Sebuah kemasan produk berbentuk prisma segitiga memiliki luas alas 25 cm\u00B2 dan tinggi 16 cm. Pabrik ingin mengubah kemasan tersebut menjadi limas segitiga dengan alas dan tinggi yang sama persis. Berapa volume kemasan limas segitiga baru tersebut?",opts:["400 cm\u00B3","200 cm\u00B3","133,3 cm\u00B3","40 cm\u00B3"],ans:2,ex:"Prisma = 25 \u00D7 16 = 400 cm\u00B3. Limas = \u2153 \u00D7 400 \u2248 133,3 cm\u00B3."},
+{n:93,part:4,t:"Kerucut",q:"Ayah membuat sebuah cetakan semen berbentuk kerucut untuk hiasan taman. Jika diameter alas kerucut memberikan luas lingkaran 150 cm\u00B2 dan tinggi cetakan 18 cm, berapa volume semen yang dibutuhkan untuk satu cetakan?",opts:["900 cm\u00B3","1.500 cm\u00B3","450 cm\u00B3","1.350 cm\u00B3"],ans:0,ex:"Volume = \u2153 \u00D7 150 \u00D7 18 = 150 \u00D7 6 = 900 cm\u00B3."},
+{n:94,part:4,t:"Balok",q:"Budi mengisi bak mandi berbentuk balok berukuran 100 cm \u00D7 60 cm \u00D7 50 cm menggunakan ember berkapasitas 15 liter. Berapa kali Budi harus menuangkan air dengan ember tersebut hingga bak mandi terisi penuh?",opts:["10 kali","20 kali","30 kali","40 kali"],ans:1,ex:"Vol bak = 100 \u00D7 60 \u00D7 50 = 300.000 cm\u00B3 = 300 liter. Banyak ember = 300 \u00F7 15 = 20 kali."},
+{n:95,part:4,t:"Prisma",q:"Sebuah tenda kemah berbentuk prisma segitiga memiliki volume 4,5 m\u00B3. Jika panjang tenda (tinggi prisma) adalah 3 meter, berapakah luas kain alas segitiga pada bagian depan dan belakang tenda?",opts:["1,5 m\u00B2","3,0 m\u00B2","4,5 m\u00B2","9,0 m\u00B2"],ans:0,ex:"Volume = luas alas (2 sisi) \u00D7 tinggi prisma. Luas alas depan & belakang = 4,5 \u00F7 3 = 1,5 m\u00B2."},
+{n:96,part:4,t:"Kubus",q:"Sebuah wadah berbentuk kubus dengan rusuk 50 cm berisi air setinggi 30 cm. Seorang anak memasukkan sebuah balok besi ke dalam air sehingga permukaan air naik setinggi 5 cm. Berapa volume balok besi yang tercelup?",opts:["7.500 cm\u00B3","12.500 cm\u00B3","25.000 cm\u00B3","75.000 cm\u00B3"],ans:1,ex:"Alas kubus = 50 \u00D7 50 = 2.500 cm\u00B2. Kenaikan air 5 cm = 2.500 \u00D7 5 = 12.500 cm\u00B3."},
+{n:97,part:4,t:"Gabungan",q:"Perusahaan pembuat dua jenis prototipe wadah: Wadah P (limas segi empat, luas alas 60 cm\u00B2, tinggi 10 cm) dan Wadah Q (kerucut, luas alas 60 cm\u00B2, tinggi 10 cm). Selisih volume kedua wadah tersebut adalah...",opts:["0 cm\u00B3","200 cm\u00B3","400 cm\u00B3","600 cm\u00B3"],ans:0,ex:"Vol P = \u2153 \u00D7 60 \u00D7 10 = 200 cm\u00B3. Vol Q = \u2153 \u00D7 60 \u00D7 10 = 200 cm\u00B3. Selisih = 0 cm\u00B3."},
+{n:98,part:4,t:"Balok",q:"Sebuah akuarium berbentuk balok dengan ukuran panjang 60 cm, lebar 30 cm, dan tinggi 40 cm diisi air hingga mencapai ketinggian 3/4 dari tinggi totalnya. Berapa liter air yang ditambahkan lagi agar akuarium tersebut terisi penuh sampai bibir atas?",opts:["18 liter","36 liter","54 liter","72 liter"],ans:0,ex:"Vol total = 60 \u00D7 30 \u00D7 40 = 72.000 cm\u00B3 = 72 liter. Kurang \u00BC bagian = 18 liter."},
+{n:99,part:4,t:"Gabungan",q:"Dalam sebuah perlombaan eksperimen sains, kelompok Rina merancang roket air berbentuk gabungan tabung dan kerucut di bagian atas. Bagian tabung memiliki luas alas 50 cm\u00B2 dan tinggi 20 cm, sedangkan kerucut memiliki tinggi 9 cm dengan luas alas yang sama. Berapa total volume roket air tersebut?",opts:["1.000 cm\u00B3","1.150 cm\u00B3","1.300 cm\u00B3","1.450 cm\u00B3"],ans:1,ex:"Tabung = 50 \u00D7 20 = 1.000 cm\u00B3. Kerucut = \u2153 \u00D7 50 \u00D7 9 = 150 cm\u00B3. Total = 1.150 cm\u00B3."},
+{n:100,part:4,t:"Kubus",q:"Sebuah pabrik mainan memproduksi mainan balok kayu berbentuk kubus dengan panjang rusuk 5 cm. Mainan tersebut dimasukkan ke dalam kardus berbentuk balok berukuran 50 cm \u00D7 30 cm \u00D7 20 cm. Berapa banyak mainan maksimal yang dapat diangkut dalam satu kardus penuh?",opts:["120 mainan","240 mainan","300 mainan","480 mainan"],ans:1,ex:"Vol kardus = 50 \u00D7 30 \u00D7 20 = 30.000 cm\u00B3. Vol kubus = 5\u00B3 = 125 cm\u00B3. 30.000 \u00F7 125 = 240 mainan."}
+];
+
+/* Soal tambahan (menyempurnakan jumlah kotak tiap zona) */
+var EXTRA_SEDANG=[
+ {n:"B+",part:2,extra:true,t:"Kubus",q:"Sebuah kubus memiliki panjang rusuk 6 cm. Volume kubus tersebut adalah...",opts:["36 cm\u00B3","216 cm\u00B3","126 cm\u00B3","72 cm\u00B3"],ans:1,ex:"Volume kubus = s \u00D7 s \u00D7 s = 6 \u00D7 6 \u00D7 6 = 216 cm\u00B3."}
+];
+var EXTRA_SULIT=[
+ {n:"C+",part:3,extra:true,t:"Tabung",q:"Volume sebuah tabung 1.570 cm\u00B3 dan luas alasnya 157 cm\u00B2. Tinggi tabung tersebut adalah...",opts:["5 cm","10 cm","15 cm","20 cm"],ans:1,ex:"Tinggi = Volume \u00F7 luas alas = 1.570 \u00F7 157 = 10 cm."}
+];
+
+/* Diagram SVG untuk soal bergambar */
+var FIGS={
+ cube3:function(){return '<svg viewBox="0 0 170 140">'
+  +'<rect x="35" y="55" width="62" height="62" fill="#eaf3fb" stroke="#1971c2" stroke-width="3"/>'
+  +'<path d="M35 55 L60 30 L122 30 L97 55 Z" fill="#f6fafe" stroke="#1971c2" stroke-width="3"/>'
+  +'<path d="M97 55 L122 30 L122 92 L97 117 Z" fill="#e2eefb" stroke="#1971c2" stroke-width="3"/>'
+  +'<text x="48" y="93" font-size="14" font-weight="700" fill="#a03018" font-family="Nunito,Arial">3 cm</text>'
+  +'</svg>';},
+ balok16:function(){return '<svg viewBox="0 0 210 140">'
+  +'<rect x="30" y="58" width="96" height="52" fill="#eaf3fb" stroke="#1971c2" stroke-width="3"/>'
+  +'<path d="M30 58 L52 32 L148 32 L126 58 Z" fill="#f6fafe" stroke="#1971c2" stroke-width="3"/>'
+  +'<path d="M126 58 L148 32 L148 84 L126 110 Z" fill="#e2eefb" stroke="#1971c2" stroke-width="3"/>'
+  +'<text x="52" y="128" font-size="13" font-weight="700" fill="#a03018" font-family="Nunito,Arial">p = 4 cm</text>'
+  +'<text x="128" y="104" font-size="13" font-weight="700" fill="#a03018">l = 2 cm</text>'
+  +'<text x="152" y="56" font-size="13" font-weight="700" fill="#a03018">t = 3 cm</text>'
+  +'</svg>';},
+ prisma33:function(){return '<svg viewBox="0 0 220 140">'
+  +'<path d="M30 105 L95 105 L62 45 Z" fill="#eaf3fb" stroke="#1971c2" stroke-width="3"/>'
+  +'<path d="M140 105 L205 105 L172 45 Z" fill="#f6fafe" stroke="#1971c2" stroke-width="3" stroke-dasharray="6 5"/>'
+  +'<line x1="30" y1="105" x2="140" y2="105" stroke="#1971c2" stroke-width="3"/>'
+  +'<line x1="95" y1="105" x2="205" y2="105" stroke="#1971c2" stroke-width="3"/>'
+  +'<line x1="62" y1="45" x2="172" y2="45" stroke="#1971c2" stroke-width="3"/>'
+  +'<text x="28" y="128" font-size="13" font-weight="700" fill="#a03018" font-family="Nunito,Arial">Luas alas = 15 cm\u00B2</text>'
+  +'<text x="148" y="38" font-size="13" font-weight="700" fill="#a03018">t = 10 cm</text>'
+  +'</svg>';},
+ limas47:function(){return '<svg viewBox="0 0 200 155">'
+  +'<path d="M35 95 L100 130 L165 95" fill="none" stroke="#1971c2" stroke-width="3"/>'
+  +'<path d="M165 95 L100 72 L35 95" fill="none" stroke="#8ab4e0" stroke-width="2.5" stroke-dasharray="6 5"/>'
+  +'<path d="M100 18 L35 95 M100 18 L100 130 M100 18 L165 95" fill="none" stroke="#1971c2" stroke-width="3"/>'
+  +'<path d="M100 18 L100 72" fill="none" stroke="#8ab4e0" stroke-width="2.5" stroke-dasharray="6 5"/>'
+  +'<text x="58" y="148" font-size="13" font-weight="700" fill="#a03018" font-family="Nunito,Arial">alas 6 cm \u00D7 6 cm</text>'
+  +'<text x="108" y="55" font-size="13" font-weight="700" fill="#a03018">t = 10 cm</text>'
+  +'</svg>';}
+};
+
+/* Ikon SVG */
+var LAD_MINI='<svg class="mini" viewBox="0 0 24 24" fill="none" stroke="#2f7d3b" stroke-width="2.6" stroke-linecap="round"><path d="M8 3v18M16 3v18M8 8h8M8 13h8M8 18h8"/></svg>';
+var SNK_MINI='<svg class="mini" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="3" stroke-linecap="round"><path d="M19 4c-9 0-9 6 0 6c9 0 9 7 0 7H5"/><circle cx="19.5" cy="4" r="2.4" fill="#c0392b" stroke="none"/></svg>';
+var TROPHY_MINI='<svg class="mini" viewBox="0 0 24 24" fill="#d4a017"><path d="M7 2h10v2h4v3a5 5 0 0 1-5 5h-.4a5.5 5.5 0 0 1-2.6 2.5V17h3v3H8v-3h3v-2.5A5.5 5.5 0 0 1 8.4 12H8a5 5 0 0 1-5-5V4h4V2zm-2 4v1a3 3 0 0 0 3 3V6H5zm14 0h-3v4a3 3 0 0 0 3-3V6z"/></svg>';
+var STAR='<svg class="st" viewBox="0 0 24 24" fill="#e8b30f"><path d="M12 2l2.9 6.2 6.8.9-5 4.7 1.3 6.7L12 17.2 6 20.5l1.3-6.7-5-4.7 6.8-.9z"/></svg>';
+var STAR_BADGE='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.2 6.8.9-5 4.7 1.3 6.7L12 17.2 6 20.5l1.3-6.7-5-4.7 6.8-.9z"/></svg>';
+var OK_ICON='<svg class="fi" viewBox="0 0 24 24" fill="none" stroke="#2b8a3e" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>';
+var NO_ICON='<svg class="fi" viewBox="0 0 24 24" fill="none" stroke="#c92a2a" stroke-width="3.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+
+var RULES_HTML='<ol>'
+ +'<li>Masukkan nama 2 pemain, lalu tekan <b>Mulai Bermain</b>. Keduanya bergiliran melempar dadu; pion berjalan <b>satu kotak demi satu kotak</b>.</li>'
+ +'<li><b>Kotak biasa:</b> berisi soal pilihan ganda Volume Bangun Ruang. Soal muncul di kotak tujuan &mdash; pion hanya boleh maju jika dijawab <b>benar</b>. Jika gagal (2 kesempatan), pion <b>tetap di tempat</b>.</li>'
+ +'<li><b>Zona kesulitan:</b> kotak 2&ndash;33 = <b>MUDAH</b> (Bagian A), kotak 34&ndash;66 = <b>SEDANG</b> (Bagian B), kotak 67&ndash;99 = <b>SULIT</b> (Bagian C) &mdash; terlihat dari warna kotaknya.</li>'
+ +'<li><b>Kotak Tangga (hijau) &amp; Kepala Ular (merah):</b> berisi soal <b>HOTS / Cerita</b> (Bagian D). Tangga: benar &rarr; <b>naik tangga</b>. Ular: salah &rarr; <b>turun ke ekor</b>; benar &rarr; aman.</li>'
+ +'<li>Jawab dengan menekan pilihan <b>A, B, C, atau D</b> (bisa juga tombol keyboard A&ndash;D atau 1&ndash;4).</li>'
+ +'<li>Harus berhenti <b>tepat di kotak 100</b>. Jika angka dadu lebih, pion memantul mundur. Pemain pertama yang mencapai kotak 100 <b>menang</b>!</li>'
+ +'</ol><div class="tips">Tips tutor: buka <b>Kunci Jawaban</b> untuk melihat seluruh soal per bagian (MUDAH / SEDANG / SULIT / HOTS, lengkap dengan nomor soal di bank soal) beserta pembahasannya. Gunakan tombol <b>Lewati</b> pada kotak soal jika diperlukan.</div>';
+
+/* ================= UTIL ================= */
+function $(s){return document.querySelector(s);}
+var NS='http://www.w3.org/2000/svg';
+function wait(ms){return new Promise(function(r){setTimeout(r,ms);});}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function ri(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+function svgEl(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function show(el){el.classList.remove('hidden');}
+function hide(el){el.classList.add('hidden');}
+function answerText(q){return 'ABCD'[q.ans]+') '+q.opts[q.ans];}
+function partName(p){return['','MUDAH','SEDANG','SULIT','HOTS'][p];}
+
+/* ================= SUARA (Web Audio) ================= */
+var sfx=(function(){
+ var ctx=null,muted=false;
+ function ac(){if(!ctx){try{ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+  if(ctx&&ctx.state==='suspended')ctx.resume();return ctx;}
+ function t(f,dur,type,vol,when,glide){var c=ac();if(!c||muted)return;
+  var o=c.createOscillator(),g=c.createGain(),t0=c.currentTime+(when||0);
+  o.type=type||'sine';o.frequency.setValueAtTime(f,t0);
+  if(glide)o.frequency.exponentialRampToValueAtTime(glide,t0+dur);
+  g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol||.12,t0+.015);
+  g.gain.exponentialRampToValueAtTime(.001,t0+dur);
+  o.connect(g);g.connect(c.destination);o.start(t0);o.stop(t0+dur+.05);}
+ return{
+  toggle:function(){muted=!muted;return muted;},
+  dice:function(){for(var i=0;i<6;i++)t(300+Math.random()*500,.05,'square',.05,i*.07);},
+  step:function(){t(620,.06,'triangle',.09);},
+  good:function(){t(523,.12,'triangle',.14);t(659,.12,'triangle',.14,.1);t(784,.22,'triangle',.14,.2);},
+  bad:function(){t(220,.32,'sawtooth',.1,0,130);},
+  climb:function(){t(300,.55,'sine',.12,0,900);t(400,.5,'sine',.07,.06,1200);},
+  slide:function(){t(720,.75,'sine',.12,0,130);},
+  win:function(){[523,659,784,1047,784,1319].forEach(function(f,i){t(f,.2,'triangle',.14,i*.13);});}
+ };
+})();
+
+/* ================= DOM & STATE ================= */
+var board=$('#board'),grid=$('#grid'),overlay=$('#overlay');
+var turnName=$('#turnName'),btnRoll=$('#btnRoll'),msgEl=$('#msg'),logEl=$('#log');
+var diceEl=$('#dice'),diceVal=$('#diceVal');
+var pcs=[$('#pc0'),$('#pc1')];
+var setupOvl=$('#setupOvl'),qOvl=$('#qOvl'),winOvl=$('#winOvl'),keyOvl=$('#keyOvl'),howOvl=$('#howOvl');
+var qBadge=$('#qBadge'),qTitle=$('#qTitle'),qText=$('#qText'),qFigWrap=$('#qFigWrap'),optsEl=$('#opts');
+var btnSkip=$('#btnSkip'),btnNext=$('#btnNext');
+var qFeedback=$('#qFeedback'),qExplain=$('#qExplain');
+
+var players=[],pawnEls=[],current=0,busy=false,started=false,lastWinner=-1;
+var qMap={},hotsReserve=[],snakePaths={},cellEls={},qCtx=null;
+
+/* ================= GEOMETRI PAPAN ================= */
+function cellCenter(n){var r=Math.floor((n-1)/10),c=(n-1)%10,col=(r%2)?9-c:c;
+ return{x:col*100+50,y:(9-r)*100+50};}
+function zoneOf(n){return n<=33?'p1':n<=66?'p2':'p3';}
+
+function buildCells(){
+ grid.innerHTML='';cellEls={};
+ var ladS=Object.keys(LADDERS).map(Number);
+ var snkH=Object.keys(SNAKES).map(Number);
+ for(var vr=0;vr<10;vr++){var r=9-vr;
+  for(var c=0;c<10;c++){
+   var n=(r%2===0)?r*10+c+1:r*10+(10-c);
+   var d=document.createElement('div');
+   d.className='cell'+(((r+c)%2)?' alt':'');
+   var inner='<span class="num">'+n+'</span>';
+   if(n===100){d.classList.add('finish','spec');inner+=TROPHY_MINI+'<span class="q">FINIS</span>';}
+   else if(n===1){d.classList.add('start','spec');inner+='<span class="q">MULAI</span>';}
+   else if(ladS.indexOf(n)>=0){d.classList.add('lad','spec');inner+=LAD_MINI+'<span class="q">Tangga HOTS<br>ke '+LADDERS[n]+'</span>';}
+   else if(snkH.indexOf(n)>=0){d.classList.add('snk','spec');inner+=SNK_MINI+'<span class="q">Ular HOTS<br>ke '+SNAKES[n]+'</span>';}
+   else{d.classList.add(zoneOf(n));inner+='<span class="q">'+esc(qMap[n].t)+'</span>';}
+   d.innerHTML=inner;grid.appendChild(d);cellEls[n]=d;
+  }}
+}
+function drawLadder(g,a,b){
+ var A=cellCenter(a),B=cellCenter(b);
+ var dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy),px=-dy/L,py=dx/L,R=11;
+ svgEl('line',{x1:A.x+px*R,y1:A.y+py*R,x2:B.x+px*R,y2:B.y+py*R,'class':'rail'},g);
+ svgEl('line',{x1:A.x-px*R,y1:A.y-py*R,x2:B.x-px*R,y2:B.y-py*R,'class':'rail'},g);
+ var n=Math.max(3,Math.floor(L/34));
+ for(var i=1;i<=n;i++){var t=i/(n+1),cx=A.x+dx*t,cy=A.y+dy*t;
+  svgEl('line',{x1:cx+px*R,y1:cy+py*R,x2:cx-px*R,y2:cy-py*R,'class':'rung'},g);}
+}
+function smoothPath(p){
+ var d='M '+p[0].x+' '+p[0].y;
+ for(var i=1;i<p.length-1;i++){var mx=(p[i].x+p[i+1].x)/2,my=(p[i].y+p[i+1].y)/2;
+  d+=' Q '+p[i].x+' '+p[i].y+' '+mx+' '+my;}
+ d+=' L '+p[p.length-1].x+' '+p[p.length-1].y;return d;}
+function drawSnake(g,head,tail,ci){
+ var H=cellCenter(head),T=cellCenter(tail);
+ var dx=T.x-H.x,dy=T.y-H.y,L=Math.hypot(dx,dy);
+ var ux=dx/L,uy=dy/L,px=-uy,py=ux;
+ var waves=Math.max(1,Math.round(L/220)),amp=Math.min(34,L*.12);
+ var segs=Math.max(8,Math.round(L/60)),pts=[];
+ for(var i=0;i<=segs;i++){var t=i/segs,env=Math.sin(t*Math.PI);
+  var off=amp*Math.sin(t*Math.PI*2*waves)*env;
+  pts.push({x:H.x+dx*t+px*off,y:H.y+dy*t+py*off});}
+ var d=smoothPath(pts),col=SNAKE_COLORS[ci%SNAKE_COLORS.length];
+ svgEl('path',{d:d,fill:'none',stroke:col.d,'stroke-width':16.5,'stroke-linecap':'round','stroke-linejoin':'round'},g);
+ var body=svgEl('path',{d:d,fill:'none',stroke:col.b,'stroke-width':13,'stroke-linecap':'round','stroke-linejoin':'round'},g);
+ svgEl('path',{d:d,fill:'none',stroke:'rgba(255,255,255,.5)','stroke-width':4.5,'stroke-dasharray':'1 21','stroke-linecap':'round'},g);
+ var fx=-ux,fy=-uy,ang=Math.atan2(fy,fx)*180/Math.PI;
+ var cx0=H.x+fx*8,cy0=H.y+fy*8;
+ svgEl('ellipse',{cx:cx0,cy:cy0,rx:16.5,ry:12.5,fill:col.b,stroke:col.d,'stroke-width':2.5,transform:'rotate('+ang+' '+cx0+' '+cy0+')'},g);
+ [1,-1].forEach(function(s){var ex=cx0+px*6.5*s+fx*4,ey=cy0+py*6.5*s+fy*4;
+  svgEl('circle',{cx:ex,cy:ey,r:4,fill:'#fff'},g);
+  svgEl('circle',{cx:ex+fx*1.6,cy:ey+fy*1.6,r:1.9,fill:'#26201a'},g);});
+ var mx=cx0+fx*16,my=cy0+fy*16,tx=cx0+fx*27,ty=cy0+fy*27;
+ svgEl('path',{d:'M '+mx+' '+my+' L '+tx+' '+ty+' M '+tx+' '+ty+' L '+(tx+px*5)+' '+(ty+py*5)+' M '+tx+' '+ty+' L '+(tx-px*5)+' '+(ty-py*5),
+  stroke:'#d6336c','stroke-width':2.4,fill:'none','stroke-linecap':'round'},g);
+ svgEl('circle',{cx:T.x,cy:T.y,r:5.5,fill:col.b,stroke:col.d,'stroke-width':2},g);
+ snakePaths[head]=body;
+}
+function drawOverlay(){
+ overlay.innerHTML='';snakePaths={};
+ var gl=svgEl('g',{},overlay),gs=svgEl('g',{},overlay);
+ var a;for(a in LADDERS)drawLadder(gl,+a,LADDERS[a]);
+ var ci=0,h;for(h in SNAKES){drawSnake(gs,+h,SNAKES[h],ci++);}
+}
+
+/* ============ PENEMPATAN SOAL SESUAI ZONA ============ */
+function buildQuestionMap(){
+ qMap={};
+ var mudah=shuffle(QUESTIONS.filter(function(q){return q.part===1;}).map(function(q){return Object.assign({},q);}));
+ var sedang=shuffle(QUESTIONS.filter(function(q){return q.part===2;}).concat(EXTRA_SEDANG).map(function(q){return Object.assign({},q);}));
+ var sulit=shuffle(QUESTIONS.filter(function(q){return q.part===3;}).concat(EXTRA_SULIT).map(function(q){return Object.assign({},q);}));
+ var hots=shuffle(QUESTIONS.filter(function(q){return q.part===4;}).map(function(q){return Object.assign({},q);}));
+ /* 1) Kotak tangga & kepala ular <- Bagian D (HOTS/Cerita) */
+ var specials=shuffle(Object.keys(LADDERS).map(Number).concat(Object.keys(SNAKES).map(Number)));
+ specials.forEach(function(b){qMap[b]=hots.pop();});
+ hotsReserve=hots.slice();
+ /* 2) Zona: kotak 2-33 MUDAH, 34-66 SEDANG, 67-99 SULIT */
+ var zE=[],zM=[],zH=[];
+ for(var n=2;n<=99;n++){if(!qMap[n]){(n<=33?zE:(n<=66?zM:zH)).push(n);}}
+ zE.forEach(function(b){qMap[b]=mudah.pop();});
+ /* sisa soal MUDAH menempel di awal zona SEDANG (transisi halus) */
+ while(mudah.length&&zM.length){qMap[zM.shift()]=mudah.pop();}
+ zM.forEach(function(b){qMap[b]=sedang.pop();});
+ zH.forEach(function(b){qMap[b]=sulit.pop();});
+ /* 3) PENGAMAN: pastikan tidak ada kotak kosong (pencegah crash) */
+ var pool=sulit.concat(sedang,mudah,hots).filter(function(q){return q;});
+ for(var m=2;m<=99;m++){if(!qMap[m])qMap[m]=Object.assign({},pick(pool));}
+}
+
+/* ================= UI DASAR ================= */
+function setMsg(t){msgEl.textContent=t;}
+function log(t,pi){var d=document.createElement('div');d.textContent=t;if(pi===0)d.className='lp0';if(pi===1)d.className='lp1';
+ logEl.prepend(d);while(logEl.children.length>40)logEl.lastChild.remove();}
+function clearLog(){logEl.innerHTML='';}
+var pipEls=[];
+(function(){for(var i=0;i<9;i++){var p=document.createElement('span');p.className='pip';diceEl.appendChild(p);pipEls.push(p);}})();
+function setFace(f){var F={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+ pipEls.forEach(function(p,i){p.classList.toggle('on',F[f].indexOf(i)>=0);});}
+
+function updateHUD(){
+ if(!players.length)return;
+ turnName.textContent=players[current].name;
+ turnName.style.color=PCOL[current];
+ players.forEach(function(p,i){
+  pcs[i].classList.toggle('active',i===current);
+  pcs[i].innerHTML='<span class="pdot" style="background:'+PCOL[i]+'"></span>'
+   +'<div><div class="pname">'+esc(p.name)+'</div>'
+   +'<div class="pstat">Kotak: <b>'+p.pos+'</b> &nbsp;\u2022&nbsp; Bintang: <b>'+p.stars+'</b> '+STAR+' &nbsp;\u2022&nbsp; Benar: <b>'+p.correct+'</b> soal</div></div>';
+ });
+ btnRoll.disabled=busy||!started;
+}
+function setPawnXY(i,x,y){var e=pawnEls[i];e.style.left=(x/10)+'%';e.style.top=(y/10)+'%';e.style.transform='translate(-50%,-52%)';}
+function refreshPawns(){
+ document.querySelectorAll('.cell.occ0,.cell.occ1').forEach(function(c){c.classList.remove('occ0','occ1');});
+ players.forEach(function(p,i){
+  var c=cellCenter(p.pos),ox=0,oy=0;
+  if(players[1-i].pos===p.pos){ox=i?15:-15;oy=i?-11:11;}
+  var e=pawnEls[i];
+  e.style.left=(c.x/10)+'%';e.style.top=(c.y/10)+'%';
+  e.style.transform='translate(calc(-50% + '+ox+'px), calc(-50% + '+oy+'px))';
+  if(cellEls[p.pos])cellEls[p.pos].classList.add('occ'+i);
+ });
+}
+
+/* ================= ALUR PERMAINAN ================= */
+function walkSteps(steps){
+ var p=players[current];
+ var pr=Promise.resolve();
+ steps.forEach(function(s){pr=pr.then(function(){p.pos=s;refreshPawns();sfx.step();return wait(330);});});
+ return pr;
+}
+function doRoll(){
+ if(busy||!started)return;
+ busy=true;updateHUD();
+ sfx.dice();
+ var v=ri(1,6);
+ diceEl.classList.add('rolling');
+ var spinPr=Promise.resolve();
+ for(var i=0;i<9;i++){(function(){spinPr=spinPr.then(function(){setFace(ri(1,6));return wait(75);});})();}
+ spinPr.then(function(){
+  diceEl.classList.remove('rolling');setFace(v);diceVal.textContent=v;
+  var p=players[current];
+  var cur=p.pos,dir=1,steps=[];
+  for(var j=0;j<v;j++){if(cur===100)dir=-1;cur+=dir;steps.push(cur);}
+  var dest=steps[steps.length-1];
+  var isL=LADDERS[dest]!==undefined,isS=SNAKES[dest]!==undefined;
+  if(isL||isS){
+   setMsg(p.name+' melempar angka '+v+'. Bergerak satu kotak demi satu kotak...');
+   log(p.name+' melempar dadu: '+v,current);
+   return wait(300).then(function(){return walkSteps(steps);})
+    .then(function(){setMsg(p.name+' berhenti di kotak '+p.pos+'. Jawab soal HOTS-nya!');return wait(250);})
+    .then(function(){openQuestion(dest,null);});
+  }else if(dest===100){
+   setMsg(p.name+' melempar angka '+v+' dan melangkah menuju kotak 100...');
+   log(p.name+' melempar dadu: '+v,current);
+   return wait(300).then(function(){return walkSteps(steps);})
+    .then(function(){return wait(350);}).then(function(){doWin();});
+  }else{
+   setMsg(p.name+' melempar angka '+v+'. Jawab soal kotak '+dest+' dengan benar agar pion boleh maju!');
+   log(p.name+' melempar dadu: '+v+' (tujuan: kotak '+dest+')',current);
+   return wait(600).then(function(){openQuestion(dest,{steps:steps,dest:dest});});
+  }
+ });
+}
+function renderOptions(q){
+ optsEl.innerHTML='';
+ q.opts.forEach(function(o,i){
+  var b=document.createElement('button');
+  b.className='optBtn';b.type='button';
+  b.innerHTML='<span class="key">'+'ABCD'[i]+'</span><span>'+esc(o)+'</span>';
+  b.addEventListener('click',function(){pickOption(i);});
+  optsEl.appendChild(b);
+ });
+}
+function openQuestion(sq,moveCtx){
+ var isL=LADDERS[sq]!==undefined,isS=SNAKES[sq]!==undefined;
+ var q=qMap[sq];
+ qCtx={sq:sq,kind:isL?'ladder':isS?'snake':'normal',q:q,attempts:0,correct:false,done:false,moveCtx:moveCtx||null};
+ if(isL){qBadge.className='badge hots';qBadge.innerHTML=STAR_BADGE+' HOTS \u2022 SOAL #'+q.n+' \u2022 KOTAK TANGGA';}
+ else if(isS){qBadge.className='badge hots';qBadge.innerHTML=STAR_BADGE+' HOTS \u2022 SOAL #'+q.n+' \u2022 KEPALA ULAR';}
+ else{qBadge.className='badge '+(q.part===1?'p1':q.part===2?'p2':'p3');
+  qBadge.textContent=partName(q.part)+' \u2022 '+(q.extra?'SOAL TAMBAHAN':'SOAL #'+q.n);}
+ var title='Kotak '+sq;
+ if(isL)title+=' \u2014 Tangga menuju '+LADDERS[sq]+' (HOTS)';
+ else if(isS)title+=' \u2014 Ular menuju '+SNAKES[sq]+' (HOTS)';
+ else if(moveCtx)title+=' \u2014 jawab benar agar pion boleh maju ke sini!';
+ qTitle.textContent=title;
+ qText.textContent=q.q;
+ if(q.fig&&FIGS[q.fig]){qFigWrap.innerHTML=FIGS[q.fig]();show(qFigWrap);}
+ else{qFigWrap.innerHTML='';hide(qFigWrap);}
+ renderOptions(q);
+ qFeedback.className='qFeedback';qFeedback.innerHTML='';
+ qExplain.className='explain';qExplain.innerHTML='';
+ btnNext.classList.add('hidden');btnSkip.classList.remove('hidden');
+ show(qOvl);
+}
+function finishQuestion(ok,feedText){
+ qCtx.done=true;qCtx.correct=ok;
+ Array.prototype.forEach.call(optsEl.children,function(b){b.disabled=true;});
+ qFeedback.className='qFeedback show '+(ok?'good':'bad');
+ qFeedback.innerHTML=(ok?OK_ICON:NO_ICON)+'<span>'+feedText+'</span>';
+ qExplain.innerHTML='<b>Pembahasan:</b> '+esc(qCtx.q.ex);qExplain.classList.add('show');
+ btnSkip.classList.add('hidden');
+ btnNext.classList.remove('hidden');
+}
+function pickOption(i){
+ if(!qCtx||qCtx.done)return;
+ var btns=Array.prototype.slice.call(optsEl.children),b=btns[i];
+ if(!b||b.disabled)return;
+ if(i===qCtx.q.ans){
+  b.classList.add('correct');sfx.good();
+  var feed=(qCtx.kind==='normal'&&qCtx.moveCtx)?'Benar! Pionmu boleh maju!':'Benar! Kerja bagus!';
+  finishQuestion(true,feed);
+ }else{
+  qCtx.attempts++;sfx.bad();
+  b.classList.add('wrong');b.disabled=true;
+  if(qCtx.kind!=='normal'||qCtx.attempts>=2){
+   btns[qCtx.q.ans].classList.add('reveal');
+   var feed='Belum tepat. Jawaban yang benar: <b>'+esc(answerText(qCtx.q))+'</b>';
+   if(qCtx.kind==='normal'&&qCtx.moveCtx)feed='Pion gagal maju. '+feed;
+   finishQuestion(false,feed);
+  }else{
+   qFeedback.className='qFeedback show bad';
+   qFeedback.innerHTML=NO_ICON+'<span>Belum tepat \u2014 pilih jawaban lain!</span>';
+   optsEl.classList.add('shake');setTimeout(function(){optsEl.classList.remove('shake');},600);
+  }
+ }
+}
+function skipQuestion(){
+ if(!qCtx||qCtx.done)return;
+ Array.prototype.forEach.call(optsEl.children,function(x){x.disabled=true;});
+ optsEl.children[qCtx.q.ans].classList.add('reveal');
+ var feed='Soal dilewati tutor. Jawaban: <b>'+esc(answerText(qCtx.q))+'</b>';
+ if(qCtx.kind==='normal'&&qCtx.moveCtx)feed='Pion gagal maju. '+feed;
+ finishQuestion(false,feed);
+}
+function resolveTurn(ctx){
+ var p=players[current],sq=ctx.sq;
+ var pr;
+ if(ctx.kind==='ladder'){
+  if(ctx.correct){
+   p.correct++;p.stars+=2;updateHUD();
+   log(p.name+' menjawab HOTS dengan benar! Naik tangga...',current);
+   pr=climbAnim(sq,LADDERS[sq]).then(function(){
+    p.pos=LADDERS[sq];refreshPawns();sfx.step();
+    log(p.name+' NAIK TANGGA dari '+sq+' ke kotak '+p.pos+'!',current);
+   });
+  }else{log(p.name+' belum berhasil menjawab, peluang naik tangga lepas. Tetap di kotak '+sq+'.',current);pr=Promise.resolve();}
+ }else if(ctx.kind==='snake'){
+  if(ctx.correct){p.correct++;p.stars+=2;log(p.name+' menjawab HOTS dengan benar! Aman dari ular, tidak turun.',current);pr=Promise.resolve();}
+  else{
+   log(p.name+' gagal menjawab... Aduh, ada ular!',current);
+   pr=slideAnim(sq).then(function(){
+    p.pos=SNAKES[sq];refreshPawns();
+    log(p.name+' TURUN dari kotak '+sq+' ke kotak '+p.pos+'.',current);
+   });
+  }
+ }else{
+  if(ctx.correct&&ctx.moveCtx){
+   p.correct++;p.stars++;updateHUD();
+   log(p.name+' menjawab benar! Pion berjalan maju...',current);
+   pr=wait(250).then(function(){return walkSteps(ctx.moveCtx.steps);})
+    .then(function(){log(p.name+' berhasil maju ke kotak '+p.pos+'. +1 bintang.',current);});
+  }else{
+   log(p.name+' gagal menjawab \u2014 pion gagal maju, tetap di kotak '+p.pos+'.',current);pr=Promise.resolve();
+  }
+ }
+ pr.then(function(){
+  updateHUD();
+  if(p.pos===100)return doWin();
+  current=1-current;busy=false;updateHUD();
+  setMsg('Giliran '+players[current].name+' \u2014 lempar dadunya!');
+ });
+}
+function climbAnim(a,b){
+ var A=cellCenter(a),B=cellCenter(b),el=pawnEls[current];
+ el.classList.add('noTrans');sfx.climb();
+ var dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy),px=-dy/L,py=dx/L;
+ var dur=980,t0=performance.now();
+ return new Promise(function(res){(function f(now){
+  var t=Math.min(1,(now-t0)/dur);
+  var bob=Math.sin(t*Math.PI*7)*7;
+  setPawnXY(current,A.x+dx*t+px*bob,A.y+dy*t+py*bob);
+  if(t<1)requestAnimationFrame(f);else{el.classList.remove('noTrans');res();}
+ })(t0);});
+}
+function slideAnim(head){
+ var path=snakePaths[head],el=pawnEls[current];
+ el.classList.add('noTrans');sfx.slide();
+ var len=path.getTotalLength(),dur=Math.min(1600,600+len*1.1),t0=performance.now();
+ return new Promise(function(res){(function f(now){
+  var t=Math.min(1,(now-t0)/dur),e=t*t;
+  var pt=path.getPointAtLength(e*len);
+  setPawnXY(current,pt.x,pt.y);
+  if(t<1)requestAnimationFrame(f);else{el.classList.remove('noTrans');res();}
+ })(t0);});
+}
+
+/* ================= MENANG ================= */
+function doWin(){
+ busy=true;lastWinner=current;updateHUD();
+ var p=players[current];
+ sfx.win();
+ log(p.name+' mencapai kotak 100 \u2014 PEMENANGNYA!',current);
+ setMsg('Permainan selesai. '+p.name+' menang!');
+ $('#winName').textContent=p.name;
+ $('#winStats').innerHTML=players.map(function(pl,i){
+  return '<div class="wrow"><span class="pdot" style="background:'+PCOL[i]+'"></span><b>'+esc(pl.name)+'</b>'
+   +' <span>\u2022 Kotak akhir: <b>'+pl.pos+'</b></span><span>\u2022 Bintang: <b>'+pl.stars+'</b></span>'
+   +' <span>\u2022 Benar: <b>'+pl.correct+'</b> soal</span>'+(i===current?'<span class="winTag">JUARA</span>':'')+'</div>';
+ }).join('');
+ spawnConfetti();show(winOvl);
+}
+function spawnConfetti(){
+ var box=$('#confetti');box.innerHTML='';
+ var cols=['#e8590c','#0ca678','#ffd43b','#d6336c','#1098ad','#2f9e44'];
+ for(var i=0;i<90;i++){var s=document.createElement('i');
+  s.style.left=Math.random()*100+'%';
+  s.style.background=pick(cols);
+  s.style.width=(7+Math.random()*7)+'px';s.style.height=(10+Math.random()*8)+'px';
+  s.style.borderRadius=Math.random()<.4?'50%':'2px';
+  s.style.animationDuration=(2.6+Math.random()*2.6)+'s';
+  s.style.animationDelay=(Math.random()*1.6)+'s';
+  box.appendChild(s);}
+}
+
+/* ================= KUNCI TUTOR ================= */
+function buildKey(){
+ var h='';
+ var zones=[
+  {p:1,name:'Kotak 2\u201333 \u2022 MUDAH \u2014 Bagian A (Soal 1\u201330)'},
+  {p:2,name:'Kotak 34\u201366 \u2022 SEDANG \u2014 Bagian B (Soal 31\u201355)'},
+  {p:3,name:'Kotak 67\u201399 \u2022 SULIT \u2014 Bagian C (Soal 56\u201380)'}
+ ];
+ zones.forEach(function(z){
+  var items=Object.keys(qMap).map(Number).filter(function(b){return qMap[b].part===z.p;}).sort(function(a,b){return a-b;});
+  h+='<details'+(z.p===1?' open':'')+'><summary>'+z.name+' ('+items.length+' kotak)</summary>';
+  items.forEach(function(b){var q=qMap[b];
+   var label=q.extra?' <i>(soal tambahan)</i>':' \u2014 Soal #'+q.n;
+   h+='<div class="kitem"><b>Kotak '+b+'</b>'+label+': '+esc(q.q)
+    +'<br><b>Jawaban: '+esc(answerText(q))+'</b> <i>'+esc(q.ex)+'</i></div>';});
+  h+='</details>';
+ });
+ var hItems=Object.keys(qMap).map(Number).filter(function(b){return qMap[b].part===4;}).sort(function(a,b){return a-b;});
+ h+='<details open><summary>Kotak Tangga &amp; Kepala Ular \u2022 HOTS/Cerita \u2014 Bagian D (Soal 81\u2013100) ('+hItems.length+' kotak)</summary>';
+ hItems.forEach(function(b){var q=qMap[b];
+  h+='<div class="kitem"><b>Kotak '+b+'</b> \u2014 Soal #'+q.n+': '+esc(q.q)
+   +'<br><b>Jawaban: '+esc(answerText(q))+'</b> <i>'+esc(q.ex)+'</i></div>';});
+ h+='</details>';
+ if(hotsReserve.length){
+  h+='<details><summary>HOTS cadangan ronde ini ('+hotsReserve.length+' soal)</summary>';
+  hotsReserve.forEach(function(q){h+='<div class="kitem"><b>Soal #'+q.n+'</b>: '+esc(q.q)
+   +'<br><b>Jawaban: '+esc(answerText(q))+'</b> <i>'+esc(q.ex)+'</i></div>';});
+  h+='</details>';
+ }
+ $('#keyBody').innerHTML=h;
+}
+
+/* ================= MULAI / ULANG ================= */
+function startGame(){
+ try{
+  var n1=($('#inName1').value||'').trim()||'Pemain 1';
+  var n2=($('#inName2').value||'').trim()||'Pemain 2';
+  players=[{name:n1.slice(0,14),pos:1,stars:0,correct:0},{name:n2.slice(0,14),pos:1,stars:0,correct:0}];
+  current=0;busy=false;started=true;lastWinner=-1;
+  pawnEls.forEach(function(e){e.remove();});pawnEls=[];
+  players.forEach(function(p,i){
+   var e=document.createElement('div');
+   e.className='pawn x'+i;e.textContent=p.name.charAt(0).toUpperCase();
+   board.appendChild(e);pawnEls.push(e);
+  });
+  buildQuestionMap();buildCells();drawOverlay();buildKey();
+  pawnEls.forEach(function(e){e.classList.add('noTrans');});
+  refreshPawns();
+  requestAnimationFrame(function(){requestAnimationFrame(function(){pawnEls.forEach(function(e){e.classList.remove('noTrans');});});});
+  updateHUD();hide(setupOvl);clearLog();
+  log('Permainan dimulai! Semua pion berdiri di kotak 1. Semangat!');
+  setMsg('Giliran '+players[0].name+' \u2014 lempar dadunya!');
+ }catch(err){
+  setMsg('Gagal memulai: '+err.message);
+ }
+}
+function resetGame(){
+ players.forEach(function(p){p.pos=1;p.stars=0;p.correct=0;});
+ current=(lastWinner===1)?0:1; // yang kalah jalan lebih dulu di ronde baru
+ buildQuestionMap();buildCells();drawOverlay();buildKey();
+ pawnEls.forEach(function(e){e.classList.add('noTrans');});
+ refreshPawns();
+ requestAnimationFrame(function(){requestAnimationFrame(function(){pawnEls.forEach(function(e){e.classList.remove('noTrans');});});});
+ busy=false;started=true;clearLog();updateHUD();
+ setMsg('Ronde baru! Giliran '+players[current].name+' \u2014 lempar dadunya!');
+ log('Ronde baru dimulai. '+players[current].name+' jalan pertama.');
+}
+
+/* ================= EVENT ================= */
+btnRoll.addEventListener('click',doRoll);
+ $('#btnAgain').addEventListener('click',function(){hide(winOvl);resetGame();});
+ $('#btnNew').addEventListener('click',function(){hide(winOvl);started=false;busy=false;show(setupOvl);});
+ $('#btnKey').addEventListener('click',function(){show(keyOvl);});
+ $('#btnKeyClose').addEventListener('click',function(){hide(keyOvl);});
+ $('#btnHow').addEventListener('click',function(){show(howOvl);});
+ $('#btnHowClose').addEventListener('click',function(){hide(howOvl);});
+ $('#btnSound').addEventListener('click',function(e){e.target.textContent='Suara: '+(sfx.toggle()?'OFF':'ON');});
+[ $('#inName1'), $('#inName2') ].forEach(function(inp){inp.addEventListener('keydown',function(e){if(e.key==='Enter')startGame();});});
+btnSkip.addEventListener('click',skipQuestion);
+btnNext.addEventListener('click',function(){if(!qCtx)return;hide(qOvl);var ctx=qCtx;qCtx=null;resolveTurn(ctx);});
+window.addEventListener('keydown',function(e){
+ if(!qOvl.classList.contains('hidden')&&qCtx&&!qCtx.done){
+  var map={a:0,b:1,c:2,d:3,'1':0,'2':1,'3':2,'4':3};
+  var k=e.key.toLowerCase();
+  if(k in map&&map[k]<qCtx.q.opts.length){e.preventDefault();pickOption(map[k]);return;}
+  if(e.key==='Enter'&&!btnNext.classList.contains('hidden')){e.preventDefault();btnNext.click();}
+  return;
+ }
+ if(e.code==='Space'&&started&&!busy&&!anyOvl()){e.preventDefault();doRoll();}
+});
+function anyOvl(){return[setupOvl,qOvl,winOvl,keyOvl,howOvl].some(function(o){return !o.classList.contains('hidden');});}
+
+/* ================= INISIALISASI ================= */
+ $('#setupRules').innerHTML=RULES_HTML;
+ $('#howBody').innerHTML='<div class="rules">'+RULES_HTML+'</div>';
+buildQuestionMap();buildCells();drawOverlay();setFace(5);diceVal.textContent='\u2013';
+</script>
+</body>
+</html>
