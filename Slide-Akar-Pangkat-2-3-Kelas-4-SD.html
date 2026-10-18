@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  SLIDE INTERAKTIF: AKAR PANGKAT 2 & 3 — MATEMATIKA KELAS 4 SD
+  ============================================================
+  Cara pakai : buka file ini di browser (Chrome / Edge / Firefox).
+               Bisa dipakai offline (font akan fallback otomatis).
+  Navigasi   : tombol ◀ ▶ di bawah, panah keyboard, atau swipe di HP.
+  Layar penuh: tekan F atau tombol ⛶ kanan atas.
+  Fitur      : latihan dengan tombol cek jawaban + pembahasan,
+               game ice breaking "Kuis Kilat", 20 soal bertingkat,
+               exit ticket (benar = kelas selesai, salah = soal lagi).
+-->
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Akar Pangkat 2 &amp; 3 — Matematika Kelas 4 SD</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔢</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:'Nunito','Segoe UI',system-ui,sans-serif;
+  color:#2B2350;
+  background:
+    radial-gradient(1100px 520px at 88% -8%, #FFE7C2 0%, rgba(255,231,194,0) 60%),
+    radial-gradient(900px 480px at -8% 108%, #D6F6EE 0%, rgba(214,246,238,0) 55%),
+    linear-gradient(180deg,#FFFBF0 0%,#FBF3E2 100%);
+  overflow:hidden;
+}
+button{font-family:inherit;cursor:pointer;user-select:none}
+.hidden{display:none!important}
+h1,h2,h3,.disp{font-family:'Baloo 2','Comic Sans MS',cursive;line-height:1.15;color:#2B2350}
+.center{text-align:center}
+.muted{color:#8B84A8}
+.small-note{font-size:.9rem}
+.big{font-size:2.6rem}
+.cap{font-weight:700;color:#5A5480;margin-top:8px}
+
+/* ===== progress & topbar ===== */
+#prog{position:fixed;top:0;left:0;height:6px;width:0;z-index:80;
+  background:linear-gradient(90deg,#2EC4B6,#FFD23F,#FF7A3C);transition:width .35s ease;border-radius:0 4px 4px 0}
+#topbar{position:fixed;top:10px;left:0;right:0;display:flex;justify-content:space-between;align-items:center;
+  padding:0 16px;z-index:70;pointer-events:none}
+.tb-chip{background:#fff;border-radius:999px;padding:6px 14px;font-weight:800;font-size:.85rem;
+  box-shadow:0 4px 12px rgba(43,35,80,.10);display:flex;align-items:center;gap:8px;pointer-events:auto}
+.tb-right{display:flex;gap:8px;pointer-events:auto}
+.icon-btn{width:38px;height:38px;border-radius:12px;border:none;background:#fff;font-size:1.05rem;
+  box-shadow:0 4px 12px rgba(43,35,80,.10);display:grid;place-items:center}
+.icon-btn:hover{background:#FFF3D6}
+
+/* ===== nav bawah ===== */
+#nav{position:fixed;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:14px;
+  padding:10px 14px 12px;z-index:70;
+  background:linear-gradient(0deg,rgba(251,243,226,.96) 35%,rgba(251,243,226,0))}
+#dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:58vw}
+.dot{width:9px;height:9px;border-radius:99px;background:#D9D2BE;border:none;padding:0;transition:all .2s}
+.dot.on{background:#FF7A3C;width:24px}
+.dot:hover{background:#B9B29C}
+
+/* ===== sistem slide ===== */
+.slide{position:fixed;inset:0;display:none;padding:60px 22px 92px;z-index:10}
+.slide.active{display:flex;justify-content:center}
+.wrap{width:min(1120px,100%);display:flex;flex-direction:column;gap:16px;
+  overflow-y:auto;max-height:calc(100vh - 152px);padding:4px 8px 14px;border-radius:18px}
+.slide.active .wrap>*{animation:pop .55s cubic-bezier(.22,1.18,.36,1) both}
+.slide.active .wrap>*:nth-child(1){animation-delay:.03s}
+.slide.active .wrap>*:nth-child(2){animation-delay:.10s}
+.slide.active .wrap>*:nth-child(3){animation-delay:.17s}
+.slide.active .wrap>*:nth-child(4){animation-delay:.24s}
+.slide.active .wrap>*:nth-child(5){animation-delay:.31s}
+.slide.active .wrap>*:nth-child(6){animation-delay:.38s}
+.slide.active .wrap>*:nth-child(7){animation-delay:.45s}
+.slide.active .wrap>*:nth-child(8){animation-delay:.52s}
+@keyframes pop{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+/* ===== tipografi ===== */
+h1{font-size:clamp(2.3rem,5.4vw,3.8rem)}
+h2{font-size:clamp(1.5rem,3vw,2.2rem)}
+h3{font-size:clamp(1.15rem,2vw,1.45rem)}
+.hi2{color:#FF7A3C}.hi3{color:#0F8C7E}
+.sub{font-size:clamp(1rem,2vw,1.18rem);color:#5A5480;font-weight:600}
+
+/* ===== pill & tag ===== */
+.pill{display:inline-block;background:#EFE9FF;color:#6C51D9;font-weight:800;border-radius:999px;
+  padding:6px 16px;font-size:.9rem;letter-spacing:.4px}
+.pill.y{background:#FFF3C9;color:#A87A00}
+.pill.t{background:#D9F6F1;color:#0F8C7E}
+.pill.o{background:#FFE4D1;color:#C75A16}
+.tag{font-size:.78rem;font-weight:800;padding:4px 12px;border-radius:999px;color:#fff;flex:none}
+.t-mudah{background:#22B573}.t-sedang{background:#F0A202}.t-sulit{background:#FF7A3C}.t-susah{background:#E5484D}
+.scorechip{background:#fff;border-radius:999px;padding:8px 16px;font-weight:800;font-size:.95rem;
+  box-shadow:0 4px 12px rgba(43,35,80,.10);white-space:nowrap}
+
+/* ===== kartu & tombol ===== */
+.card{background:#fff;border-radius:22px;box-shadow:0 8px 0 rgba(43,35,80,.06),0 18px 40px rgba(43,35,80,.10)}
+.card-pad{padding:20px 22px}
+.btn{border:none;border-radius:16px;font-family:'Baloo 2';font-weight:700;font-size:1.05rem;
+  padding:12px 24px;color:#fff;transition:transform .12s,box-shadow .12s}
+.btn.teal{background:#2EC4B6;box-shadow:0 5px 0 #1FA396}
+.btn.orange{background:#FF7A3C;box-shadow:0 5px 0 #D95B1E}
+.btn.purple{background:#8B72E9;box-shadow:0 5px 0 #6C51D9}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+.btn.big{font-size:1.25rem;padding:15px 34px;border-radius:20px}
+
+/* ===== grid ===== */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+
+/* ===== kuis ===== */
+.qgrid{display:grid;gap:13px}
+.qgrid.cols2{grid-template-columns:1fr 1fr}
+.quiz{background:#fff;border-radius:20px;padding:14px 16px;
+  box-shadow:0 8px 0 rgba(43,35,80,.06),0 14px 30px rgba(43,35,80,.08);border:2.5px solid transparent}
+.quiz.ok{border-color:#22B573}
+.quiz.no{border-color:#E5484D;animation:shake .4s}
+.qhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.qnum{width:30px;height:30px;border-radius:50%;background:#2EC4B6;color:#fff;display:grid;place-items:center;
+  font-weight:800;font-family:'Baloo 2';flex:none}
+.qtext{font-weight:700;font-size:1.12rem;flex:1;min-width:110px}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ans{flex:1;min-width:96px;max-width:190px;font-size:1.15rem;font-family:'Baloo 2';font-weight:700;text-align:center;
+  padding:10px 12px;border:3px solid #EDE7D8;border-radius:14px;background:#FFFDF6;color:#2B2350}
+.ans:focus{outline:none;border-color:#2EC4B6;background:#fff}
+.ans:disabled{opacity:.65}
+.fb{display:none;font-weight:800;margin-top:8px}
+.fb.good{display:block;color:#22B573}
+.fb.bad{display:block;color:#E5484D}
+.fb.warn{display:block;color:#E8930C}
+.pem{display:none;margin-top:10px;background:#FFF8E1;border:2px dashed #F0B90B;border-radius:14px;
+  padding:10px 14px;font-size:.98rem;line-height:1.55;animation:fadeUp .35s both}
+.pem.show{display:block}
+.pem b{color:#A87A00}
+.ex{margin-top:10px;background:#FFF8E1;border:2px dashed #F0B90B;border-radius:14px;padding:10px 14px;line-height:1.6}
+
+/* ===== chips penjelajah pangkat ===== */
+.chiprow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.chip{width:48px;height:48px;border-radius:14px;background:#fff;border:3px solid #EDE7D8;
+  font-family:'Baloo 2';font-weight:800;font-size:1.25rem;color:#2B2350;transition:all .15s}
+.chip:hover{transform:translateY(-3px);border-color:#2EC4B6}
+.chip.on{background:#FF7A3C;border-color:#D95B1E;color:#fff;transform:scale(1.1)}
+.expout{padding:16px 20px}
+#expTitle{font-family:'Baloo 2';font-weight:800;font-size:1.25rem;margin-bottom:4px}
+.exp-line{font-family:'Baloo 2';font-weight:700;font-size:clamp(1.1rem,2.4vw,1.55rem);margin:4px 0;color:#5A5480}
+.exp-line .v{color:#FF7A3C}
+
+/* ===== trick & langkah ===== */
+.step{display:flex;gap:12px;align-items:flex-start;background:#F6FBFA;border-radius:16px;
+  padding:12px 14px;border:2px solid #E2F3EF;margin-top:10px;line-height:1.5}
+.stepnum{width:34px;height:34px;flex:none;border-radius:12px;background:#2EC4B6;color:#fff;
+  font-family:'Baloo 2';font-weight:800;display:grid;place-items:center;font-size:1.05rem}
+.dlegend{font-size:.82rem;color:#8B84A8;font-weight:700;margin-top:10px}
+.dmap{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:6px}
+.dmap div{text-align:center;border-radius:9px;padding:6px 0;font-weight:800;font-size:.95rem}
+.dmap .h{background:#8B72E9;color:#fff}
+.dmap .v{background:#FFF3C9;color:#8A6D00;border:2px solid #F0B90B}
+.formula{font-family:'Baloo 2';font-size:1.3rem;font-weight:800;background:#EFFCF9;border-radius:12px;
+  padding:12px 14px;margin-bottom:6px;color:#0F8C7E;text-align:center}
+
+/* ===== anatomi notasi ===== */
+.anat{display:flex;align-items:center;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.anat-num{font-family:'Baloo 2';font-weight:800}
+.anat-num .ab{font-size:4rem;color:#2B2350}
+.anat-num .ap{font-size:2.2rem;color:#FF7A3C;vertical-align:super}
+.anat-num .eq{font-size:3rem;color:#B9B2CC;margin:0 6px}
+.anat-l{display:flex;flex-direction:column;gap:8px;font-weight:800;font-size:.95rem}
+.anat-l span{padding:6px 12px;border-radius:10px}
+
+/* ===== game ===== */
+.gstats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.gstat{background:#fff;border-radius:999px;padding:8px 18px;font-weight:800;
+  box-shadow:0 4px 12px rgba(43,35,80,.10)}
+.gq{font-family:'Baloo 2';font-weight:800;font-size:clamp(1.9rem,4.6vw,3rem);margin:4px 0 12px}
+.gq.small{font-size:clamp(1.5rem,3.2vw,2.1rem);margin:10px 0}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:540px;margin:0 auto}
+.opt{border:none;border-radius:18px;padding:16px 10px;font-family:'Baloo 2';font-weight:800;
+  font-size:1.5rem;color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.18);transition:transform .12s}
+.opt:hover{transform:translateY(-2px)}
+.opt:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.opt.c0{background:#2EC4B6}.opt.c1{background:#8B72E9}.opt.c2{background:#FF7A3C}.opt.c3{background:#FF5D8F}
+.opt.correct{outline:5px solid #22B573;outline-offset:2px}
+.opt.wrong{animation:shake .4s;opacity:.75}
+.gbar{height:12px;background:#EDE7D8;border-radius:99px;overflow:hidden;max-width:540px;margin:10px auto 2px}
+#gBarFill{height:100%;width:100%;background:linear-gradient(90deg,#2EC4B6,#FFD23F,#FF7A3C);
+  transition:width 1s linear;border-radius:99px}
+
+/* ===== maskot & kartu cerita ===== */
+.mascot{display:flex;gap:12px;align-items:flex-start}
+.mascot .face{font-size:2.4rem;flex:none;animation:floaty 3s ease-in-out infinite}
+.bubble{background:#fff;border-radius:4px 20px 20px 20px;padding:14px 18px;font-weight:600;line-height:1.55;
+  box-shadow:0 8px 0 rgba(43,35,80,.06),0 14px 30px rgba(43,35,80,.08)}
+.bubble b{color:#E85D1F}
+.story p{line-height:1.65;font-weight:600;color:#4A4370}
+.pemantik{background:#fff;border-radius:20px;padding:16px 18px;border-top:6px solid #2EC4B6;
+  box-shadow:0 8px 0 rgba(43,35,80,.06),0 14px 30px rgba(43,35,80,.08)}
+.pemantik.pk2{border-top-color:#FFD23F}
+.pemantik.pk3{border-top-color:#FF7A3C}
+.ptext{font-weight:700;line-height:1.55}
+.hint{display:none;margin-top:10px;background:#EFFCF9;border-left:4px solid #2EC4B6;
+  padding:8px 12px;border-radius:0 12px 12px 0;animation:fadeUp .3s both;font-weight:600}
+.hint.show{display:block}
+.hint-btn{margin-top:10px;background:#EFFCF9;color:#0F8C7E;border:2px solid #BFEDE6;border-radius:12px;
+  padding:6px 14px;font-weight:800}
+.goal{display:flex;gap:14px;align-items:center;background:#fff;border-radius:18px;padding:14px 18px;
+  box-shadow:0 8px 0 rgba(43,35,80,.06),0 14px 30px rgba(43,35,80,.08)}
+.goal .ico{font-size:1.9rem;flex:none}
+.goal p{font-weight:700}
+.goals{display:flex;flex-direction:column;gap:12px}
+.sumcard{background:#fff;border-radius:20px;padding:18px;border-top:6px solid #FF7A3C;
+  box-shadow:0 8px 0 rgba(43,35,80,.06),0 14px 30px rgba(43,35,80,.08)}
+.sumcard h3{margin-bottom:6px}
+.sumcard .mm{font-size:1.9rem}
+.sumcard p{font-weight:600;color:#4A4370;line-height:1.55}
+
+/* ===== refleksi & exit ===== */
+.moods{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.mood{font-size:2.5rem;background:#fff;border:3px solid #EDE7D8;border-radius:18px;padding:8px 20px;
+  transition:transform .15s,border-color .15s}
+.mood:hover{transform:scale(1.08) rotate(-3deg)}
+.mood.on{border-color:#2EC4B6;background:#EFFCF9}
+.good-msg{color:#22B573;font-weight:800;margin-top:10px}
+.soalhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.soalhead .left{display:flex;flex-direction:column;gap:6px}
+
+/* ===== overlay & konfeti ===== */
+#party{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(800px 500px at 50% 20%,rgba(255,210,63,.35),rgba(43,35,80,.55)),rgba(43,35,80,.45);
+  backdrop-filter:blur(4px)}
+.party-card{background:#fff;border-radius:28px;padding:34px 40px;text-align:center;max-width:520px;margin:16px;
+  box-shadow:0 30px 80px rgba(0,0,0,.3);animation:pop .6s cubic-bezier(.22,1.4,.36,1) both}
+.party-card h2{font-size:2.6rem;color:#FF7A3C}
+.party-card .big{font-size:3.4rem}
+.party-card p{font-weight:700;color:#5A5480;margin:6px 0}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:300}
+
+/* ===== scrollbar & responsif ===== */
+.wrap::-webkit-scrollbar{width:8px}
+.wrap::-webkit-scrollbar-thumb{background:#E3DCC8;border-radius:99px}
+@media (max-width:840px){
+  .qgrid.cols2,.grid2,.grid3,.opts{grid-template-columns:1fr}
+  .wrap{max-height:calc(100vh - 160px)}
+  #dots{display:none}
+  .anat-num .ab{font-size:3rem}
+  .anat-num .ap{font-size:1.7rem}
+}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<div id="topbar">
+  <div class="tb-chip">🔢 Pangkat &amp; Akar • Kelas 4 SD</div>
+  <div class="tb-right">
+    <span class="tb-chip" id="slideNum">1 / 19</span>
+    <button class="icon-btn" onclick="goHome()" title="Kembali ke awal">🏠</button>
+    <button class="icon-btn" onclick="toggleFs()" title="Layar penuh (F)">⛶</button>
+  </div>
+</div>
+
+<main>
+<!-- ============ SLIDE 1 : COVER ============ -->
+<section class="slide active">
+  <div class="wrap cover" style="align-items:center;text-align:center">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      <span class="pill o">🎓 Matematika • Kelas 4 SD</span>
+      <span class="pill t">✨ Bab Pangkat &amp; Akar</span>
+    </div>
+    <h1>Akar Pangkat <span class="hi2">Dua</span> &amp; <span class="hi3">Tiga</span></h1>
+    <p class="sub">Petualangan seru mencari panjang sisi persegi &amp; panjang rusuk kubus dengan kekuatan akar! 💪</p>
+    <div style="width:min(600px,90vw)">
+      <svg viewBox="0 0 660 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+        <g transform="translate(48,88)" font-family="Baloo 2, sans-serif">
+          <text x="70" y="-18" text-anchor="middle" font-size="30" font-weight="800" fill="#E85D1F">3² = 9</text>
+          <rect x="-12" y="-12" width="164" height="164" rx="20" fill="#FFF3C9"/>
+          <rect x="0" y="0" width="44" height="44" rx="8" fill="#FFD23F" stroke="#E0A800" stroke-width="3"/>
+          <rect x="48" y="0" width="44" height="44" rx="8" fill="#FFC93C" stroke="#E0A800" stroke-width="3"/>
+          <rect x="96" y="0" width="44" height="44" rx="8" fill="#FFD23F" stroke="#E0A800" stroke-width="3"/>
+          <rect x="0" y="48" width="44" height="44" rx="8" fill="#FFC93C" stroke="#E0A800" stroke-width="3"/>
+          <rect x="48" y="48" width="44" height="44" rx="8" fill="#FFD23F" stroke="#E0A800" stroke-width="3"/>
+          <rect x="96" y="48" width="44" height="44" rx="8" fill="#FFC93C" stroke="#E0A800" stroke-width="3"/>
+          <rect x="0" y="96" width="44" height="44" rx="8" fill="#FFD23F" stroke="#E0A800" stroke-width="3"/>
+          <rect x="48" y="96" width="44" height="44" rx="8" fill="#FFC93C" stroke="#E0A800" stroke-width="3"/>
+          <rect x="96" y="96" width="44" height="44" rx="8" fill="#FFD23F" stroke="#E0A800" stroke-width="3"/>
+          <text x="70" y="184" text-anchor="middle" font-size="21" font-weight="700" fill="#8A6D00">3 × 3 = 9</text>
+        </g>
+        <text x="322" y="180" text-anchor="middle" font-size="58" font-weight="800" fill="#B9B2CC" font-family="Baloo 2, sans-serif">+</text>
+        <g transform="translate(378,64)" font-family="Baloo 2, sans-serif">
+          <text x="130" y="-22" text-anchor="middle" font-size="30" font-weight="800" fill="#0F8C7E">4³ = 64</text>
+          <polygon points="130,0 235,50 130,100 25,50" fill="#BFF0E9" stroke="#1FA396" stroke-width="3"/>
+          <polygon points="25,50 130,100 130,215 25,165" fill="#7FD8CC" stroke="#1FA396" stroke-width="3"/>
+          <polygon points="235,50 130,100 130,215 235,165" fill="#3FB6A6" stroke="#1FA396" stroke-width="3"/>
+          <text x="130" y="252" text-anchor="middle" font-size="21" font-weight="700" fill="#0F8C7E">4 × 4 × 4 = 64</text>
+        </g>
+      </svg>
+    </div>
+    <div><button class="btn orange big" onclick="go(1)">🚀 Mulai Belajar</button></div>
+    <p class="muted small-note">Tips: gunakan tombol ◀ ▶ di bawah, panah keyboard, atau swipe di layar sentuh</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2 : APERSEPSI & PEMANTIK ============ -->
+<section class="slide">
+  <div class="wrap">
+    <h2>🔍 Apersepsi &amp; Pemantik</h2>
+    <div class="mascot">
+      <div class="face">🐱</div>
+      <div class="bubble">Halo teman-teman! Aku <b>Kiko</b>, si kucing penasaran. Hari ini kita akan menjadi <b>detektif bilangan</b>! Sebelum berangkat, yuk hangatkan otak dulu… 🕵️</div>
+    </div>
+    <div class="card card-pad story">
+      <h3>📖 Cerita: Taman Pak Budi</h3>
+      <p>Pak Budi ingin memasang pagar di taman rumahnya yang berbentuk <b>persegi</b>. Pak Budi sudah mengetahui luas tanahnya, yaitu <b>25 m²</b>, tetapi ia bingung: <i>"Berapa ya panjang tiap sisi tanahku, supaya pagarnya pas?"</i> 🤔<br>Belum ada yang bisa menjawab… nanti di akhir pelajaran, kamu akan bisa membantu Pak Budi. Janji ya!</p>
+    </div>
+    <h3>💭 Yuk pikirkan dulu…</h3>
+    <div class="grid3">
+      <div class="pemantik pk1">
+        <p class="ptext">1️⃣ 3 × 3 = 9. Sebenarnya angka 9 ini "lahir" dari siapa, ya? 🤔</p>
+        <button class="hint-btn" onclick="this.nextElementSibling.classList.toggle('show')">💡 Petunjuk</button>
+        <div class="hint">9 lahir dari angka 3 yang dikalikan dirinya sendiri. Nama ajaibnya: <b>pangkat</b>!</div>
+      </div>
+      <div class="pemantik pk2">
+        <p class="ptext">2️⃣ Kalau 9 lahir dari 3 × 3, bisakah kita mengembalikan 9 menjadi 3 lagi? 🔎</p>
+        <button class="hint-btn" onclick="this.nextElementSibling.classList.toggle('show')">💡 Petunjuk</button>
+        <div class="hint">Bisa! Proses mengembalikannya disebut <b>akar</b>. Nanti kita tulis: √9 = 3.</div>
+      </div>
+      <div class="pemantik pk3">
+        <p class="ptext">3️⃣ Kotak kado ajaib berbentuk kubus volumenya 8 cm³. Rusuknya berapa cm? 🎁</p>
+        <button class="hint-btn" onclick="this.nextElementSibling.classList.toggle('show')">💡 Petunjuk</button>
+        <div class="hint">Cari bilangan yang jika dikalikan tiga kali hasilnya 8. Itulah yang nanti disebut <b>akar pangkat tiga</b>!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3 : TUJUAN PEMBELAJARAN ============ -->
+<section class="slide">
+  <div class="wrap">
+    <h2>🎯 Tujuan Pembelajaran</h2>
+    <p class="sub">Setelah belajar dengan gembira hari ini, kamu akan bisa:</p>
+    <div class="goals">
+      <div class="goal"><span class="ico">⚡</span><p>Menjelaskan makna <b>pangkat dua</b> dan <b>pangkat tiga</b> sebagai perkalian berulang.</p></div>
+      <div class="goal"><span class="ico">🧮</span><p>Menentukan <b>nilai pangkat dua dan pangkat tiga</b> untuk bilangan 0 sampai 10.</p></div>
+      <div class="goal"><span class="ico">🕵️</span><p>Menentukan <b>akar pangkat dua dan tiga</b> menggunakan trik jitu.</p></div>
+      <div class="goal"><span class="ico">📐</span><p>Menggunakan akar untuk mencari <b>panjang sisi persegi</b> dan <b>panjang rusuk kubus</b>.</p></div>
+    </div>
+    <div class="mascot">
+      <div class="face">🐱</div>
+      <div class="bubble">Empat misi spesial! Selesaikan semuanya, dan kamu akan mendapat gelar <b>"Detektif Akar Sejati"</b>! 🏅</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4 : MATERI KONSEP PANGKAT ============ -->
+<section class="slide">
+  <div class="wrap">
+    <h2>⚡ Materi 1 — Apa Itu Pangkat?</h2>
+    <div class="card card-pad">
+      <p style="font-weight:700;font-size:1.1rem">Pangkat adalah <b style="color:#E85D1F">perkalian berulang</b> dengan bilangan yang sama.</p>
+      <div class="anat">
+        <div class="anat-num"><span class="ab">4</span><sup class="ap">3</sup></div>
+        <div class="anat-l">
+          <span style="background:#EFE9FF;color:#6C51D9">4 = bilangan pokok (yang dikalikan)</span>
+          <span style="background:#FFE4D1;color:#C75A16">3 = pangkat (dikalikan sebanyak 3 kali)</span>
+        </div>
+      </div>
+      <p style="font-weight:700;margin-top:12px">4³ dibaca <i>"empat pangkat tiga"</i> = 4 × 4 × 4 = <b style="color:#E85D1F">64</b>.</p>
+    </div>
+    <div class="grid2">
+      <div class="card card-pad center">
+        <h3 style="color:#E85D1F">Pangkat Dua (Kuadrat)</h3>
+        <svg viewBox="0 0 164 164" xmlns="http://www.w3.org/2000/svg" style="width:min(170px,60%);height:auto">
+          <rect x="0" y="0" width="44" height="44" rx="8" fill="#FFD23F" stroke="#E0A800" stroke-width="3"/>
+          <rect x="48" y="0" width="44" height="44" rx="8" fill="#FFC93C" stroke="#E0A800" stroke-width="3"/>
+          <rect x="96" y="0" width="44" height="44" rx="8" fill="#FFD23F" stroke="#E0A800" stroke-width="3"/>
+          <rect x="0" y="48" width="44" height="44" rx="8" fill="#FFC93C" stroke="#E0A800" stroke-width="3"/>
+          <rect x="48" y="48" width="44" height="44" rx="8" fill="#FFD23F" stroke="#E0A800" stroke-width="3"/>
+          <rect x="96" y="48" width="44" height="44" rx="8" fill="#FFC93C" stroke="#E0A800" stroke-width="3"/>
+          <rect x="0" y="96" width="44" height="44" rx="8" fill="#FFD23F" stroke="#E0A800" stroke-width="3"/>
+          <rect x="48" y="96" width="44" height="44" rx="8" fill="#FFC93C" stroke="#E0A800" stroke-width="3"/>
+          <rect x="96" y="96" width="44" height="44" rx="8" fill="#FFD23F" stroke="#E0A800" stroke-width="3"/>
+        </svg>
+        <p class="cap">3² = 3 × 3 = <b>9</b> → seperti luas persegi bersisi 3!</p>
+      </div>
+      <div class="card card-pad center">
+        <h3 style="color:#0F8C7E">Pangkat Tiga (Kubik)</h3>
+        <svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" style="width:min(200px,70%);height:auto">
+          <polygon points="130,6 235,56 130,106 25,56" fill="#BFF0E9" stroke="#1FA396" stroke-width="3"/>
+          <polygon points="25,56 130,106 130,214 25,164" fill="#7FD8CC" stroke="#1FA396" stroke-width="3"/>
+          <polygon points="235,56 130,106 130,214 235,164" fill="#3FB6A6" stroke="#1FA396" stroke-width="3"/>
+        </svg>
+        <p class="cap">2³ = 2 × 2 × 2 = <b>8</b> → seperti volume kubus berusuk 2!</p>
+      </div>
+    </div>
+    <div class="mascot">
+      <div class="face">🐱</div>
+      <div class="bubble">Tahukah kamu? Pangkat dua disebut <b>kuadrat</b> karena luas persegi = sisi × sisi. Pangkat tiga disebut <b>kubik</b> karena volume kubus = sisi × sisi × sisi!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 5 : MATERI KONSEP AKAR ============ -->
+<section class="slide">
+  <div class="wrap">
+    <h2>🔍 Materi 2 — Apa Itu Akar?</h2>
+    <div class="card card-pad">
+      <p style="font-weight:700;font-size:1.1rem">Akar adalah <b style="color:#0F8C7E">kebalikan dari pangkat</b> — akar mencari "bilangan asal"-nya!</p>
+      <div class="anat">
+        <div class="anat-num"><span class="ab" style="color:#0F8C7E">√</span><span class="ab">9</span><span class="eq">=</span><span class="ab" style="color:#E85D1F">3</span></div>
+        <div class="anat-l">
+          <span style="background:#D9F6F1;color:#0F8C7E">√ = tanda akar (radikal)</span>
+          <span style="background:#FFE4D1;color:#C75A16">3 = bilangan asalnya (karena 3 × 3 = 9)</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card card-pad">
+        <h3 style="color:#E85D1F">Akar Pangkat Dua (√)</h3>
+        <p style="font-weight:600;line-height:1.7;margin-top:6px">
+          <b>√9 = 3</b>, karena 3 × 3 = 9.<br>
+          <b>√16 = 4</b>, karena 4 × 4 = 16.<br>
+          <b>√25 = 5</b>, karena 5 × 5 = 25.<br>
+          <span class="muted">√ mencari bilangan yang <i>dikali dua kali</i>.</span>
+        </p>
+      </div>
+      <div class="card card-pad">
+        <h3 style="color:#0F8C7E">Akar Pangkat Tiga (∛)</h3>
+        <p style="font-weight:600;line-height:1.7;margin-top:6px">
+          <b>∛27 = 3</b>, karena 3 × 3 × 3 = 27.<br>
+          <b>∛8 = 2</b>, karena 2 × 2 × 2 = 8.<br>
+          <b>∛64 = 4</b>, karena 4 × 4 × 4 = 64.<br>
+          <span class="muted">∛ mencari bilangan yang <i>dikali tiga kali</i>.</span>
+        </p>
+      </div>
+    </div>
+    <div class="mascot">
+      <div class="face">🕵️</div>
+      <div class="bubble">Akar itu seperti <b>detektif</b>: dari hasilnya saja, ia bisa membongkar bilangan apa yang membentuknya. Misal 9 bertanya, "Siapa orang tuaku?" Akar menjawab: "Kamu dari 3!" 😄</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6 : LATIHAN 1 NILAI PANGKAT 0-10 ============ -->
+<section class="slide">
+  <div class="wrap">
+    <h2>🧮 Latihan 1 — Nilai Pangkat Dua &amp; Tiga (0–10)</h2>
+    <p class="sub">Klik angkanya, lihat sihir pangkatnya! 👇</p>
+    <div class="chiprow" id="chipRow"></div>
+    <div class="card expout">
+      <div id="expTitle">👆 Klik salah satu angka di atas!</div>
+      <div class="exp-line" id="expKua">—</div>
+      <div class="exp-line" id="expKub">—</div>
+    </div>
+    <h3>✏️ Giliranmu! Tulis jawaban, lalu tekan <b>Cek</b></h3>
+    <div id="mLat1" class="qgrid cols2"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7 : TRICK AKAR HASIL PULUHAN ============ -->
+<section class="slide">
+  <div class="wrap">
+    <h2>🪄 Trick Jitu — Menentukan Akar Hasil Puluhan</h2>
+    <div class="grid2">
+      <div class="card card-pad">
+        <h3 style="color:#E85D1F">🔍 Trick Akar Pangkat Dua (√)</h3>
+        <div class="step"><div class="stepnum">1</div><div><b>Cek batas puluhan.</b> Hafalkan: 10² = 100, 20² = 400, 30² = 900, 40² = 1600. Bilangannya berada di antara mana?</div></div>
+        <div class="step"><div class="stepnum">2</div><div><b>Intip angka terakhir.</b> Akhiran 25 → akarnya berakhiran 5 · akhiran 00 → akarnya berakhiran 0 · akhiran lain → uji dua kemungkinan, lalu kalikan untuk memastikan.</div></div>
+        <div class="ex"><b>Contoh: √625</b><br>
+          ① 400 &lt; 625 &lt; 900 → puluhannya <b>2</b><br>
+          ② akhiran 25 → satuannya <b>5</b><br>
+          ③ Jadi √625 = <b>25</b> ✔ (cek: 25 × 25 = 625)</div>
+        <div class="ex"><b>Contoh: √400</b><br>400 tepat sama dengan 20² → √400 = <b>20</b> ✔</div>
+      </div>
+      <div class="card card-pad">
+        <h3 style="color:#0F8C7E">🎲 Trick Akar Pangkat Tiga (∛)</h3>
+        <div class="step"><div class="stepnum">1</div><div><b>Sapu 3 angka terakhir.</b> Buang tiga digit terakhir, lalu lihat sisinya berada antara 1³ = 1, 2³ = 8, 3³ = 27, 4³ = 64, …</div></div>
+        <div class="step"><div class="stepnum">2</div><div><b>Petakan angka terakhir</b> lewat peta ajaib di bawah untuk menemukan satuan akarnya.</div></div>
+        <p class="dlegend">Baris ungu = angka terakhir bilangan → Baris kuning = angka terakhir akarnya</p>
+        <div class="dmap">
+          <div class="h">0</div><div class="h">1</div><div class="h">2</div><div class="h">3</div><div class="h">4</div><div class="h">5</div><div class="h">6</div><div class="h">7</div><div class="h">8</div><div class="h">9</div>
+          <div class="v">0</div><div class="v">1</div><div class="v">8</div><div class="v">7</div><div class="v">4</div><div class="v">5</div><div class="v">6</div><div class="v">3</div><div class="v">2</div><div class="v">9</div>
+        </div>
+        <div class="ex"><b>Contoh: ∛3375</b><br>
+          ① buang 375 → sisa 3 → di antara 1 dan 8 → puluhannya <b>1</b><br>
+          ② akhiran 5 → satuannya <b>5</b><br>
+          ③ Jadi ∛3375 = <b>15</b> ✔ (cek: 15 × 15 × 15 = 3375)</div>
+      </div>
+    </div>
+    <div class="mascot">
+      <div class="face">🦉</div>
+      <div class="bubble">Kunci trick: <b>batas puluhan</b> + <b>angka terakhir</b>. Selalu cek jawabanmu dengan mengalikan kembali, ya!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8 : LATIHAN 2 AKAR PANGKAT DUA & TIGA ============ -->
+<section class="slide">
+  <div class="wrap">
+    <h2>🕵️ Latihan 2 — Menentukan Akar Pangkat Dua &amp; Tiga</h2>
+    <p class="sub">Pakai trick barumu! Tulis jawaban, tekan <b>Cek</b>, lalu baca pembahasannya. 💪</p>
+    <div id="mLat2" class="qgrid cols2"></div>
+  </div>
+</section>
+<!-- ============ SLIDE 9 : GAME ICE BREAKING ============ -->
+<section class="slide">
+  <div class="wrap" style="align-items:center;text-align:center">
+    <h2>⚡ Game Ice Breaking — KUIS KILAT</h2>
+    <p class="sub">Istirahat sejenak! Jawab sebanyak mungkin dalam <b>60 detik</b>!</p>
+    <div id="gStart" class="card card-pad" style="width:min(560px,100%)">
+      <div class="big">🧠⚡🏆</div>
+      <h3 style="margin:6px 0">Siap uji kecepatan otakmu?</h3>
+      <p style="font-weight:600;color:#5A5480;margin-bottom:14px">Pangkat, akar… semuanya! Pilih jawaban yang benar secepat mungkin.</p>
+      <button class="btn orange big" id="gStartBtn">▶️ Mulai Game</button>
+      <p class="muted small-note" style="margin-top:12px">+10 poin tiap jawaban benar · bonus +5 jika streak 3 ke atas · 🥉🥈🏆 medal menantimu!</p>
+    </div>
+    <div id="gPlay" class="hidden" style="width:min(640px,100%)">
+      <div class="gstats">
+        <span class="gstat">⏱️ <b id="gTime">60</b> detik</span>
+        <span class="gstat">⭐ Skor <b id="gScore">0</b></span>
+        <span class="gstat">🔥 Streak <b id="gStreak">0</b></span>
+      </div>
+      <div class="gbar"><div id="gBarFill"></div></div>
+      <div class="card card-pad">
+        <div class="gq" id="gQ">8² = ?</div>
+        <div class="opts" id="gOpts"></div>
+      </div>
+    </div>
+    <div id="gEnd" class="card card-pad hidden" style="width:min(560px,100%)">
+      <div class="big" id="gMedal">🏆</div>
+      <h3 id="gEndTitle" style="margin:6px 0">Juara Emas!</h3>
+      <p style="font-weight:700;color:#5A5480">Skor akhir kamu: <b id="gEndScore">0</b></p>
+      <button class="btn teal" id="gAgain" style="margin-top:10px">🔄 Main Lagi</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10 : PENGGUNAAN — SISI PERSEGI ============ -->
+<section class="slide">
+  <div class="wrap">
+    <h2>📐 Gunakan Akar — Mencari Panjang Sisi Persegi</h2>
+    <div class="grid2">
+      <div class="card card-pad center">
+        <svg viewBox="0 0 320 230" xmlns="http://www.w3.org/2000/svg" style="width:min(320px,90%);height:auto" font-family="Baloo 2, sans-serif">
+          <g transform="translate(60,26)">
+            <rect x="0" y="0" width="180" height="180" rx="10" fill="#D9F6F1" stroke="#1FA396" stroke-width="3"/>
+            <line x1="30" y1="0" x2="30" y2="180" stroke="#9FDCD3" stroke-width="2"/>
+            <line x1="60" y1="0" x2="60" y2="180" stroke="#9FDCD3" stroke-width="2"/>
+            <line x1="90" y1="0" x2="90" y2="180" stroke="#9FDCD3" stroke-width="2"/>
+            <line x1="120" y1="0" x2="120" y2="180" stroke="#9FDCD3" stroke-width="2"/>
+            <line x1="150" y1="0" x2="150" y2="180" stroke="#9FDCD3" stroke-width="2"/>
+            <line x1="0" y1="30" x2="180" y2="30" stroke="#9FDCD3" stroke-width="2"/>
+            <line x1="0" y1="60" x2="180" y2="60" stroke="#9FDCD3" stroke-width="2"/>
+            <line x1="0" y1="90" x2="180" y2="90" stroke="#9FDCD3" stroke-width="2"/>
+            <line x1="0" y1="120" x2="180" y2="120" stroke="#9FDCD3" stroke-width="2"/>
+            <line x1="0" y1="150" x2="180" y2="150" stroke="#9FDCD3" stroke-width="2"/>
+            <text x="90" y="100" text-anchor="middle" font-size="22" font-weight="800" fill="#0F8C7E">Luas = 36 cm²</text>
+            <text x="90" y="-10" text-anchor="middle" font-size="19" font-weight="800" fill="#E85D1F">s = ?</text>
+            <text x="200" y="95" text-anchor="start" font-size="19" font-weight="800" fill="#E85D1F">s = ?</text>
+          </g>
+        </svg>
+        <p class="cap">Luas persegi = sisi × sisi. Mencari sisi → pakai <b>akar pangkat dua</b>!</p>
+      </div>
+      <div class="card card-pad">
+        <h3 style="color:#0F8C7E">Rumus Ajaib</h3>
+        <div class="formula">Luas = s × s = s² &nbsp;⟹&nbsp; s = √Luas</div>
+        <div class="step"><div class="stepnum">1</div><div>Contoh: luas persegi 36 cm². Berarti s × s = 36.</div></div>
+        <div class="step"><div class="stepnum">2</div><div>Maka s = √36.</div></div>
+        <div class="step"><div class="stepnum">3</div><div>s = <b>6 cm</b>, karena 6 × 6 = 36 ✔</div></div>
+        <div class="mascot" style="margin-top:12px">
+          <div class="face">🐱</div>
+          <div class="bubble">Sekarang aku tahu cara bantu Pak Budi! Taman luas 25 m² → s = √25 = <b>5 m</b>. Misteri terpecahkan! 🎉</div>
+        </div>
+      </div>
+    </div>
+    <h3>✏️ Coba sendiri!</h3>
+    <div id="mPersegi" class="qgrid cols2"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 11 : PENGGUNAAN — RUSUK KUBUS ============ -->
+<section class="slide">
+  <div class="wrap">
+    <h2>🧊 Gunakan Akar — Mencari Panjang Rusuk Kubus</h2>
+    <div class="grid2">
+      <div class="card card-pad center">
+        <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg" style="width:min(300px,90%);height:auto" font-family="Baloo 2, sans-serif">
+          <g transform="translate(45,30)">
+            <polygon points="115,0 230,55 115,110 0,55" fill="#BFF0E9" stroke="#1FA396" stroke-width="3"/>
+            <polygon points="0,55 115,110 115,225 0,170" fill="#7FD8CC" stroke="#1FA396" stroke-width="3"/>
+            <polygon points="230,55 115,110 115,225 230,170" fill="#3FB6A6" stroke="#1FA396" stroke-width="3"/>
+            <text x="115" y="72" text-anchor="middle" font-size="20" font-weight="800" fill="#0F8C7E">Volume</text>
+            <text x="115" y="95" text-anchor="middle" font-size="20" font-weight="800" fill="#0F8C7E">125 cm³</text>
+            <text x="-8" y="30" text-anchor="end" font-size="19" font-weight="800" fill="#E85D1F">rusuk?</text>
+            <text x="238" y="130" text-anchor="start" font-size="19" font-weight="800" fill="#E85D1F">rusuk?</text>
+          </g>
+        </svg>
+        <p class="cap">Volume kubus = rusuk × rusuk × rusuk. Mencari rusuk → pakai <b>akar pangkat tiga</b>!</p>
+      </div>
+      <div class="card card-pad">
+        <h3 style="color:#0F8C7E">Rumus Ajaib</h3>
+        <div class="formula">Volume = s × s × s = s³ &nbsp;⟹&nbsp; s = ∛Volume</div>
+        <div class="step"><div class="stepnum">1</div><div>Contoh: volume kubus 125 cm³. Berarti s × s × s = 125.</div></div>
+        <div class="step"><div class="stepnum">2</div><div>Maka s = ∛125.</div></div>
+        <div class="step"><div class="stepnum">3</div><div>s = <b>5 cm</b>, karena 5 × 5 × 5 = 125 ✔</div></div>
+        <div class="mascot" style="margin-top:12px">
+          <div class="face">🎁</div>
+          <div class="bubble">Ingat kotak kado ajaib volumenya 8 cm³ di awal? Rusuknya = ∛8 = <b>2 cm</b>! Ajaib, kan? ✨</div>
+        </div>
+      </div>
+    </div>
+    <h3>✏️ Coba sendiri!</h3>
+    <div id="mKubus" class="qgrid cols2"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 12-16 : 20 SOAL LATIHAN ============ -->
+<section class="slide">
+  <div class="wrap">
+    <div class="soalhead">
+      <div class="left"><h2>📝 Latihan Besar — Soal 1–4</h2><div><span class="pill y">Level: Mudah 😊</span></div></div>
+      <span class="scorechip">✅ Benar: <b class="soalScore">0</b>/20</span>
+    </div>
+    <div class="soal-mount"></div>
+  </div>
+</section>
+<section class="slide">
+  <div class="wrap">
+    <div class="soalhead">
+      <div class="left"><h2>📝 Latihan Besar — Soal 5–8</h2><div><span class="pill y">Level: Naik Level 😎</span></div></div>
+      <span class="scorechip">✅ Benar: <b class="soalScore">0</b>/20</span>
+    </div>
+    <div class="soal-mount"></div>
+  </div>
+</section>
+<section class="slide">
+  <div class="wrap">
+    <div class="soalhead">
+      <div class="left"><h2>📝 Latihan Besar — Soal 9–12</h2><div><span class="pill o">Level: Sedang 🔥</span></div></div>
+      <span class="scorechip">✅ Benar: <b class="soalScore">0</b>/20</span>
+    </div>
+    <div class="soal-mount"></div>
+  </div>
+</section>
+<section class="slide">
+  <div class="wrap">
+    <div class="soalhead">
+      <div class="left"><h2>📝 Latihan Besar — Soal 13–16</h2><div><span class="pill o">Level: Sulit ⚡</span></div></div>
+      <span class="scorechip">✅ Benar: <b class="soalScore">0</b>/20</span>
+    </div>
+    <div class="soal-mount"></div>
+  </div>
+</section>
+<section class="slide">
+  <div class="wrap">
+    <div class="soalhead">
+      <div class="left"><h2>👑 Latihan Besar — Soal 17–20</h2><div><span class="pill o">Level: Tantangan Terakhir 👑</span></div></div>
+      <span class="scorechip">✅ Benar: <b class="soalScore">0</b>/20</span>
+    </div>
+    <div class="soal-mount"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 17 : KESIMPULAN ============ -->
+<section class="slide">
+  <div class="wrap">
+    <h2>🌟 Kesimpulan</h2>
+    <div class="grid2">
+      <div class="sumcard" style="border-top-color:#FF7A3C">
+        <div class="mm">🟠</div>
+        <h3>Pangkat = Perkalian Berulang</h3>
+        <p>5² = 5 × 5 = 25 dan 2³ = 2 × 2 × 2 = 8. Pangkat dua disebut <b>kuadrat</b>, pangkat tiga disebut <b>kubik</b>.</p>
+      </div>
+      <div class="sumcard" style="border-top-color:#2EC4B6">
+        <div class="mm">🟢</div>
+        <h3>Akar = Kebalikan Pangkat</h3>
+        <p>√25 = 5 karena 5 × 5 = 25. ∛8 = 2 karena 2 × 2 × 2 = 8. Akar membongkar "bilangan asal"-nya!</p>
+      </div>
+      <div class="sumcard" style="border-top-color:#FFD23F">
+        <div class="mm">🟡</div>
+        <h3>Sisi Persegi dari Luas</h3>
+        <p>Luas = s², maka <b>s = √Luas</b>. Contoh: luas 49 cm² → s = √49 = 7 cm.</p>
+      </div>
+      <div class="sumcard" style="border-top-color:#8B72E9">
+        <div class="mm">🟣</div>
+        <h3>Rusuk Kubus dari Volume</h3>
+        <p>Volume = s³, maka <b>s = ∛Volume</b>. Contoh: volume 343 cm³ → s = ∛343 = 7 cm.</p>
+      </div>
+    </div>
+    <div class="mascot">
+      <div class="face">🦉</div>
+      <div class="bubble">Jangan lupa trick-nya: <b>cek batas puluhan</b> + <b>intip angka terakhir</b>. Selamat! Kamu kini resmi menjadi <b>Detektif Akar Sejati</b>! 🏅</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 18 : REFLEKSI ============ -->
+<section class="slide">
+  <div class="wrap" style="align-items:center;text-align:center">
+    <h2>🪞 Refleksi Hari Ini</h2>
+    <p class="sub">Bagaimana perasaanmu setelah belajar? Klik emoji-nya!</p>
+    <div class="moods">
+      <button class="mood" data-k="senang" title="Seru!">😄</button>
+      <button class="mood" data-k="ok" title="Cukup baik">🙂</button>
+      <button class="mood" data-k="bingung" title="Masih bingung">😓</button>
+    </div>
+    <p class="disp" id="moodMsg" style="font-size:1.25rem;font-weight:800;min-height:1.6em"></p>
+    <div class="grid3" style="width:100%">
+      <div class="card card-pad">
+        <div class="big">💬</div>
+        <p style="font-weight:700;margin-top:6px">Apa bagian yang paling seru hari ini?</p>
+      </div>
+      <div class="card card-pad">
+        <div class="big">🧗</div>
+        <p style="font-weight:700;margin-top:6px">Bagian mana yang masih terasa sulit dan perlu dilatih lagi?</p>
+      </div>
+      <div class="card card-pad">
+        <div class="big">🏠</div>
+        <p style="font-weight:700;margin-top:6px">Tugas rumah: temukan 1 benda kubus, lalu ceritakan panjang rusuknya!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 19 : TERIMA KASIH + EXIT TICKET ============ -->
+<section class="slide">
+  <div class="wrap" style="align-items:center;text-align:center">
+    <h2>Terima Kasih untuk Hari Ini! 🌈</h2>
+    <p class="sub">Kalian semua luar biasa! Sebelum kelas berakhir, satu tiket terakhir dulu ya…</p>
+    <div class="card card-pad" style="width:min(620px,100%)">
+      <span class="pill">🎫 EXIT TICKET</span>
+      <p class="gq small" id="exQ">…</p>
+      <div class="qrow" style="justify-content:center">
+        <input id="exAns" class="ans" inputmode="numeric" placeholder="Jawaban…" aria-label="Jawaban exit ticket">
+        <button id="exCek" class="btn teal">Cek ✓</button>
+      </div>
+      <div class="fb" id="exFb"></div>
+      <div class="pem" id="exPem"></div>
+      <div id="exDone" class="hidden good-msg">🎉 Exit ticket selesai — <b>kelas hari ini resmi berakhir!</b> 👏</div>
+      <div style="margin-top:12px"><button id="exAgain" class="btn purple hidden">🔁 Beri Soal Lagi</button></div>
+      <p class="muted small-note" style="margin-top:12px">✅ Jawab benar → kelas selesai! · ❌ Salah → dapat soal lain dulu</p>
+    </div>
+    <p class="muted small-note">Sampai jumpa di petualangan berikutnya! 👋🌟</p>
+  </div>
+</section>
+</main>
+
+<!-- ============ NAVIGASI ============ -->
+<nav id="nav">
+  <button class="btn teal" id="bPrev">◀ Sebelumnya</button>
+  <div id="dots"></div>
+  <button class="btn orange" id="bNext">Berikutnya ▶</button>
+</nav>
+
+<!-- ============ OVERLAY PERAYAAN ============ -->
+<div id="party" class="hidden">
+  <div class="party-card">
+    <div class="big">🎉🏆🎉</div>
+    <h2>SELAMAT!</h2>
+    <p>Exit ticket berhasil dijawab dengan benar.</p>
+    <p>Kelas hari ini <b style="color:#0F8C7E">resmi berakhir</b> — kamu hebat sekali! 🌟</p>
+    <div style="margin-top:14px"><button class="btn orange" onclick="hideParty()">🎈 Tutup</button></div>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+<script>
+/* ================= UTILITAS ================= */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+function gi(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function parseAns(s) {
+  s = (s || '').trim();
+  if (!s) return null;
+  const m = s.replace(/,/g, '.').replace(/[^0-9.\-]/g, '');
+  if (!m || m === '-' || m === '.') return null;
+  const v = parseFloat(m);
+  return Number.isFinite(v) ? v : null;
+}
+
+/* ================= SUARA ================= */
+let AC = null;
+function tone(f, d = 0.12, type = 'sine', v = 0.12) {
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state === 'suspended') AC.resume();
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type; o.frequency.value = f;
+    o.connect(g); g.connect(AC.destination);
+    const t = AC.currentTime;
+    g.gain.setValueAtTime(v, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + d);
+    o.start(t); o.stop(t + d + 0.02);
+  } catch (e) {}
+}
+function sndOk() { tone(680, 0.10); setTimeout(() => tone(920, 0.16), 110); }
+function sndNo() { tone(170, 0.28, 'sawtooth', 0.06); }
+
+/* ================= KONFETI ================= */
+const cvs = $('#confetti'), ctx = cvs.getContext('2d');
+let CP = [], cRaf = null;
+const CCOL = ['#FF7A3C', '#FFD23F', '#2EC4B6', '#8B72E9', '#FF5D8F', '#4CC9F0'];
+function sizeCvs() { cvs.width = innerWidth; cvs.height = innerHeight; }
+addEventListener('resize', sizeCvs); sizeCvs();
+function confetti(n = 120) {
+  for (let i = 0; i < n; i++) {
+    CP.push({
+      x: Math.random() * cvs.width, y: -30 - Math.random() * cvs.height * 0.4,
+      vx: (Math.random() - 0.5) * 2.6, vy: 2.2 + Math.random() * 3.8,
+      s: 6 + Math.random() * 8, c: CCOL[gi(0, CCOL.length - 1)],
+      r: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.25
+    });
+  }
+  if (!cRaf) cTick();
+}
+function cTick() {
+  ctx.clearRect(0, 0, cvs.width, cvs.height);
+  CP.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.r += p.vr;
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r);
+    ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * 0.62);
+    ctx.restore();
+  });
+  CP = CP.filter(p => p.y < cvs.height + 40);
+  if (CP.length) { cRaf = requestAnimationFrame(cTick); }
+  else { cRaf = null; ctx.clearRect(0, 0, cvs.width, cvs.height); }
+}
+
+/* ================= DATA SOAL ================= */
+const LAT1 = [
+  { q: '7² = ?', a: 49, exp: '7² artinya 7 × 7. Jadi 7 × 7 = 49.' },
+  { q: '10² = ?', a: 100, exp: '10² artinya 10 × 10 = 100.' },
+  { q: '3³ = ?', a: 27, exp: '3³ artinya 3 × 3 × 3 = 9 × 3 = 27.' },
+  { q: '6³ = ?', a: 216, exp: '6³ artinya 6 × 6 × 6 = 36 × 6 = 216.' },
+  { q: '9² = ?', a: 81, exp: '9² artinya 9 × 9 = 81.' }
+];
+const LAT2 = [
+  { q: '√36 = ?', a: 6, exp: '6 × 6 = 36, jadi √36 = 6.' },
+  { q: '√81 = ?', a: 9, exp: '9 × 9 = 81, jadi √81 = 9.' },
+  { q: '∛27 = ?', a: 3, exp: '3 × 3 × 3 = 27, jadi ∛27 = 3.' },
+  { q: '∛125 = ?', a: 5, exp: '5 × 5 × 5 = 125, jadi ∛125 = 5.' },
+  { q: '√49 = ?', a: 7, exp: '7 × 7 = 49, jadi √49 = 7.' },
+  { q: '∛8 = ?', a: 2, exp: '2 × 2 × 2 = 8, jadi ∛8 = 2.' }
+];
+const PERSEGI = [
+  { q: '📐 Luas persegi = 81 cm². Panjang sisinya?', a: 9, exp: 's = √81 = 9 cm, karena 9 × 9 = 81.' },
+  { q: '📐 Luas persegi = 144 cm². Panjang sisinya?', a: 12, exp: 's = √144 = 12 cm, karena 12 × 12 = 144.' }
+];
+const KUBUS = [
+  { q: '🧊 Volume kubus = 512 cm³. Panjang rusuknya?', a: 8, exp: 's = ∛512 = 8 cm, karena 8 × 8 × 8 = 512.' },
+  { q: '🧊 Volume kubus = 27 cm³. Panjang rusuknya?', a: 3, exp: 's = ∛27 = 3 cm, karena 3 × 3 × 3 = 27.' }
+];
+const SOAL = [
+  { t: 'mudah',  q: '3² = ?', a: 9,   exp: '3² artinya 3 × 3 = 9.' },
+  { t: 'mudah',  q: '5² = ?', a: 25,  exp: '5² artinya 5 × 5 = 25.' },
+  { t: 'mudah',  q: '√16 = ?', a: 4,  exp: 'Cari bilangan yang dikali dirinya sendiri hasilnya 16. Karena 4 × 4 = 16, maka √16 = 4.' },
+  { t: 'mudah',  q: '2³ = ?', a: 8,   exp: '2³ artinya 2 × 2 × 2 = 4 × 2 = 8.' },
+  { t: 'mudah',  q: '√49 = ?', a: 7,  exp: 'Karena 7 × 7 = 49, maka √49 = 7.' },
+  { t: 'sedang', q: '8² = ?', a: 64,  exp: '8² = 8 × 8 = 64.' },
+  { t: 'sedang', q: '∛27 = ?', a: 3,  exp: 'Cari bilangan yang dikalikan tiga kali hasilnya 27: 3 × 3 × 3 = 27, jadi ∛27 = 3.' },
+  { t: 'sedang', q: '√100 = ?', a: 10, exp: '10 × 10 = 100, jadi √100 = 10.' },
+  { t: 'sedang', q: '4³ = ?', a: 64,  exp: '4³ = 4 × 4 × 4 = 16 × 4 = 64.' },
+  { t: 'sedang', q: '√144 = ?', a: 12, exp: '12 × 12 = 144, jadi √144 = 12.' },
+  { t: 'sedang', q: '∛64 = ?', a: 4,  exp: '4 × 4 × 4 = 64, jadi ∛64 = 4.' },
+  { t: 'sulit',  q: '√225 = ?', a: 15, exp: '√225: akhiran 25 → akarnya berakhiran 5. Cek: 15 × 15 = 225. Jadi √225 = 15.' },
+  { t: 'sulit',  q: '∛125 = ?', a: 5,  exp: '5 × 5 × 5 = 25 × 5 = 125, jadi ∛125 = 5.' },
+  { t: 'sulit',  q: '√400 = ?', a: 20, exp: '400 ada di daftar kuadrat puluhan: 20 × 20 = 400, jadi √400 = 20.' },
+  { t: 'sulit',  q: '∛1000 = ?', a: 10, exp: '10 × 10 × 10 = 1000, jadi ∛1000 = 10.' },
+  { t: 'sulit',  q: '√625 = ?', a: 25, exp: '√625: akhiran 25 → akarnya berakhiran 5; 625 di antara 400 (20²) dan 900 (30²). Cek: 25 × 25 = 625, jadi √625 = 25.' },
+  { t: 'susah',  q: '∛3375 = ?', a: 15, exp: '∛3375: buang 3 angka terakhir (375) → sisa 3 → di antara 1³ = 1 dan 2³ = 8 → puluhannya 1. Angka terakhir 5 → satuannya 5. Jadi ∛3375 = 15. Cek: 15 × 15 × 15 = 3375.' },
+  { t: 'susah',  q: '📐 Sebuah persegi memiliki luas 81 cm². Berapa panjang sisinya?', a: 9, exp: 'Luas persegi = s × s, berarti s = √81. Karena 9 × 9 = 81, panjang sisi = 9 cm.' },
+  { t: 'susah',  q: '🧊 Sebuah kubus memiliki volume 216 cm³. Berapa panjang rusuknya?', a: 6, exp: 'Volume kubus = s × s × s, berarti s = ∛216. Karena 6 × 6 × 6 = 216, panjang rusuk = 6 cm.' },
+  { t: 'susah',  q: '🌿 Taman Pak Budi berbentuk persegi dengan luas 900 m². Berapa panjang tiap sisinya?', a: 30, exp: 's = √900. Karena 30 × 30 = 900, panjang tiap sisi taman = 30 m.' }
+];
+const EXIT = [
+  { q: '√64 = ?', a: 8, exp: '8 × 8 = 64, jadi √64 = 8.' },
+  { q: '∛512 = ?', a: 8, exp: '8 × 8 × 8 = 512, jadi ∛512 = 8.' },
+  { q: '9² = ?', a: 81, exp: '9² = 9 × 9 = 81.' },
+  { q: '📐 Sebuah persegi luasnya 144 cm². Panjang sisinya?', a: 12, exp: 's = √144 = 12 cm, karena 12 × 12 = 144.' },
+  { q: '🧊 Sebuah kubus volumenya 343 cm³. Panjang rusuknya?', a: 7, exp: 's = ∛343 = 7 cm, karena 7 × 7 × 7 = 343.' },
+  { q: '∛729 = ?', a: 9, exp: '9 × 9 × 9 = 729, jadi ∛729 = 9.' }
+];
+const TAGS = {
+  mudah:  ['Mudah', 't-mudah'],
+  sedang: ['Sedang', 't-sedang'],
+  sulit:  ['Sulit', 't-sulit'],
+  susah:  ['Sulit Sekali', 't-susah']
+};
+
+/* ================= MESIN KUIS ================= */
+function mkQuiz(items, mount) {
+  if (!mount) return;
+  mount.classList.add('qgrid', 'cols2');
+  items.forEach((it, i) => {
+    const c = document.createElement('div');
+    c.className = 'quiz';
+    const tag = it.t ? '<span class="tag ' + TAGS[it.t][1] + '">' + TAGS[it.t][0] + '</span>' : '';
+    c.innerHTML =
+      '<div class="qhead"><span class="qnum">' + (i + 1) + '</span>' +
+      '<span class="qtext">' + it.q + '</span>' + tag + '</div>' +
+      '<div class="qrow"><input class="ans" inputmode="numeric" placeholder="Jawaban…" aria-label="Jawaban">' +
+      '<button class="btn teal">Cek ✓</button></div>' +
+      '<div class="fb"></div>' +
+      '<div class="pem"><b>💡 Pembahasan:</b> ' + it.exp + '</div>';
+    const inp = c.querySelector('.ans'), btn = c.querySelector('.btn'),
+          fb = c.querySelector('.fb'), pem = c.querySelector('.pem');
+    const check = () => {
+      const v = parseAns(inp.value);
+      if (v === null) {
+        fb.className = 'fb warn'; fb.textContent = '✏️ Tulis jawabanmu dulu ya!';
+        return;
+      }
+      if (Math.abs(v - it.a) < 1e-9) {
+        c.classList.add('ok'); c.classList.remove('no');
+        fb.className = 'fb good'; fb.textContent = '✅ Benar! Kerja bagus! 🎉';
+        sndOk(); confetti(45); pem.classList.add('show'); updSoalScore();
+      } else {
+        c.classList.add('no');
+        fb.className = 'fb bad'; fb.textContent = '❌ Belum tepat. Coba lagi, kamu pasti bisa! 💪';
+        sndNo(); pem.classList.add('show');
+      }
+    };
+    btn.onclick = check;
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+    mount.appendChild(c);
+  });
+}
+function updSoalScore() {
+  const n = $$('.soal-mount .quiz.ok').length;
+  $$('.soalScore').forEach(el => el.textContent = n);
+}
+
+/* ================= PENJELAJAH PANGKAT (LATIHAN 1) ================= */
+function explore(x) {
+  $$('.chip').forEach(b => b.classList.toggle('on', +b.dataset.x === x));
+  $('#expTitle').innerHTML = 'Pangkat dari <span class="v">' + x + '</span>';
+  const sq = x === 0 ? '0 × 0' : Array(x).fill(x).join(' × ');
+  const cu = x === 0 ? '0 × 0 × 0' : Array(x).fill(x).join(' × ');
+  $('#expKua').innerHTML = x + '² = ' + sq + ' = <span class="v">' + (x * x) + '</span>';
+  $('#expKub').innerHTML = x + '³ = ' + cu + ' = <span class="v">' + (x * x * x) + '</span>';
+}
+(function buildChips() {
+  const row = $('#chipRow');
+  for (let i = 0; i <= 10; i++) {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.dataset.x = i; b.textContent = i;
+    b.onclick = () => explore(i);
+    row.appendChild(b);
+  }
+})();
+
+/* ================= GAME KUIS KILAT ================= */
+let G = { on: false, t: 60, score: 0, streak: 0, ans: null, int: null, lock: false };
+function gClear() { if (G.int) clearInterval(G.int); G.on = false; G.int = null; G.lock = false; }
+function gReset() {
+  gClear();
+  $('#gStart').classList.remove('hidden');
+  $('#gPlay').classList.add('hidden');
+  $('#gEnd').classList.add('hidden');
+}
+function gStop() { gClear(); }
+function gStart() {
+  G = { on: true, t: 60, score: 0, streak: 0, ans: null, int: null, lock: false };
+  $('#gStart').classList.add('hidden');
+  $('#gEnd').classList.add('hidden');
+  $('#gPlay').classList.remove('hidden');
+  $('#gTime').textContent = 60; $('#gScore').textContent = 0; $('#gStreak').textContent = 0;
+  $('#gBarFill').style.width = '100%';
+  G.int = setInterval(() => {
+    G.t--;
+    $('#gTime').textContent = G.t;
+    $('#gBarFill').style.width = (G.t / 60 * 100) + '%';
+    if (G.t <= 0) gEnd();
+  }, 1000);
+  gGen();
+}
+function gGen() {
+  const r = Math.random(); let q, a;
+  if (r < 0.32)      { const x = gi(1, 10); q = x + '² = ?';       a = x * x; }
+  else if (r < 0.58) { const x = gi(1, 9);  q = x + '³ = ?';       a = x * x * x; }
+  else if (r < 0.82) { const x = gi(1, 12); q = '√' + (x * x) + ' = ?';   a = x; }
+  else               { const x = gi(1, 9);  q = '∛' + (x * x * x) + ' = ?'; a = x; }
+  const set = new Set([a]);
+  while (set.size < 4) { const d = a + gi(-10, 10); if (d >= 0) set.add(d); }
+  const opts = shuffle(Array.from(set));
+  G.ans = a;
+  $('#gQ').textContent = q;
+  const box = $('#gOpts'); box.innerHTML = '';
+  opts.forEach((v, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt c' + i; b.textContent = v;
+    b.onclick = () => gPick(b, v);
+    box.appendChild(b);
+  });
+}
+function gPick(b, v) {
+  if (!G.on || G.lock) return;
+  G.lock = true;
+  if (v === G.ans) {
+    b.classList.add('correct');
+    G.streak++;
+    G.score += 10 + (G.streak >= 3 ? 5 : 0);
+    sndOk();
+    $('#gScore').textContent = G.score; $('#gStreak').textContent = G.streak;
+    setTimeout(() => { G.lock = false; gGen(); }, 420);
+  } else {
+    b.classList.add('wrong');
+    G.streak = 0;
+    sndNo();
+    $$('#gOpts .opt').forEach(o => { if (+o.textContent === G.ans) o.classList.add('correct'); });
+    $('#gScore').textContent = G.score; $('#gStreak').textContent = G.streak;
+    setTimeout(() => { G.lock = false; gGen(); }, 850);
+  }
+}
+function gEnd() {
+  gClear();
+  $('#gPlay').classList.add('hidden');
+  $('#gEnd').classList.remove('hidden');
+  let medal, title;
+  if (G.score >= 120)      { medal = '🏆'; title = 'Juara Emas! Luar biasa!'; confetti(220); }
+  else if (G.score >= 80)  { medal = '🥈'; title = 'Juara Perak! Hebat!'; }
+  else                     { medal = '🥉'; title = 'Juara Perunggu! Terus berlatih!'; }
+  $('#gMedal').textContent = medal;
+  $('#gEndTitle').textContent = title;
+  $('#gEndScore').textContent = G.score;
+}
+$('#gStartBtn').onclick = gStart;
+$('#gAgain').onclick = gStart;
+
+/* ================= EXIT TICKET ================= */
+let exI = 0;
+function exNew(avoid) {
+  let i = gi(0, EXIT.length - 1);
+  if (EXIT.length > 1) { while (i === avoid) i = gi(0, EXIT.length - 1); }
+  exI = i;
+  const e = EXIT[i];
+  $('#exQ').textContent = e.q;
+  const a = $('#exAns');
+  a.value = ''; a.disabled = false;
+  $('#exCek').disabled = false;
+  $('#exFb').className = 'fb'; $('#exFb').textContent = '';
+  $('#exPem').classList.remove('show'); $('#exPem').innerHTML = '';
+  $('#exAgain').classList.add('hidden');
+  $('#exDone').classList.add('hidden');
+}
+function exCheck() {
+  const e = EXIT[exI], fb = $('#exFb');
+  const v = parseAns($('#exAns').value);
+  if (v === null) {
+    fb.className = 'fb warn'; fb.textContent = '✏️ Tulis jawabanmu dulu ya!';
+    return;
+  }
+  if (Math.abs(v - e.a) < 1e-9) {
+    fb.className = 'fb good'; fb.textContent = '✅ BENAR! Kamu luar biasa! 🎉';
+    sndOk();
+    $('#exAns').disabled = true; $('#exCek').disabled = true;
+    $('#exPem').innerHTML = '<b>💡 Pembahasan:</b> ' + e.exp;
+    $('#exPem').classList.add('show');
+    $('#exDone').classList.remove('hidden');
+    confetti(320);
+    setTimeout(showParty, 900);
+  } else {
+    fb.className = 'fb bad';
+    fb.textContent = '❌ Belum tepat! Baca pembahasannya, lalu coba soal lain ya. 🙌';
+    sndNo();
+    $('#exPem').innerHTML = '<b>💡 Pembahasan:</b> ' + e.exp;
+    $('#exPem').classList.add('show');
+    $('#exAgain').classList.remove('hidden');
+  }
+}
+function showParty() { $('#party').classList.remove('hidden'); confetti(260); }
+function hideParty() { $('#party').classList.add('hidden'); }
+$('#exCek').onclick = exCheck;
+$('#exAgain').onclick = () => exNew(exI);
+$('#exAns').addEventListener('keydown', e => { if (e.key === 'Enter') exCheck(); });
+exNew(-1);
+
+/* ================= REFLEKSI ================= */
+const MOODS = {
+  senang: 'Wah, senang mendengarnya! Terus semangat ya! 🌟',
+  ok: 'Terima kasih! Semoga besok belajarnya makin seru! 💪',
+  bingung: 'Terima kasih sudah jujur! Nanti kita latihan lagi bersama-sama ya! 🤗'
+};
+$$('.mood').forEach(m => {
+  m.onclick = () => {
+    $$('.mood').forEach(x => x.classList.remove('on'));
+    m.classList.add('on');
+    $('#moodMsg').textContent = MOODS[m.dataset.k];
+    sndOk();
+  };
+});
+
+/* ================= RENDER SEMUA KUIS ================= */
+mkQuiz(LAT1, $('#mLat1'));
+mkQuiz(LAT2, $('#mLat2'));
+mkQuiz(PERSEGI, $('#mPersegi'));
+mkQuiz(KUBUS, $('#mKubus'));
+const soalMounts = $$('.soal-mount');
+soalMounts.forEach((m, i) => mkQuiz(SOAL.slice(i * 4, i * 4 + 4), m));
+
+/* ================= NAVIGASI SLIDE ================= */
+const slides = $$('.slide');
+let cur = 0;
+const GAME = 8; /* indeks slide game */
+const dotsBox = $('#dots');
+slides.forEach((_, i) => {
+  const d = document.createElement('button');
+  d.className = 'dot'; d.title = 'Slide ' + (i + 1);
+  d.onclick = () => go(i);
+  dotsBox.appendChild(d);
+});
+function go(n) {
+  if (n < 0 || n >= slides.length) return;
+  if (cur === GAME && G.on) { gStop(); gReset(); }
+  slides[cur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
+  $('#prog').style.width = ((cur + 1) / slides.length * 100) + '%';
+  $('#slideNum').textContent = (cur + 1) + ' / ' + slides.length;
+  $$('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+  const w = slides[cur].querySelector('.wrap');
+  if (w) w.scrollTop = 0;
+  if (cur === GAME) gReset();
+}
+$('#bPrev').onclick = () => go(cur - 1);
+$('#bNext').onclick = () => go(cur + 1);
+function goHome() { go(0); }
+function toggleFs() {
+  if (document.fullscreenElement) { document.exitFullscreen(); }
+  else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+}
+addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !$('#party').classList.contains('hidden')) { hideParty(); return; }
+  if (/INPUT|TEXTAREA/.test(e.target.tagName)) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(cur + 1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(cur - 1); }
+  else if (e.key === 'f' || e.key === 'F') { toggleFs(); }
+});
+let tx = null;
+addEventListener('touchstart', e => {
+  if (/INPUT|TEXTAREA|BUTTON/.test(e.target.tagName)) return;
+  tx = e.touches[0].clientX;
+}, { passive: true });
+addEventListener('touchend', e => {
+  if (tx === null) return;
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 70) { dx < 0 ? go(cur + 1) : go(cur - 1); }
+  tx = null;
+}, { passive: true });
+
+/* ================= INISIALISASI ================= */
+go(0);
+</script>
+</body>
+</html>
