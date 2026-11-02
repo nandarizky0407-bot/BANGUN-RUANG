@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ludo Bangun Ruang — Game Edukasi Matematika Kelas 4 SD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--ink:#1e293b;--muted:#64748b;--line:#e2e8f0;--indigo:#4338ca;--indigo-l:#eef2ff}
+body{font-family:'Baloo 2','Comic Sans MS','Segoe UI',system-ui,sans-serif;color:var(--ink);min-height:100vh;background:linear-gradient(135deg,#bfdbfe 0%,#ddd6fe 48%,#fbcfe8 100%);background-attachment:fixed}
+body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(70px);opacity:.45;pointer-events:none;z-index:0}
+body::before{width:46vmax;height:46vmax;left:-14vmax;top:-16vmax;background:#93c5fd}
+body::after{width:42vmax;height:42vmax;right:-12vmax;bottom:-18vmax;background:#f9a8d4}
+.hidden{display:none!important}
+button{font-family:inherit}
+.screen{display:none;min-height:100dvh;flex-direction:column;align-items:center;position:relative;z-index:1}
+.screen.active{display:flex}
+
+/* ============ KARTU MENU & INPUT NAMA ============ */
+.menu-card{background:#fff;border-radius:28px;box-shadow:0 18px 50px rgba(30,41,59,.20);width:min(94vw,840px);margin:auto;padding:28px 32px 30px;text-align:center;position:relative;z-index:1}
+.logo{font-size:44px;line-height:1.2;letter-spacing:6px}
+.title{font-size:clamp(30px,5vw,44px);font-weight:800;color:var(--indigo);letter-spacing:.5px;line-height:1.15}
+.subtitle{color:var(--muted);font-weight:600;margin-top:2px;font-size:16px}
+.credit{margin-top:16px;font-size:12.5px;color:#94a3b8;font-weight:600}
+.rules-box{text-align:left;background:#f8fafc;border:2px dashed #c7d2fe;border-radius:18px;padding:16px 20px;margin:18px 0 6px;max-height:320px;overflow:auto}
+.rules-box h3{color:var(--indigo);margin:10px 0 6px;font-size:16.5px}
+.rules-box h3:first-child{margin-top:0}
+.rules-box p{font-size:14.5px;line-height:1.5;margin-bottom:6px}
+.rules-box ol,.rules-box ul{padding-left:22px;display:grid;gap:6px;font-size:14.5px;line-height:1.5;margin-bottom:6px}
+.rules-box li b{color:#0f172a}
+.mini-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:8px 0;font-size:13.5px;font-weight:600}
+.sec-title{font-size:21px;font-weight:800;color:#0f172a;margin:18px 0 12px}
+.count-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.count-btn{font-size:19px;font-weight:800;padding:14px 26px;border-radius:999px;border:3px solid var(--line);background:#fff;cursor:pointer;color:#334155;transition:.18s;line-height:1.25}
+.count-btn small{display:block;font-size:12px;font-weight:600;color:#94a3b8}
+.count-btn:hover{transform:translateY(-2px);border-color:#a5b4fc}
+.count-btn.sel{border-color:#4f46e5;background:var(--indigo-l);color:var(--indigo);box-shadow:0 6px 16px rgba(79,70,229,.25);transform:translateY(-2px)}
+.btn-primary{margin-top:18px;font-size:19px;font-weight:800;color:#7c2d12;background:linear-gradient(180deg,#fde047,#f59e0b);border:none;border-radius:999px;padding:14px 30px;cursor:pointer;box-shadow:0 6px 0 #b45309,0 10px 20px rgba(180,83,9,.25);transition:.15s}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.04)}
+.btn-primary:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 #b45309}
+.btn-primary:disabled{background:#e2e8f0;color:#94a3b8;box-shadow:0 4px 0 #cbd5e1;cursor:not-allowed}
+.btn-secondary{font-size:17px;font-weight:800;color:#475569;background:#fff;border:3px solid var(--line);border-radius:999px;padding:13px 26px;cursor:pointer;box-shadow:0 4px 0 #cbd5e1;transition:.15s;margin-top:18px}
+.btn-secondary:hover{border-color:#a5b4fc;transform:translateY(-2px)}
+.row-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+#name-rows{margin:20px 0 4px;text-align:left;max-width:520px;margin-left:auto;margin-right:auto}
+.name-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.name-row input{flex:1;min-width:0;font-family:inherit;font-size:18px;font-weight:700;padding:12px 16px;border-radius:14px;border:3px solid var(--line);outline:none;color:var(--ink);background:#fff}
+.name-row input:focus{border-color:#818cf8}
+.pchip{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;color:#fff;font-weight:800;font-size:19px;flex:0 0 auto;box-shadow:inset 0 -3px 5px rgba(0,0,0,.22),0 2px 6px rgba(2,6,23,.22)}
+.pchip.mini{width:26px;height:26px;font-size:13px;border-radius:8px;vertical-align:middle;margin-right:2px}
+.switch-row{display:flex;align-items:center;gap:10px;background:#f8fafc;border:2px dashed #c7d2fe;padding:12px 16px;border-radius:14px;font-weight:700;cursor:pointer;margin:14px auto 0;max-width:520px;text-align:left;font-size:15.5px;line-height:1.35}
+.switch-row input{width:22px;height:22px;accent-color:#4f46e5;flex:0 0 auto}
+.switch-row small{color:var(--muted);font-weight:600;font-size:12.5px;display:block}
+/* ============ LAYAR PERMAINAN ============ */
+.game-top{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 18px 6px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:20px;color:#3730a3}
+.brand small{font-size:12px;color:#64748b;font-weight:700}
+.top-btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn-icon{background:#fff;border:2px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:700;font-size:14px;color:#334155;cursor:pointer;box-shadow:0 2px 6px rgba(2,6,23,.08);transition:.15s}
+.btn-icon:hover{border-color:#a5b4fc;transform:translateY(-1px)}
+.game-layout{display:flex;gap:20px;align-items:flex-start;justify-content:center;flex-wrap:wrap;padding:8px 16px 34px;width:100%}
+.board-wrap{--cell:40px;position:relative;width:min(94vw,600px);width:min(94vw,600px,calc(100dvh - 150px));aspect-ratio:1/1;border-radius:20px;overflow:hidden;box-shadow:0 16px 40px rgba(2,6,23,.30);background:#fff;flex:0 0 auto;user-select:none}
+#board{position:absolute;inset:0;display:grid;grid-template-columns:repeat(15,1fr);grid-template-rows:repeat(15,1fr)}
+#pawn-layer{position:absolute;inset:0;pointer-events:none;z-index:6}
+
+/* sel jalur */
+.cell{background:#fff;box-shadow:inset 0 0 0 1px #dbe4f0;position:relative}
+.cell.start-red{background:#ef4444}.cell.start-green{background:#22c55e}.cell.start-yellow{background:#f59e0b}.cell.start-blue{background:#3b82f6}
+.cell.start-red::after,.cell.start-green::after,.cell.start-yellow::after,.cell.start-blue::after{content:'★';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:calc(var(--cell)*.55);text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.cell.gate-red{background:#fca5a5}.cell.gate-green{background:#86efac}.cell.gate-yellow{background:#fcd34d}.cell.gate-blue{background:#93c5fd}
+.cell.home-red{background:#fecaca}.cell.home-green{background:#bbf7d0}.cell.home-yellow{background:#fde68a}.cell.home-blue{background:#bfdbfe}
+
+/* basis (rumah) */
+.base{position:relative}
+.b-red{background:#ef4444}.b-green{background:#22c55e}.b-yellow{background:#f59e0b}.b-blue{background:#3b82f6}
+.base.dimmed{filter:grayscale(.9) opacity(.45)}
+.base-inner{position:absolute;inset:13%;background:rgba(255,255,255,.93);border-radius:16px;box-shadow:inset 0 0 0 3px rgba(255,255,255,.7),0 2px 10px rgba(2,6,23,.15)}
+.base.active-glow::before{content:'';position:absolute;inset:0;border:calc(var(--cell)*.14) solid #fde047;border-radius:8px;animation:glowpulse 1.2s ease-in-out infinite;z-index:2;pointer-events:none}
+.base-slot{position:absolute;width:23%;aspect-ratio:1/1;border:3px dashed rgba(255,255,255,.95);border-radius:50%;transform:translate(-50%,-50%);z-index:1}
+.base-name{position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);background:#fff;color:#1e293b;font-weight:800;font-size:calc(var(--cell)*.42);padding:2px 12px;border-radius:999px;box-shadow:0 2px 6px rgba(2,6,23,.25);white-space:nowrap;max-width:88%;overflow:hidden;text-overflow:ellipsis;z-index:2}
+
+/* pusat papan */
+.center-area{grid-area:7/7/10/10;position:relative;z-index:2}
+.tri{position:absolute;inset:0}
+.tri-red{background:#ef4444;clip-path:polygon(0 0,50% 50%,0 100%)}
+.tri-green{background:#22c55e;clip-path:polygon(0 0,100% 0,50% 50%)}
+.tri-yellow{background:#f59e0b;clip-path:polygon(100% 0,100% 100%,50% 50%)}
+.tri-blue{background:#3b82f6;clip-path:polygon(0 100%,50% 50%,100% 100%)}
+
+/* pion */
+.pawn{position:absolute;z-index:10;width:calc(var(--cell)*1.16);height:calc(var(--cell)*1.16);border-radius:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.78),rgba(255,255,255,0) 55%),var(--pc);border:calc(var(--cell)*.06) solid #fff;box-shadow:0 calc(var(--cell)*.07) calc(var(--cell)*.16) rgba(2,6,23,.42),inset 0 calc(var(--cell)*-.09) calc(var(--cell)*.12) rgba(0,0,0,.28);transition:left .19s linear,top .19s linear;pointer-events:auto}
+.pc-red{--pc:#ef4444;--pcd:#991b1b}.pc-green{--pc:#22c55e;--pcd:#166534}.pc-yellow{--pc:#f59e0b;--pcd:#92400e}.pc-blue{--pc:#3b82f6;--pcd:#1e40af}
+.pawn-ico{font-size:calc(var(--cell)*.5);line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+.pawn-num{position:absolute;top:calc(var(--cell)*-.16);left:calc(var(--cell)*-.16);width:calc(var(--cell)*.54);height:calc(var(--cell)*.54);font-size:calc(var(--cell)*.34);background:#fff;border:2px solid var(--pc);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--pcd);box-shadow:0 1px 4px rgba(2,6,23,.3)}
+.pawn.selectable{cursor:pointer;animation:pulse 1.1s ease-in-out infinite}
+.pawn.selectable:hover{transform:translate(-50%,-50%) scale(1.22);z-index:60}
+.pawn.hop{animation:hop .4s ease}
+
+/* dadu */
+.dice-zone{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0}
+.dice{width:62px;height:62px;background:#fff;border:3px solid #334155;border-radius:14px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:7px;gap:2px;box-shadow:0 4px 10px rgba(2,6,23,.18);flex:0 0 auto}
+.dice.rolling{animation:shake .45s linear infinite}
+.pip{background:#334155;border-radius:50%;width:100%;height:100%;align-self:center;justify-self:center;visibility:hidden}
+.btn-roll{flex:1;min-width:150px;font-size:17px;line-height:1.25;padding:12px 14px;border:none;border-radius:16px;color:#fff;font-weight:800;cursor:pointer;background:linear-gradient(180deg,#34d399,#059669);box-shadow:0 5px 0 #047857,0 8px 16px rgba(4,120,87,.25);transition:.15s}
+.btn-roll:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 #047857}
+.btn-roll:disabled{background:#e2e8f0;color:#94a3b8;box-shadow:0 4px 0 #cbd5e1;cursor:not-allowed}
+
+/* sidebar */
+.sidebar{width:330px;max-width:94vw;display:flex;flex-direction:column;gap:14px}
+.card{background:#fff;border-radius:20px;box-shadow:0 10px 26px rgba(2,6,23,.12);padding:16px 18px}
+.card-title{font-weight:800;margin-bottom:10px;color:#334155;font-size:16px}
+.turn-name{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800;margin-bottom:2px}
+.status{background:var(--indigo-l);border-radius:12px;padding:10px 13px;font-weight:700;color:var(--indigo);min-height:48px;display:flex;align-items:center;line-height:1.4;font-size:15px}
+.prow{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;border:2px solid transparent;margin-bottom:4px}
+.prow.current{background:#fef9c3;border-color:#facc15}
+.pname{font-weight:800;font-size:15.5px;line-height:1.2}
+.pdots{display:flex;gap:4px;margin-top:4px}
+.pdot{width:15px;height:15px;border-radius:50%;border:2px solid #cbd5e1;background:#f1f5f9}
+.pdot.track{background:var(--pc);border-color:var(--pcd)}
+.pdot.home{background:var(--pc);border-color:var(--pcd);box-shadow:inset 0 0 0 2px #fff}
+.pdot.center{background:#fbbf24;border-color:#d97706}
+.pmeta{margin-left:auto;text-align:right;font-size:12px;color:var(--muted);font-weight:700;line-height:1.35;white-space:nowrap}
+.legend-row{display:flex;align-items:center;gap:10px;padding:6px 0;font-weight:700;font-size:14px}
+.legend-ico{width:34px;height:34px;border-radius:10px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 auto}
+.legend-row b{color:#475569;margin-left:auto;font-size:11.5px;background:#f8fafc;border:1px solid var(--line);padding:2px 9px;border-radius:999px;white-space:nowrap}
+
+/* modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
+.q-card{background:#fff;border-radius:24px;width:min(580px,96vw);max-height:92dvh;overflow:auto;padding:22px 24px;animation:pop .25s ease}
+.q-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.q-player{font-weight:800;font-size:16.5px;display:flex;align-items:center;gap:8px}
+.badge{padding:5px 12px;border-radius:999px;font-weight:800;font-size:13px}
+.badge-cat{background:var(--indigo-l);color:var(--indigo);border:2px solid #c7d2fe}
+.badge-dice{background:#dcfce7;color:#166534;border:2px solid #86efac}
+.q-text{font-size:19px;font-weight:700;line-height:1.5;margin:4px 0 16px;color:#0f172a}
+.q-opts{display:grid;gap:10px}
+.q-opt{display:flex;align-items:center;gap:12px;text-align:left;font-size:16px;font-weight:700;padding:11px 14px;border-radius:14px;border:3px solid var(--line);background:#fff;cursor:pointer;transition:.15s;color:var(--ink)}
+.q-opt:hover:not(:disabled){border-color:#a5b4fc;transform:translateX(4px)}
+.q-opt .letter{width:32px;height:32px;flex:0 0 32px;border-radius:10px;background:var(--indigo-l);color:var(--indigo);display:flex;align-items:center;justify-content:center;font-weight:800}
+.q-opt.correct{background:#dcfce7;border-color:#22c55e;color:#14532d}
+.q-opt.correct .letter{background:#22c55e;color:#fff}
+.q-opt.wrong{background:#fee2e2;border-color:#ef4444;color:#7f1d1d}
+.q-opt.wrong .letter{background:#ef4444;color:#fff}
+.q-opt.faded{opacity:.5}
+.q-fb{margin-top:14px;border-radius:14px;padding:12px 15px;font-weight:600;line-height:1.55;font-size:15px}
+.q-fb.ok{background:#dcfce7;border:2px solid #86efac;color:#14532d}
+.q-fb.bad{background:#fee2e2;border:2px solid #fca5a5;color:#7f1d1d}
+.q-card .btn-primary{display:block;margin-left:auto;margin-right:auto}
+#q-next{width:100%;margin-top:14px}
+
+/* pemenang */
+.win-card{text-align:center;max-width:520px}
+.win-trophy{font-size:74px;line-height:1;animation:bounce 1s ease-in-out infinite}
+.win-title{font-size:clamp(26px,4.5vw,38px);font-weight:800;color:#b45309;margin-top:6px;line-height:1.2}
+.win-sub{color:var(--muted);font-weight:600;margin-top:4px;font-size:15.5px}
+.win-table{margin:18px auto 4px;border-collapse:collapse;width:100%}
+.win-table th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding:6px 10px;border-bottom:2px solid #f1f5f9;text-align:center}
+.win-table td{padding:9px 10px;border-bottom:2px solid #f1f5f9;font-size:15.5px;font-weight:700;text-align:center}
+.win-table tr.winner-row{background:#fef9c3}
+.confetti{position:fixed;top:-4vh;width:12px;height:18px;z-index:300;animation:cfall linear forwards;pointer-events:none}
+
+/* animasi */
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes shake{0%{transform:rotate(0)}25%{transform:rotate(-14deg) translateY(-3px)}50%{transform:rotate(10deg)}75%{transform:rotate(-8deg) translateY(-2px)}100%{transform:rotate(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 calc(var(--cell)*.07) calc(var(--cell)*.16) rgba(2,6,23,.42),0 0 0 0 rgba(255,255,255,.85)}50%{box-shadow:0 calc(var(--cell)*.07) calc(var(--cell)*.16) rgba(2,6,23,.42),0 0 0 calc(var(--cell)*.30) rgba(255,255,255,.20)}}
+@keyframes hop{0%,100%{margin-top:0}50%{margin-top:calc(var(--cell)*-.38)}}
+@keyframes glowpulse{0%,100%{box-shadow:inset 0 0 0 4px rgba(253,224,71,.95)}50%{box-shadow:inset 0 0 0 9px rgba(253,224,71,.5)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes cfall{to{transform:translateY(110vh) rotate(720deg)}}
+
+@media (max-width:1020px){
+  .game-layout{flex-direction:column;align-items:center}
+  .board-wrap{width:min(94vw,540px)}
+  .sidebar{width:min(94vw,540px)}
+}
+@media (max-width:560px){
+  .mini-legend{grid-template-columns:1fr}
+  .menu-card{padding:22px 18px}
+  .q-text{font-size:17px}
+  .q-opt{font-size:14.5px}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= LAYAR 1: MENU / CARA BERMAIN ================= -->
+<section id="screen-menu" class="screen active">
+  <div class="menu-card">
+    <div class="logo">🎲 📦 🔺</div>
+    <h1 class="title">Ludo Bangun Ruang</h1>
+    <p class="subtitle">Game Edukasi Bangun Ruang &bull; Matematika Kelas 4 SD</p>
+    <div class="rules-box" id="rules-menu"></div>
+    <h2 class="sec-title">👨‍👩‍👧‍👦 Pilih Jumlah Pemain</h2>
+    <div class="count-btns" id="count-btns">
+      <button class="count-btn" data-n="2">👥 2 Pemain<small>Satu lawan satu</small></button>
+      <button class="count-btn" data-n="3">🧑‍🤝‍🧑 3 Pemain<small>Tiga petualang</small></button>
+      <button class="count-btn" data-n="4">🎉 4 Pemain<small>Rame-ramean!</small></button>
+    </div>
+    <button id="btn-next-names" class="btn-primary" disabled>Lanjut: Isi Nama Pemain ➜</button>
+    <p class="credit">Sumber soal: Modul Latihan 100 Soal Bangun Ruang Kelas 4 SD — Panjang Rusuk dari Volume &amp; Volume Tabung &amp; Kerucut (5 Bagian @ 20 Soal)</p>
+  </div>
+</section>
+
+<!-- ================= LAYAR 2: INPUT NAMA ================= -->
+<section id="screen-names" class="screen">
+  <div class="menu-card">
+    <h1 class="title" style="font-size:30px">✏️ Isi Nama Pemain</h1>
+    <p class="subtitle">Nama boleh dikosongkan — akan diberi nama otomatis.</p>
+    <div id="name-rows"></div>
+    <label class="switch-row"><input type="checkbox" id="opt-double"><span>⚡ Mode Dadu Ganda<small>Lempar 2 dadu sekaligus, pion maju sesuai jumlahnya. Permainan lebih cepat selesai!</small></span></label>
+    <div class="row-btns">
+      <button id="btn-back-menu" class="btn-secondary">⟵ Kembali</button>
+      <button id="btn-start" class="btn-primary" style="margin-top:0">🚀 Mulai Bermain!</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LAYAR 3: PERMAINAN ================= -->
+<section id="screen-game" class="screen">
+  <header class="game-top">
+    <span class="brand">🎲 Ludo Bangun Ruang <small>• Matematika Kelas 4 SD</small></span>
+    <div class="top-btns">
+      <button id="btn-rules" class="btn-icon">📖 Cara Main</button>
+      <button id="btn-sound" class="btn-icon" title="Nyalakan/matikan suara">🔊</button>
+      <button id="btn-restart" class="btn-icon">🔄 Ulangi</button>
+    </div>
+  </header>
+  <div class="game-layout">
+    <div class="board-wrap">
+      <div id="board"></div>
+      <div id="pawn-layer"></div>
+    </div>
+    <aside class="sidebar">
+      <div class="card">
+        <div class="card-title">🎛️ Giliran Bermain</div>
+        <div class="turn-name" id="turn-name"></div>
+        <div class="dice-zone">
+          <div class="dice" id="dice-1"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+          <div class="dice hidden" id="dice-2"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+          <button class="btn-roll" id="btn-roll">🎲 Lempar Dadu</button>
+        </div>
+        <div class="status" id="status">…</div>
+      </div>
+      <div class="card" id="players-panel"></div>
+      <div class="card">
+        <div class="card-title">🧩 Jenis Soal Tiap Pion</div>
+        <div class="legend-row"><span class="legend-ico">🧊</span><span>Panjang Rusuk Kubus</span><b>Pion 1</b></div>
+        <div class="legend-row"><span class="legend-ico">📦</span><span>Panjang Rusuk Balok</span><b>Pion 2</b></div>
+        <div class="legend-row"><span class="legend-ico">⛺</span><span>Panjang Rusuk Prisma</span><b>Pion 3</b></div>
+        <div class="legend-row"><span class="legend-ico">🔺</span><span>Panjang Rusuk Limas</span><b>Pion 4</b></div>
+        <div class="legend-row"><span class="legend-ico">🥫</span><span>Volume Tabung dan Kerucut</span><b>Pion 5</b></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= MODAL SOAL ================= -->
+<div id="modal-q" class="modal-overlay hidden">
+  <div class="q-card">
+    <div class="q-head">
+      <span class="q-player" id="q-player"></span>
+      <span class="badge badge-cat" id="q-cat"></span>
+      <span class="badge badge-dice" id="q-dice"></span>
+    </div>
+    <div class="q-text" id="q-text"></div>
+    <div class="q-opts" id="q-opts"></div>
+    <div class="q-fb hidden" id="q-fb"></div>
+    <button id="q-next" class="btn-primary hidden">Lanjut ➜</button>
+  </div>
+</div>
+
+<!-- ================= MODAL ATURAN ================= -->
+<div id="modal-rules" class="modal-overlay hidden">
+  <div class="q-card">
+    <h2 style="text-align:center;color:var(--indigo);margin-bottom:10px">📖 Cara Bermain</h2>
+    <div class="rules-box" id="rules-modal" style="max-height:54vh;margin-top:0"></div>
+    <button id="btn-close-rules" class="btn-primary" style="width:100%">Mengerti! ➜</button>
+  </div>
+</div>
+
+<!-- ================= MODAL KONFIRMASI ULANGI ================= -->
+<div id="modal-restart" class="modal-overlay hidden">
+  <div class="q-card" style="max-width:430px;text-align:center">
+    <h2 style="color:#b45309">🔄 Ulangi Permainan?</h2>
+    <p style="margin:12px 0 4px;color:var(--muted);font-weight:600">Permainan saat ini akan diulang dari awal (kembali ke menu utama).</p>
+    <div class="row-btns">
+      <button id="btn-restart-no" class="btn-secondary">Batal</button>
+      <button id="btn-restart-yes" class="btn-primary" style="margin-top:0">Ya, Ulangi</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= OVERLAY PEMENANG ================= -->
+<div id="modal-win" class="modal-overlay hidden">
+  <div class="q-card win-card">
+    <div id="win-fill"></div>
+    <button id="btn-again" class="btn-primary">🔁 Main Lagi</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* =====================================================
+   LUDO BANGUN RUANG — Game Edukasi Matematika Kelas 4 SD
+   Sumber soal: Modul Latihan 100 Soal Bangun Ruang Kelas 4 SD (5 bagian @ 20 soal)
+   ===================================================== */
+
+const CATS = {
+  1:{icon:'🧊', name:'Panjang Rusuk Kubus'},
+  2:{icon:'📦', name:'Panjang Rusuk Balok'},
+  3:{icon:'⛺', name:'Panjang Rusuk Prisma'},
+  4:{icon:'🔺', name:'Panjang Rusuk Limas'},
+  5:{icon:'🥫', name:'Volume Tabung dan Kerucut'}
+};
+
+const PLAYERS = [
+  {key:'red',    label:'Merah',  color:'#ef4444', dark:'#991b1b'},
+  {key:'green',  label:'Hijau',  color:'#22c55e', dark:'#166534'},
+  {key:'yellow', label:'Kuning', color:'#f59e0b', dark:'#92400e'},
+  {key:'blue',   label:'Biru',   color:'#3b82f6', dark:'#1e40af'}
+];
+
+const LETTERS = ['A','B','C','D'];
+
+/* ===== BANK SOAL (a = indeks jawaban benar pada array o) ===== */
+/* Sumber: Modul Latihan 100 Soal Bangun Ruang Kelas 4 SD (5 bagian @ 20 soal) */
+const QB = {
+1: [ /* PION 1: MENENTUKAN PANJANG RUSUK KUBUS (Soal 1-20) */
+ {q:"Sebuah kubus memiliki volume 1 cm³. Berapakah panjang rusuk kubus tersebut?", o:["1 cm","2 cm","3 cm","4 cm"], a:0, e:"Karena 1 × 1 × 1 = 1 cm³, maka panjang rusuk kubus adalah 1 cm."},
+ {q:"Sebuah dadu berbentuk kubus memiliki volume 8 cm³. Panjang rusuk dadu tersebut adalah ....", o:["2 cm","3 cm","4 cm","6 cm"], a:0, e:"Karena 2 × 2 × 2 = 8 cm³, maka panjang rusuk dadu adalah 2 cm."},
+ {q:"Diketahui sebuah kubus kayu memiliki volume 27 cm³. Berapa cm panjang rusuk kubus kayu itu?", o:["2 cm","3 cm","6 cm","9 cm"], a:1, e:"Karena 3 × 3 × 3 = 27 cm³, maka panjang rusuk kubus kayu adalah 3 cm."},
+ {q:"Kotak kapur berbentuk kubus mempunyai volume 64 cm³. Panjang rusuk kotak kapur tersebut adalah ....", o:["4 cm","6 cm","8 cm","16 cm"], a:0, e:"Karena 4 × 4 × 4 = 64 cm³, maka panjang rusuk kotak kapur adalah 4 cm."},
+ {q:"Sebuah kotak hadiah berbentuk kubus memiliki volume 125 cm³. Panjang rusuk kotak hadiah itu adalah ....", o:["4 cm","5 cm","15 cm","25 cm"], a:1, e:"Karena 5 × 5 × 5 = 125 cm³, maka panjang rusuk kotak hadiah adalah 5 cm."},
+ {q:"Volume sebuah kubus mainan adalah 216 cm³. Berapakah panjang rusuk kubus mainan tersebut?", o:["4 cm","6 cm","8 cm","12 cm"], a:1, e:"Karena 6 × 6 × 6 = 216 cm³, maka panjang rusuk kubus mainan adalah 6 cm."},
+ {q:"Sebuah wadah berbentuk kubus dapat menampung 343 cm³ pasir. Panjang rusuk wadah itu adalah ....", o:["6 cm","7 cm","8 cm","9 cm"], a:1, e:"Karena 7 × 7 × 7 = 343 cm³, maka panjang rusuk wadah adalah 7 cm."},
+ {q:"Akuarium kecil berbentuk kubus memiliki volume 512 cm³. Berapa panjang rusuk akuarium tersebut?", o:["6 cm","7 cm","8 cm","9 cm"], a:2, e:"Karena 8 × 8 × 8 = 512 cm³, maka panjang rusuk akuarium adalah 8 cm."},
+ {q:"Sebuah balok es berbentuk kubus memiliki volume 729 cm³. Panjang rusuk balok es tersebut adalah ....", o:["7 cm","8 cm","9 cm","11 cm"], a:2, e:"Karena 9 × 9 × 9 = 729 cm³, maka panjang rusuk balok es adalah 9 cm."},
+ {q:"Kotak penyimpanan berbentuk kubus mempunyai volume 1.000 cm³. Panjang rusuknya adalah ....", o:["10 cm","20 cm","50 cm","100 cm"], a:0, e:"Karena 10 × 10 × 10 = 1.000 cm³, maka panjang rusuk kotak adalah 10 cm."},
+ {q:"Sebuah kardus berbentuk kubus memiliki volume 1.331 cm³. Berapakah panjang rusuk kardus itu?", o:["9 cm","11 cm","13 cm","21 cm"], a:1, e:"Karena 11 × 11 × 11 = 1.331 cm³, maka panjang rusuk kardus adalah 11 cm."},
+ {q:"Volume sebuah peti berbentuk kubus adalah 1.728 cm³. Panjang rusuk peti tersebut adalah ....", o:["10 cm","12 cm","14 cm","16 cm"], a:1, e:"Karena 12 × 12 × 12 = 1.728 cm³, maka panjang rusuk peti adalah 12 cm."},
+ {q:"Sebuah bangun ruang kubus memiliki volume 2.197 cm³. Panjang rusuk kubus tersebut adalah ....", o:["11 cm","12 cm","13 cm","17 cm"], a:2, e:"Karena 13 × 13 × 13 = 2.197 cm³, maka panjang rusuk kubus adalah 13 cm."},
+ {q:"Sebuah kotak kaca berbentuk kubus memiliki volume 2.744 cm³. Berapakah panjang rusuknya?", o:["12 cm","14 cm","16 cm","18 cm"], a:1, e:"Karena 14 × 14 × 14 = 2.744 cm³, maka panjang rusuk kotak kaca adalah 14 cm."},
+ {q:"Kaleng biskuit berbentuk kubus mempunyai volume 3.375 cm³. Panjang rusuk kaleng tersebut adalah ....", o:["13 cm","15 cm","17 cm","25 cm"], a:1, e:"Karena 15 × 15 × 15 = 3.375 cm³, maka panjang rusuk kaleng adalah 15 cm."},
+ {q:"Sebuah bak mandi berbentuk kubus memiliki volume 8.000 dm³. Berapakah panjang rusuk bak mandi itu?", o:["10 dm","20 dm","40 dm","80 dm"], a:1, e:"Karena 20 × 20 × 20 = 8.000 dm³, maka panjang rusuk bak mandi adalah 20 dm."},
+ {q:"Sebuah kontainer kecil berbentuk kubus memiliki volume 27.000 cm³. Panjang rusuknya adalah ....", o:["20 cm","30 cm","60 cm","90 cm"], a:1, e:"Karena 30 × 30 × 30 = 27.000 cm³, maka panjang rusuk kontainer adalah 30 cm."},
+ {q:"Akuarium kaca berbentuk kubus memiliki volume 64.000 cm³. Panjang rusuk akuarium itu adalah ....", o:["20 cm","30 cm","40 cm","80 cm"], a:2, e:"Karena 40 × 40 × 40 = 64.000 cm³, maka panjang rusuk akuarium adalah 40 cm."},
+ {q:"Tangki air berbentuk kubus mempunyai volume 125.000 cm³. Berapa cm panjang rusuk tangki tersebut?", o:["30 cm","40 cm","50 cm","60 cm"], a:2, e:"Karena 50 × 50 × 50 = 125.000 cm³, maka panjang rusuk tangki adalah 50 cm."},
+ {q:"Dua buah kubus yang ukurannya sama digabungkan sehingga total volumenya menjadi 16 cm³. Berapakah panjang rusuk satu buah kubus tersebut?", o:["2 cm","4 cm","6 cm","8 cm"], a:0, e:"Volume 1 kubus = 16 ÷ 2 = 8 cm³. Karena 2 × 2 × 2 = 8, maka rusuknya 2 cm."}
+],
+2: [ /* PION 2: MENENTUKAN SALAH SATU RUSUK BALOK (Soal 21-40) */
+ {q:"Sebuah balok memiliki volume 24 cm³. Jika lebar balok 2 cm dan tingginya 3 cm, berapakah panjang balok tersebut?", o:["3 cm","4 cm","6 cm","8 cm"], a:1, e:"Hasil kali lebar dan tinggi = 2 × 3 = 6. Panjang = 24 ÷ 6 = 4 cm."},
+ {q:"Volume sebuah kotak pensil berbentuk balok adalah 60 cm³. Jika panjangnya 5 cm dan tingginya 3 cm, maka lebarnya adalah ....", o:["2 cm","3 cm","4 cm","5 cm"], a:2, e:"Hasil kali panjang dan tinggi = 5 × 3 = 15. Lebar = 60 ÷ 15 = 4 cm."},
+ {q:"Sebuah balok kayu mempunyai volume 100 cm³, panjang 10 cm, dan lebar 5 cm. Berapakah tinggi balok kayu itu?", o:["2 cm","4 cm","5 cm","10 cm"], a:0, e:"Hasil kali panjang dan lebar = 10 × 5 = 50. Tinggi = 100 ÷ 50 = 2 cm."},
+ {q:"Diketahui volume sebuah balok adalah 48 cm³. Jika lebarnya 4 cm dan tingginya 2 cm, maka panjang balok tersebut adalah ....", o:["4 cm","6 cm","8 cm","12 cm"], a:1, e:"Hasil kali lebar dan tinggi = 4 × 2 = 8. Panjang = 48 ÷ 8 = 6 cm."},
+ {q:"Sebuah batu bata berbentuk balok memiliki volume 120 cm³. Jika panjangnya 6 cm dan tingginya 4 cm, berapakah lebarnya?", o:["4 cm","5 cm","6 cm","8 cm"], a:1, e:"Hasil kali panjang dan tinggi = 6 × 4 = 24. Lebar = 120 ÷ 24 = 5 cm."},
+ {q:"Kotak tisu berbentuk balok memiliki volume 90 cm³, panjang 9 cm, dan lebar 5 cm. Tinggi kotak tisu tersebut adalah ....", o:["2 cm","3 cm","4 cm","5 cm"], a:0, e:"Hasil kali panjang dan lebar = 9 × 5 = 45. Tinggi = 90 ÷ 45 = 2 cm."},
+ {q:"Sebuah kardus berbentuk balok memiliki volume 150 cm³. Jika lebarnya 5 cm dan tingginya 3 cm, berapa cm panjang kardus itu?", o:["5 cm","10 cm","15 cm","20 cm"], a:1, e:"Hasil kali lebar dan tinggi = 5 × 3 = 15. Panjang = 150 ÷ 15 = 10 cm."},
+ {q:"Volume sebuah balok adalah 80 cm³. Jika panjangnya 8 cm dan tingginya 2 cm, berapakah lebar balok tersebut?", o:["4 cm","5 cm","6 cm","8 cm"], a:1, e:"Hasil kali panjang dan tinggi = 8 × 2 = 16. Lebar = 80 ÷ 16 = 5 cm."},
+ {q:"Sebuah wadah plastik berbentuk balok memiliki volume 72 cm³, panjang 6 cm, dan lebar 4 cm. Tinggi wadah tersebut adalah ....", o:["2 cm","3 cm","4 cm","6 cm"], a:1, e:"Hasil kali panjang dan lebar = 6 × 4 = 24. Tinggi = 72 ÷ 24 = 3 cm."},
+ {q:"Sebuah lemari kecil berbentuk balok memiliki volume 200 dm³. Jika lebarnya 5 dm dan tingginya 4 dm, berapakah panjangnya?", o:["8 dm","10 dm","12 dm","20 dm"], a:1, e:"Hasil kali lebar dan tinggi = 5 × 4 = 20. Panjang = 200 ÷ 20 = 10 dm."},
+ {q:"Penghapus berbentuk balok memiliki volume 36 cm³. Jika panjangnya 6 cm dan tingginya 2 cm, maka lebarnya adalah ....", o:["2 cm","3 cm","4 cm","6 cm"], a:1, e:"Hasil kali panjang dan tinggi = 6 × 2 = 12. Lebar = 36 ÷ 12 = 3 cm."},
+ {q:"Volume sebuah balok adalah 180 cm³. Diketahui panjangnya 10 cm dan lebarnya 6 cm. Berapakah tinggi balok tersebut?", o:["2 cm","3 cm","4 cm","5 cm"], a:1, e:"Hasil kali panjang dan lebar = 10 × 6 = 60. Tinggi = 180 ÷ 60 = 3 cm."},
+ {q:"Sebuah kotak sepatu berbentuk balok memiliki volume 140 cm³, lebar 7 cm, dan tinggi 2 cm. Panjang kotak sepatu itu adalah ....", o:["8 cm","10 cm","12 cm","14 cm"], a:1, e:"Hasil kali lebar dan tinggi = 7 × 2 = 14. Panjang = 140 ÷ 14 = 10 cm."},
+ {q:"Spons cuci piring berbentuk balok memiliki volume 96 cm³. Jika panjangnya 8 cm dan tingginya 3 cm, berapakah lebarnya?", o:["3 cm","4 cm","5 cm","6 cm"], a:1, e:"Hasil kali panjang dan tinggi = 8 × 3 = 24. Lebar = 96 ÷ 24 = 4 cm."},
+ {q:"Sebuah kolam ikan berbentuk balok memiliki volume 240 m³, panjang 10 m, dan lebar 4 m. Berapakah kedalaman (tinggi) kolam itu?", o:["4 m","5 m","6 m","8 m"], a:2, e:"Hasil kali panjang dan lebar = 10 × 4 = 40. Tinggi = 240 ÷ 40 = 6 m."},
+ {q:"Sebuah balok memiliki luas alas 25 cm² dan volume 125 cm³. Berapakah tinggi balok tersebut?", o:["4 cm","5 cm","6 cm","8 cm"], a:1, e:"Tinggi balok = Volume ÷ Luas alas = 125 ÷ 25 = 5 cm."},
+ {q:"Volume sebuah kotak roti berbentuk balok adalah 300 cm³. Jika lebarnya 5 cm dan tingginya 6 cm, berapakah panjangnya?", o:["8 cm","10 cm","12 cm","15 cm"], a:1, e:"Hasil kali lebar dan tinggi = 5 × 6 = 30. Panjang = 300 ÷ 30 = 10 cm."},
+ {q:"Sebuah balok mainan mempunyai volume 160 cm³. Jika panjangnya 8 cm dan tingginya 4 cm, maka lebarnya adalah ....", o:["4 cm","5 cm","6 cm","8 cm"], a:1, e:"Hasil kali panjang dan tinggi = 8 × 4 = 32. Lebar = 160 ÷ 32 = 5 cm."},
+ {q:"Akuarium berbentuk balok memiliki volume 400 cm³, panjang 10 cm, dan lebar 8 cm. Berapakah tinggi akuarium tersebut?", o:["4 cm","5 cm","6 cm","8 cm"], a:1, e:"Hasil kali panjang dan lebar = 10 × 8 = 80. Tinggi = 400 ÷ 80 = 5 cm."},
+ {q:"Sebuah peti kemas kecil berbentuk balok memiliki volume 500 dm³. Jika lebarnya 10 dm dan tingginya 5 dm, berapakah panjangnya?", o:["5 dm","10 dm","15 dm","20 dm"], a:1, e:"Hasil kali lebar dan tinggi = 10 × 5 = 50. Panjang = 500 ÷ 50 = 10 dm."}
+],
+3: [ /* PION 3: MENENTUKAN PANJANG RUSUK PRISMA (Soal 41-60) */
+ {q:"Sebuah prisma segitiga memiliki volume 30 cm³ dan luas alas 6 cm². Berapakah tinggi prisma tersebut?", o:["4 cm","5 cm","6 cm","7 cm"], a:1, e:"Tinggi prisma = Volume ÷ Luas alas = 30 ÷ 6 = 5 cm."},
+ {q:"Volume sebuah prisma adalah 60 cm³. Jika luas alasnya 10 cm², maka tinggi prisma itu adalah ....", o:["5 cm","6 cm","8 cm","10 cm"], a:1, e:"Tinggi prisma = Volume ÷ Luas alas = 60 ÷ 10 = 6 cm."},
+ {q:"Sebuah tenda berbentuk prisma segitiga memiliki volume 80 m³ dan luas alas 20 m². Berapakah tinggi tenda tersebut?", o:["2 m","4 m","6 m","8 m"], a:1, e:"Tinggi tenda = Volume ÷ Luas alas = 80 ÷ 20 = 4 m."},
+ {q:"Diketahui volume sebuah prisma adalah 100 cm³ dan luas alasnya 25 cm². Tinggi prisma tersebut adalah ....", o:["3 cm","4 cm","5 cm","6 cm"], a:1, e:"Tinggi prisma = Volume ÷ Luas alas = 100 ÷ 25 = 4 cm."},
+ {q:"Sebuah cokelat berbentuk prisma segitiga memiliki volume 45 cm³ dan luas alas 9 cm². Berapakah tinggi cokelat tersebut?", o:["4 cm","5 cm","6 cm","9 cm"], a:1, e:"Tinggi cokelat = Volume ÷ Luas alas = 45 ÷ 9 = 5 cm."},
+ {q:"Sebuah prisma memiliki volume 120 cm³ dan luas alas 15 cm². Berapakah tinggi prisma tersebut?", o:["6 cm","7 cm","8 cm","9 cm"], a:2, e:"Tinggi prisma = Volume ÷ Luas alas = 120 ÷ 15 = 8 cm."},
+ {q:"Atap rumah berbentuk prisma segitiga memiliki volume 70 m³ dan luas alas 14 m². Tinggi prisma atap tersebut adalah ....", o:["4 m","5 m","6 m","7 m"], a:1, e:"Tinggi prisma atap = Volume ÷ Luas alas = 70 ÷ 14 = 5 m."},
+ {q:"Sebuah prisma tegak memiliki volume 90 cm³. Jika luas alasnya 18 cm², maka tinggi prisma itu adalah ....", o:["4 cm","5 cm","6 cm","8 cm"], a:1, e:"Tinggi prisma = Volume ÷ Luas alas = 90 ÷ 18 = 5 cm."},
+ {q:"Volume sebuah prisma adalah 150 cm³ dan luas alasnya 30 cm². Berapakah tinggi prisma tersebut?", o:["3 cm","5 cm","6 cm","10 cm"], a:1, e:"Tinggi prisma = Volume ÷ Luas alas = 150 ÷ 30 = 5 cm."},
+ {q:"Sebuah papan nama berbentuk prisma segitiga memiliki volume 48 cm³ dan luas alas 12 cm². Tinggi prisma itu adalah ....", o:["3 cm","4 cm","6 cm","8 cm"], a:1, e:"Tinggi prisma = Volume ÷ Luas alas = 48 ÷ 12 = 4 cm."},
+ {q:"Sebuah prisma persegi memiliki volume 36 cm³ dan tinggi 4 cm. Jika alasnya berbentuk persegi, berapakah panjang rusuk alasnya?", o:["2 cm","3 cm","4 cm","9 cm"], a:1, e:"Luas alas persegi = 36 ÷ 4 = 9 cm². Karena 3 × 3 = 9, maka rusuk alasnya 3 cm."},
+ {q:"Sebuah prisma dengan alas berbentuk persegi memiliki volume 80 cm³ dan tinggi 5 cm. Panjang rusuk persegi pada alasnya adalah ....", o:["2 cm","4 cm","8 cm","16 cm"], a:1, e:"Luas alas persegi = 80 ÷ 5 = 16 cm². Karena 4 × 4 = 16, maka rusuk alasnya 4 cm."},
+ {q:"Volume sebuah prisma beralas persegi adalah 150 cm³. Jika tinggi prisma 6 cm, berapakah panjang rusuk alasnya?", o:["4 cm","5 cm","6 cm","25 cm"], a:1, e:"Luas alas persegi = 150 ÷ 6 = 25 cm². Karena 5 × 5 = 25, maka rusuk alasnya 5 cm."},
+ {q:"Sebuah prisma segitiga memiliki volume 24 cm³. Luas alas segitiga didapat dari (alas × tinggi segitiga) ÷ 2. Jika alas segitiga 4 cm dan tinggi segitiga 3 cm, berapakah tinggi prisma tersebut?", o:["2 cm","3 cm","4 cm","6 cm"], a:2, e:"Luas alas segitiga = (4 × 3) ÷ 2 = 6 cm². Tinggi prisma = 24 ÷ 6 = 4 cm."},
+ {q:"Sebuah prisma segitiga memiliki volume 60 cm³. Jika panjang alas segitiga 6 cm dan tinggi segitiga 4 cm, berapakah tinggi prisma?", o:["4 cm","5 cm","6 cm","10 cm"], a:1, e:"Luas alas segitiga = (6 × 4) ÷ 2 = 12 cm². Tinggi prisma = 60 ÷ 12 = 5 cm."},
+ {q:"Volume sebuah prisma segitiga adalah 100 cm³. Jika alas segitiga 5 cm dan tinggi segitiga 4 cm, maka tinggi prisma adalah ....", o:["5 cm","8 cm","10 cm","20 cm"], a:2, e:"Luas alas segitiga = (5 × 4) ÷ 2 = 10 cm². Tinggi prisma = 100 ÷ 10 = 10 cm."},
+ {q:"Sebuah prisma segitiga mempunyai volume 90 cm³. Jika panjang alas segitiga 6 cm dan tinggi segitiga 5 cm, berapakah tinggi prisma?", o:["5 cm","6 cm","8 cm","15 cm"], a:1, e:"Luas alas segitiga = (6 × 5) ÷ 2 = 15 cm². Tinggi prisma = 90 ÷ 15 = 6 cm."},
+ {q:"Sebuah prisma segitiga memiliki volume 30 cm³ dan tinggi prisma 5 cm. Jika tinggi segitiga pada alasnya 3 cm, berapakah panjang alas segitiga tersebut?", o:["2 cm","3 cm","4 cm","6 cm"], a:2, e:"Luas alas = 30 ÷ 5 = 6 cm². Alas segitiga = (Luas alas × 2) ÷ tinggi segitiga = (6 × 2) ÷ 3 = 4 cm."},
+ {q:"Volume sebuah prisma segitiga adalah 80 cm³ dan tinggi prisma 8 cm. Jika tinggi segitiga alasnya 4 cm, berapakah panjang alas segitiganya?", o:["4 cm","5 cm","8 cm","10 cm"], a:1, e:"Luas alas = 80 ÷ 8 = 10 cm². Alas segitiga = (10 × 2) ÷ 4 = 20 ÷ 4 = 5 cm."},
+ {q:"Sebuah prisma segitiga memiliki volume 120 cm³ dan tinggi prisma 10 cm. Jika panjang alas segitiganya 6 cm, berapakah tinggi segitiga pada alas tersebut?", o:["2 cm","4 cm","6 cm","8 cm"], a:1, e:"Luas alas = 120 ÷ 10 = 12 cm². Tinggi segitiga = (12 × 2) ÷ 6 = 24 ÷ 6 = 4 cm."}
+],
+4: [ /* PION 4: MENENTUKAN PANJANG RUSUK DAN TINGGI LIMAS (Soal 61-80) */
+ {q:"Sebuah limas memiliki volume 20 cm³ dan luas alas 10 cm². Berapakah tinggi limas tersebut? (Ingat: kalikan volume dengan 3 terlebih dahulu)", o:["4 cm","5 cm","6 cm","8 cm"], a:2, e:"Tinggi limas = (Volume × 3) ÷ Luas alas = (20 × 3) ÷ 10 = 60 ÷ 10 = 6 cm."},
+ {q:"Volume sebuah limas adalah 30 cm³. Jika luas alasnya 15 cm², maka tinggi limas tersebut adalah ....", o:["2 cm","4 cm","6 cm","9 cm"], a:2, e:"Tinggi limas = (Volume × 3) ÷ Luas alas = (30 × 3) ÷ 15 = 90 ÷ 15 = 6 cm."},
+ {q:"Sebuah hiasan berbentuk limas memiliki volume 40 cm³ dan luas alas 20 cm². Berapakah tinggi limas itu?", o:["4 cm","6 cm","8 cm","10 cm"], a:1, e:"Tinggi limas = (40 × 3) ÷ 20 = 120 ÷ 20 = 6 cm."},
+ {q:"Diketahui volume sebuah limas adalah 50 cm³ dan luas alasnya 25 cm². Tinggi limas tersebut adalah ....", o:["4 cm","5 cm","6 cm","10 cm"], a:2, e:"Tinggi limas = (50 × 3) ÷ 25 = 150 ÷ 25 = 6 cm."},
+ {q:"Sebuah limas mempunyai volume 16 cm³ dan luas alas 12 cm². Berapakah tinggi limas tersebut?", o:["3 cm","4 cm","5 cm","6 cm"], a:1, e:"Tinggi limas = (16 × 3) ÷ 12 = 48 ÷ 12 = 4 cm."},
+ {q:"Volume sebuah limas adalah 24 cm³. Jika luas alasnya 18 cm², berapakah tinggi limas tersebut?", o:["3 cm","4 cm","6 cm","8 cm"], a:1, e:"Tinggi limas = (24 × 3) ÷ 18 = 72 ÷ 18 = 4 cm."},
+ {q:"Sebuah piramida mainan berbentuk limas memiliki volume 60 cm³ dan luas alas 30 cm². Tinggi piramida mainan itu adalah ....", o:["4 cm","5 cm","6 cm","9 cm"], a:2, e:"Tinggi limas = (60 × 3) ÷ 30 = 180 ÷ 30 = 6 cm."},
+ {q:"Sebuah limas memiliki volume 32 cm³ dan luas alas 16 cm². Berapakah tinggi limas tersebut?", o:["4 cm","6 cm","8 cm","12 cm"], a:1, e:"Tinggi limas = (32 × 3) ÷ 16 = 96 ÷ 16 = 6 cm."},
+ {q:"Diketahui volume sebuah limas adalah 45 cm³ dan luas alasnya 27 cm². Tinggi limas tersebut adalah ....", o:["3 cm","4 cm","5 cm","6 cm"], a:2, e:"Tinggi limas = (45 × 3) ÷ 27 = 135 ÷ 27 = 5 cm."},
+ {q:"Volume sebuah limas adalah 100 cm³ dan luas alasnya 50 cm². Berapakah tinggi limas tersebut?", o:["4 cm","5 cm","6 cm","8 cm"], a:2, e:"Tinggi limas = (100 × 3) ÷ 50 = 300 ÷ 50 = 6 cm."},
+ {q:"Sebuah limas memiliki alas berbentuk persegi. Jika volume limas 12 cm³ dan tinggi limas 4 cm, berapakah panjang rusuk persegi pada alasnya?", o:["2 cm","3 cm","4 cm","9 cm"], a:1, e:"Luas alas = (12 × 3) ÷ 4 = 36 ÷ 4 = 9 cm². Karena 3 × 3 = 9, rusuk alasnya 3 cm."},
+ {q:"Sebuah limas beralas persegi memiliki volume 32 cm³ dan tinggi 6 cm. Panjang rusuk alas persegi tersebut adalah ....", o:["3 cm","4 cm","6 cm","8 cm"], a:1, e:"Luas alas = (32 × 3) ÷ 6 = 96 ÷ 6 = 16 cm². Karena 4 × 4 = 16, rusuk alasnya 4 cm."},
+ {q:"Volume sebuah limas persegi adalah 75 cm³. Jika tinggi limas 9 cm, berapakah panjang rusuk persegi pada alasnya?", o:["4 cm","5 cm","6 cm","15 cm"], a:1, e:"Luas alas = (75 × 3) ÷ 9 = 225 ÷ 9 = 25 cm². Karena 5 × 5 = 25, rusuk alasnya 5 cm."},
+ {q:"Sebuah limas beralas persegi mempunyai volume 48 cm³ dan tinggi 4 cm. Panjang rusuk alasnya adalah ....", o:["4 cm","6 cm","8 cm","12 cm"], a:1, e:"Luas alas = (48 × 3) ÷ 4 = 144 ÷ 4 = 36 cm². Karena 6 × 6 = 36, rusuk alasnya 6 cm."},
+ {q:"Sebuah kue berbentuk limas persegi memiliki volume 100 cm³ dan tinggi 3 cm. Berapakah panjang rusuk alas kue tersebut?", o:["5 cm","8 cm","10 cm","20 cm"], a:2, e:"Luas alas = (100 × 3) ÷ 3 = 300 ÷ 3 = 100 cm². Karena 10 × 10 = 100, rusuk alasnya 10 cm."},
+ {q:"Sebuah limas memiliki alas berbentuk persegi dengan panjang rusuk alas 3 cm. Jika volume limas 18 cm³, berapakah tinggi limas tersebut?", o:["3 cm","4 cm","6 cm","9 cm"], a:2, e:"Luas alas persegi = 3 × 3 = 9 cm². Tinggi limas = (18 × 3) ÷ 9 = 54 ÷ 9 = 6 cm."},
+ {q:"Alas sebuah limas berbentuk persegi dengan panjang rusuk 4 cm. Jika volumenya 32 cm³, maka tinggi limas adalah ....", o:["4 cm","6 cm","8 cm","12 cm"], a:1, e:"Luas alas persegi = 4 × 4 = 16 cm². Tinggi limas = (32 × 3) ÷ 16 = 96 ÷ 16 = 6 cm."},
+ {q:"Sebuah limas persegi memiliki panjang rusuk alas 5 cm dan volume 50 cm³. Berapakah tinggi limas tersebut?", o:["4 cm","5 cm","6 cm","10 cm"], a:2, e:"Luas alas persegi = 5 × 5 = 25 cm². Tinggi limas = (50 × 3) ÷ 25 = 150 ÷ 25 = 6 cm."},
+ {q:"Panjang rusuk alas sebuah limas persegi adalah 6 cm. Jika volume limas 60 cm³, berapakah tinggi limas itu?", o:["4 cm","5 cm","6 cm","10 cm"], a:1, e:"Luas alas persegi = 6 × 6 = 36 cm². Tinggi limas = (60 × 3) ÷ 36 = 180 ÷ 36 = 5 cm."},
+ {q:"Sebuah monumen kecil berbentuk limas persegi memiliki panjang rusuk alas 10 cm dan volume 200 cm³. Berapakah tinggi monumen tersebut?", o:["4 cm","5 cm","6 cm","8 cm"], a:2, e:"Luas alas persegi = 10 × 10 = 100 cm². Tinggi limas = (200 × 3) ÷ 100 = 600 ÷ 100 = 6 cm."}
+],
+5: [ /* PION 5: MENENTUKAN VOLUME TABUNG DAN KERUCUT (Soal 81-100) */
+ {q:"Sebuah tabung memiliki luas alas 10 cm² dan tinggi 5 cm. Berapakah volume tabung tersebut?", o:["15 cm³","25 cm³","50 cm³","100 cm³"], a:2, e:"Volume tabung = Luas alas × Tinggi = 10 × 5 = 50 cm³."},
+ {q:"Kaleng susu berbentuk tabung memiliki luas alas 20 cm² dan tinggi 4 cm. Volume kaleng susu itu adalah ....", o:["40 cm³","60 cm³","80 cm³","100 cm³"], a:2, e:"Volume tabung = Luas alas × Tinggi = 20 × 4 = 80 cm³."},
+ {q:"Sebuah gelas berbentuk tabung memiliki luas alas 15 cm² dan tinggi 6 cm. Berapakah volume gelas tersebut?", o:["60 cm³","75 cm³","90 cm³","120 cm³"], a:2, e:"Volume tabung = Luas alas × Tinggi = 15 × 6 = 90 cm³."},
+ {q:"Sebuah tabung memiliki luas alas 25 cm² dan tinggi 4 cm. Volume tabung tersebut adalah ....", o:["50 cm³","75 cm³","100 cm³","125 cm³"], a:2, e:"Volume tabung = Luas alas × Tinggi = 25 × 4 = 100 cm³."},
+ {q:"Celengan berbentuk tabung mempunyai luas alas 30 cm² dan tinggi 5 cm. Berapakah volume celengan tersebut?", o:["90 cm³","120 cm³","150 cm³","180 cm³"], a:2, e:"Volume tabung = Luas alas × Tinggi = 30 × 5 = 150 cm³."},
+ {q:"Sebuah toples berbentuk tabung memiliki luas alas 12 cm² dan tinggi 10 cm. Volume toples itu adalah ....", o:["100 cm³","120 cm³","140 cm³","240 cm³"], a:1, e:"Volume tabung = Luas alas × Tinggi = 12 × 10 = 120 cm³."},
+ {q:"Sebuah ember lurus berbentuk tabung memiliki luas alas 50 cm² dan tinggi 4 cm. Berapakah volumenya?", o:["100 cm³","150 cm³","200 cm³","250 cm³"], a:2, e:"Volume tabung = Luas alas × Tinggi = 50 × 4 = 200 cm³."},
+ {q:"Sebuah pipa pendek berbentuk tabung memiliki luas alas 40 cm² dan tinggi 3 cm. Volume pipa tersebut adalah ....", o:["80 cm³","100 cm³","120 cm³","160 cm³"], a:2, e:"Volume tabung = Luas alas × Tinggi = 40 × 3 = 120 cm³."},
+ {q:"Sebuah tabung memiliki jari-jari alas 7 cm (luas alas = 154 cm²) dan tinggi 2 cm. Berapakah volume tabung tersebut?", o:["156 cm³","254 cm³","308 cm³","318 cm³"], a:2, e:"Volume tabung = Luas alas × Tinggi = 154 × 2 = 308 cm³."},
+ {q:"Sebuah drum kecil berbentuk tabung memiliki jari-jari alas 7 cm (luas alas = 154 cm²) dan tinggi 5 cm. Berapakah volumenya?", o:["650 cm³","750 cm³","770 cm³","870 cm³"], a:2, e:"Volume tabung = Luas alas × Tinggi = 154 × 5 = 770 cm³."},
+ {q:"Sebuah kerucut memiliki luas alas 12 cm² dan tinggi 5 cm. Berapakah volume kerucut tersebut? (Ingat: luas alas dikali tinggi lalu dibagi 3)", o:["15 cm³","20 cm³","30 cm³","60 cm³"], a:1, e:"Volume kerucut = (Luas alas × Tinggi) ÷ 3 = (12 × 5) ÷ 3 = 60 ÷ 3 = 20 cm³."},
+ {q:"Topi ulang tahun berbentuk kerucut memiliki luas alas 15 cm² dan tinggi 4 cm. Volume topi tersebut adalah ....", o:["15 cm³","20 cm³","30 cm³","60 cm³"], a:1, e:"Volume kerucut = (15 × 4) ÷ 3 = 60 ÷ 3 = 20 cm³."},
+ {q:"Sebuah nasi tumpeng berbentuk kerucut memiliki luas alas 20 cm² dan tinggi 6 cm. Berapakah volume nasi tumpeng itu?", o:["30 cm³","40 cm³","60 cm³","120 cm³"], a:1, e:"Volume kerucut = (20 × 6) ÷ 3 = 120 ÷ 3 = 40 cm³."},
+ {q:"Sebuah kerucut memiliki luas alas 18 cm² dan tinggi 5 cm. Volume kerucut tersebut adalah ....", o:["25 cm³","30 cm³","45 cm³","90 cm³"], a:1, e:"Volume kerucut = (18 × 5) ÷ 3 = 90 ÷ 3 = 30 cm³."},
+ {q:"Wadah es krim berbentuk kerucut mempunyai luas alas 30 cm² dan tinggi 4 cm. Berapakah volume wadah es krim tersebut?", o:["30 cm³","40 cm³","60 cm³","120 cm³"], a:1, e:"Volume kerucut = (30 × 4) ÷ 3 = 120 ÷ 3 = 40 cm³."},
+ {q:"Sebuah kerucut kayu memiliki luas alas 25 cm² dan tinggi 6 cm. Volume kerucut kayu itu adalah ....", o:["40 cm³","50 cm³","75 cm³","150 cm³"], a:1, e:"Volume kerucut = (25 × 6) ÷ 3 = 150 ÷ 3 = 50 cm³."},
+ {q:"Sebuah pembatas jalan berbentuk kerucut memiliki luas alas 24 cm² dan tinggi 5 cm. Berapakah volumenya?", o:["30 cm³","40 cm³","50 cm³","120 cm³"], a:1, e:"Volume kerucut = (24 × 5) ÷ 3 = 120 ÷ 3 = 40 cm³."},
+ {q:"Sebuah kerucut memiliki luas alas 45 cm² dan tinggi 2 cm. Volume kerucut tersebut adalah ....", o:["20 cm³","30 cm³","45 cm³","90 cm³"], a:1, e:"Volume kerucut = (45 × 2) ÷ 3 = 90 ÷ 3 = 30 cm³."},
+ {q:"Sebuah kerucut memiliki jari-jari alas 7 cm (luas alas = 154 cm²) dan tinggi 3 cm. Berapakah volume kerucut tersebut?", o:["154 cm³","308 cm³","462 cm³","616 cm³"], a:0, e:"Volume kerucut = (154 × 3) ÷ 3 = 462 ÷ 3 = 154 cm³."},
+ {q:"Sebuah caping petani berbentuk kerucut memiliki jari-jari alas 7 cm (luas alas = 154 cm²) dan tinggi 6 cm. Berapakah volume caping tersebut?", o:["154 cm³","308 cm³","462 cm³","924 cm³"], a:1, e:"Volume kerucut = (154 × 6) ÷ 3 = 924 ÷ 3 = 308 cm³."}
+]
+};
+
+/* ===== GEOMETRI PAPAN (koordinat 0-indexed [baris, kolom]) ===== */
+const TRACK = [[6,0],[6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,6],[0,7],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,9],[6,10],[6,11],[6,12],[6,13],[6,14],[7,14],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9],[9,8],[10,8],[11,8],[12,8],[13,8],[14,8],[14,7],[14,6],[13,6],[12,6],[11,6],[10,6],[9,6],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0],[7,0]];
+const START = [1,14,27,40];           /* indeks petak start tiap pemain */
+const GATE  = [51,12,25,38];          /* petak gerbang masuk jalur rumah */
+const HOME = [
+  [[7,1],[7,2],[7,3],[7,4],[7,5]],
+  [[1,7],[2,7],[3,7],[4,7],[5,7]],
+  [[7,13],[7,12],[7,11],[7,10],[7,9]],
+  [[13,7],[12,7],[11,7],[10,7],[9,7]]
+];
+const ORIGIN = [[0,0],[0,9],[9,9],[9,0]];            /* pojok kiri-atas tiap base */
+const BASE_SLOTS = [[1.5,1.5],[1.5,3.5],[3,2.5],[4.5,1.5],[4.5,3.5]]; /* posisi 5 slot pion dalam base */
+const OFFS = [[0,0],[-.22,-.2],[.22,-.2],[-.22,.22],[.22,.22],[0,-.34],[0,.4]];
+const FINISH_STEP = 57;               /* 1=petak start ... 51=gerbang, 52-56=jalur rumah, 57=tengah */
+/* ===== UTIL ===== */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=arr[i]; arr[i]=arr[j]; arr[j]=t; } return arr; }
+function rnd6(){ return 1+Math.floor(Math.random()*6); }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ===== DECK SOAL (anti berulang sampai habis) ===== */
+const decks = {}, deckPos = {};
+Object.keys(QB).forEach(k=>{ decks[k] = shuffle(QB[k].slice()); deckPos[k]=0; });
+function drawQ(cat){
+  if(deckPos[cat] >= decks[cat].length){ decks[cat] = shuffle(QB[cat].slice()); deckPos[cat]=0; }
+  return decks[cat][deckPos[cat]++];
+}
+
+/* ===== STATE ===== */
+const state = {
+  count:0, active:[], names:[], double:false,
+  turn:0, phase:'menu', roll:0, extraOk:false,
+  pawns:[], activePawn:null, curQ:null, optOrder:[], answered:false, answeredOk:false,
+  stats:[], over:false, muted:false
+};
+
+function showScreen(id){
+  $$('.screen').forEach(s=>s.classList.remove('active'));
+  $('#'+id).classList.add('active');
+  if(id==='screen-game') setCellSize();
+}
+
+/* ===== UKURAN SEL (untuk skala pion) ===== */
+function setCellSize(){
+  const wrap = document.querySelector('.board-wrap');
+  if(!wrap) return;
+  const r = wrap.getBoundingClientRect();
+  if(r.width>0) wrap.style.setProperty('--cell',(r.width/15)+'px');
+}
+window.addEventListener('resize', setCellSize);
+
+/* ===== BANGUN PAPAN ===== */
+function buildBoard(){
+  const b = $('#board'); b.innerHTML='';
+  const baseDefs = [['red',0,'1 / 1 / 7 / 7'],['green',1,'1 / 10 / 7 / 16'],['yellow',2,'10 / 10 / 16 / 16'],['blue',3,'10 / 1 / 16 / 7']];
+  baseDefs.forEach(([key,pi,area])=>{
+    const d=document.createElement('div');
+    d.className='base b-'+key; d.style.gridArea=area; d.dataset.pi=pi;
+    const inner=document.createElement('div'); inner.className='base-inner'; d.appendChild(inner);
+    BASE_SLOTS.forEach(s=>{
+      const slot=document.createElement('div'); slot.className='base-slot';
+      slot.style.left=(((s[1]-ORIGIN[pi][1])/6)*100)+'%';
+      slot.style.top =(((s[0]-ORIGIN[pi][0])/6)*100)+'%';
+      d.appendChild(slot);
+    });
+    const nm=document.createElement('div'); nm.className='base-name'; d.appendChild(nm);
+    b.appendChild(d);
+  });
+  TRACK.forEach(([r,c],i)=>{
+    const d=document.createElement('div'); d.className='cell';
+    d.style.gridArea=(r+1)+' / '+(c+1);
+    for(let p=0;p<4;p++){
+      if(START[p]===i) d.classList.add('start-'+PLAYERS[p].key);
+      if(GATE[p]===i)  d.classList.add('gate-'+PLAYERS[p].key);
+    }
+    b.appendChild(d);
+  });
+  HOME.forEach((cells,p)=>{
+    cells.forEach(([r,c])=>{
+      const d=document.createElement('div'); d.className='cell home-'+PLAYERS[p].key;
+      d.style.gridArea=(r+1)+' / '+(c+1);
+      b.appendChild(d);
+    });
+  });
+  const c=document.createElement('div'); c.className='center-area';
+  c.innerHTML='<div class="tri tri-red"></div><div class="tri tri-green"></div><div class="tri tri-yellow"></div><div class="tri tri-blue"></div>';
+  b.appendChild(c);
+}
+
+/* ===== KOORDINAT PION ===== */
+function coordOf(p){
+  if(p.steps===0){
+    const s=BASE_SLOTS[p.slot];
+    return {x:ORIGIN[p.pi][1]+s[1], y:ORIGIN[p.pi][0]+s[0]};
+  }
+  if(p.steps>=FINISH_STEP) return {x:7.5, y:7.5};
+  if(p.steps<=51){
+    const i=(START[p.pi]+p.steps-1)%52;
+    return {x:TRACK[i][1]+.5, y:TRACK[i][0]+.5};
+  }
+  const h=HOME[p.pi][p.steps-52];
+  return {x:h[1]+.5, y:h[0]+.5};
+}
+
+/* ===== RENDER SEMUA PION (dengan tumpukan) ===== */
+function renderPawns(movingIdx){
+  const items = state.pawns.map((p,i)=>({p,i,c:coordOf(p)}));
+  const groups = {};
+  items.forEach(o=>{
+    const k=o.c.x.toFixed(2)+','+o.c.y.toFixed(2);
+    (groups[k]=groups[k]||[]).push(o);
+  });
+  Object.values(groups).forEach(g=>{
+    g.forEach((o,j)=>{ o.off = OFFS[Math.min(j,OFFS.length-1)]; });
+  });
+  items.forEach(o=>{
+    const off=o.off||[0,0];
+    o.p.el.style.left = (((o.c.x+off[0])/15)*100)+'%';
+    o.p.el.style.top  = (((o.c.y+off[1])/15)*100)+'%';
+    o.p.el.style.zIndex = (movingIdx===o.i) ? 60 : (o.p.steps>=FINISH_STEP ? 20 : 10);
+  });
+}
+
+/* ===== BIKIN PION ===== */
+function createPawns(){
+  const layer=$('#pawn-layer'); layer.innerHTML='';
+  state.pawns=[];
+  state.active.forEach((abs,seq)=>{
+    for(let s=0;s<5;s++){
+      const el=document.createElement('div');
+      el.className='pawn pc-'+PLAYERS[abs].key;
+      el.innerHTML='<span class="pawn-num">'+(s+1)+'</span><span class="pawn-ico">'+CATS[s+1].icon+'</span>';
+      el.title='Pion '+(s+1)+' • '+CATS[s+1].name;
+      const pawn={pi:abs, seq:seq, slot:s, steps:0, el:el, idx:state.pawns.length};
+      el.addEventListener('click',()=>onPawnClick(pawn));
+      layer.appendChild(el);
+      state.pawns.push(pawn);
+    }
+  });
+  renderPawns();
+}
+
+function markSelectable(){
+  const cur = state.active[state.turn];
+  state.pawns.forEach(p=>{
+    p.el.classList.toggle('selectable', state.phase==='select' && p.pi===cur);
+  });
+}
+
+/* ===== PANEL PEMAIN & GILIRAN ===== */
+function countCenterBySeq(seq){
+  return state.pawns.filter(p=>p.seq===seq && p.steps>=FINISH_STEP).length;
+}
+function pawnDotClass(steps){
+  if(steps===0) return '';
+  if(steps>=FINISH_STEP) return 'center';
+  if(steps>=52) return 'home';
+  return 'track';
+}
+function renderPanel(){
+  let html='<div class="card-title">📊 Papan Skor</div>';
+  state.active.forEach((abs,seq)=>{
+    const pl=PLAYERS[abs], st=state.stats[seq]||{ok:0,no:0};
+    const dots=state.pawns.filter(p=>p.seq===seq).map(p=>{
+      const cls=pawnDotClass(p.steps);
+      return '<span class="pdot '+cls+'" style="--pc:'+pl.color+';--pcd:'+pl.dark+'" title="Pion '+(p.slot+1)+' • '+CATS[p.slot+1].name+'"></span>';
+    }).join('');
+    html+='<div class="prow '+(seq===state.turn && !state.over ? 'current':'')+'" style="--pc:'+pl.color+'">'
+      +'<span class="pchip" style="background:'+pl.color+'">'+pl.label[0]+'</span>'
+      +'<div><div class="pname">'+esc(state.names[seq])+'</div><div class="pdots">'+dots+'</div></div>'
+      +'<div class="pmeta">'+countCenterBySeq(seq)+'/5 ⭐<br>✅'+st.ok+' ❌'+st.no+'</div>'
+      +'</div>';
+  });
+  $('#players-panel').innerHTML=html;
+}
+function updateTurnUI(){
+  const abs=state.active[state.turn], pl=PLAYERS[abs];
+  $('#turn-name').innerHTML='<span class="pchip" style="background:'+pl.color+'">'+pl.label[0]+'</span><span>'+esc(state.names[state.turn])+'</span>';
+  $$('.base').forEach(b=>{
+    const bp=+b.dataset.pi;
+    b.classList.toggle('active-glow', bp===abs && !state.over);
+    b.classList.toggle('dimmed', state.active.indexOf(bp)<0);
+    b.querySelector('.base-name').textContent = state.active.indexOf(bp)>=0 ? state.names[state.active.indexOf(bp)] : '—';
+  });
+  renderPanel();
+}
+function status(html){ $('#status').innerHTML=html; }
+
+/* ===== LAYAR MENU & NAMA ===== */
+function wireMenu(){
+  $$('#count-btns .count-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      $$('#count-btns .count-btn').forEach(x=>x.classList.remove('sel'));
+      btn.classList.add('sel');
+      state.count=+btn.dataset.n;
+      state.active = state.count===2 ? [0,2] : state.count===3 ? [0,1,2] : [0,1,2,3];
+      $('#btn-next-names').disabled=false;
+    });
+  });
+  $('#btn-next-names').addEventListener('click',()=>{
+    if(!state.count) return;
+    let rows='';
+    state.active.forEach((abs,seq)=>{
+      const pl=PLAYERS[abs];
+      rows+='<div class="name-row"><span class="pchip" style="background:'+pl.color+'">'+pl.label[0]+'</span>'
+        +'<input id="name-'+seq+'" maxlength="18" placeholder="Pemain '+(seq+1)+' ('+pl.label+')" autocomplete="off"></div>';
+    });
+    $('#name-rows').innerHTML=rows;
+    showScreen('screen-names');
+  });
+  $('#btn-back-menu').addEventListener('click',()=>showScreen('screen-menu'));
+  $('#btn-start').addEventListener('click',startGame);
+}
+/* ===== MULAI PERMAINAN ===== */
+function startGame(){
+  state.names = state.active.map((abs,seq)=>{
+    const v=(document.getElementById('name-'+seq)||{}).value||'';
+    const t=v.trim();
+    return t ? t.slice(0,18) : ('Pemain '+(seq+1));
+  });
+  state.double = document.getElementById('opt-double').checked;
+  state.turn=0; state.phase='idle'; state.roll=0; state.extraOk=false; state.over=false;
+  state.stats = state.active.map(()=>({ok:0,no:0}));
+  createPawns();
+  $('#dice-2').classList.toggle('hidden', !state.double);
+  setFace($('#dice-1'),1); setFace($('#dice-2'),1);
+  updateTurnUI(); markSelectable();
+  status('<b>'+esc(state.names[0])+'</b>, lempar dadumu! 🎲');
+  showScreen('screen-game');
+}
+
+/* ===== DADU ===== */
+function setFace(el,n){
+  if(!el) return;
+  const map={1:[4],2:[2,6],3:[2,4,6],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+  const pips=el.children;
+  for(let i=0;i<9;i++) pips[i].style.visibility = map[n].indexOf(i)>=0 ? 'visible':'hidden';
+}
+async function doRoll(){
+  if(state.phase!=='idle' || state.over) return;
+  ensureAudio();
+  state.phase='rolling';
+  $('#btn-roll').disabled=true;
+  markSelectable();
+  const d1=$('#dice-1'), d2=$('#dice-2');
+  const n1=rnd6(), n2=state.double?rnd6():0;
+  d1.classList.add('rolling'); if(state.double) d2.classList.remove('hidden'), d2.classList.add('rolling');
+  const flick=setInterval(()=>{ setFace(d1,rnd6()); if(state.double) setFace(d2,rnd6()); },90);
+  sDice();
+  await sleep(820);
+  clearInterval(flick);
+  d1.classList.remove('rolling'); d2.classList.remove('rolling');
+  setFace(d1,n1); if(state.double) setFace(d2,n2);
+  state.roll = n1+n2;
+  state.extraOk = !state.double && n1===6;
+  state.phase='select';
+  status('🎲 Dadu: <b>'+state.roll+'</b> — klik pion yang ingin dimajukan. Ingat: setiap pion punya jenis soal berbeda!');
+  markSelectable();
+}
+
+/* ===== MODAL SOAL ===== */
+function onPawnClick(pawn){
+  if(state.phase!=='select' || state.over) return;
+  if(pawn.pi!==state.active[state.turn]) return;
+  openQuestion(pawn);
+}
+function openQuestion(pawn){
+  state.phase='question'; markSelectable();
+  state.activePawn=pawn; state.answered=false; state.answeredOk=false;
+  const cat=pawn.slot+1, q=drawQ(cat);
+  state.curQ=q;
+  const pl=PLAYERS[pawn.pi];
+  $('#q-player').innerHTML='<span class="pchip mini" style="background:'+pl.color+'">'+pl.label[0]+'</span>'+esc(state.names[pawn.seq]);
+  $('#q-cat').textContent=CATS[cat].icon+' '+CATS[cat].name+' • Pion '+cat;
+  $('#q-dice').textContent='🎲 Dadu: '+state.roll;
+  $('#q-text').textContent=q.q;
+  const opts=$('#q-opts'); opts.innerHTML='';
+  state.optOrder=shuffle([0,1,2,3]);
+  state.optOrder.forEach((oi,slot)=>{
+    const b=document.createElement('button');
+    b.className='q-opt';
+    b.innerHTML='<span class="letter">'+LETTERS[slot]+'</span><span>'+esc(q.o[oi])+'</span>';
+    b.addEventListener('click',()=>pickOpt(slot));
+    opts.appendChild(b);
+  });
+  $('#q-fb').className='q-fb hidden'; $('#q-fb').innerHTML='';
+  $('#q-next').classList.add('hidden');
+  $('#modal-q').classList.remove('hidden');
+}
+function pickOpt(slot){
+  if(state.answered) return;
+  state.answered=true;
+  const q=state.curQ, pawn=state.activePawn, pl=PLAYERS[pawn.pi];
+  const chosen=state.optOrder[slot];
+  const ok = chosen===q.a;
+  state.answeredOk=ok;
+  const correctSlot=state.optOrder.indexOf(q.a);
+  $$('#q-opts .q-opt').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===correctSlot) b.classList.add('correct');
+    else if(i===slot) b.classList.add('wrong');
+    else b.classList.add('faded');
+  });
+  state.stats[pawn.seq][ok?'ok':'no']++;
+  let fb;
+  if(ok){
+    fb='✅ <b>Benar! Hebat, '+esc(state.names[pawn.seq])+'!</b> '
+      +(pawn.steps===0 ? 'Pion keluar dari rumah menuju petak start. 🚀' : 'Pion maju '+state.roll+' langkah. 🚀')
+      +'<br>💡 '+esc(q.e);
+    sOk();
+  }else{
+    fb='❌ <b>Belum tepat.</b> Jawaban benar: <b>'+LETTERS[correctSlot]+'. '+esc(q.o[q.a])+'</b>'
+      +'<br>Pion tidak jadi maju — giliran berpindah ke pemain lain.<br>💡 '+esc(q.e);
+    sNo();
+  }
+  const fbEl=$('#q-fb'); fbEl.className='q-fb '+(ok?'ok':'bad'); fbEl.innerHTML=fb;
+  const nxt=$('#q-next');
+  nxt.textContent = ok ? (pawn.steps===0?'Keluar & Maju! ➜':'Maju '+state.roll+' Langkah! ➜') : 'Giliran Berikutnya ➜';
+  nxt.classList.remove('hidden');
+  renderPanel();
+}
+function onQuestionContinue(){
+  $('#modal-q').classList.add('hidden');
+  if(state.answeredOk) moveActivePawn();
+  else endTurn(false);
+}
+
+/* ===== GERAK PION ===== */
+async function moveActivePawn(){
+  state.phase='moving';
+  const p=state.activePawn;
+  const from=p.steps;
+  if(from===0){
+    p.steps=1;
+    p.el.classList.add('hop'); renderPawns(p.idx); sStep();
+    await sleep(430); p.el.classList.remove('hop');
+    status('🚀 Pion '+(p.slot+1)+' keluar dari rumah ke petak start!');
+    await sleep(380);
+  }else{
+    const to=Math.min(from+state.roll,FINISH_STEP);
+    for(let s=from+1;s<=to;s++){
+      p.steps=s; renderPawns(p.idx); sStep();
+      await sleep(195);
+    }
+  }
+  if(p.steps>=FINISH_STEP){
+    const done=countCenterBySeq(p.seq);
+    if(done===5){ gameOver(); return; }
+    status('🎉 Pion '+(p.slot+1)+' ('+CATS[p.slot+1].name+') sampai di tengah! ('+done+'/5)');
+    sCenter(); await sleep(950);
+  }
+  renderPanel();
+  endTurn(state.extraOk);
+}
+function endTurn(extra){
+  $('#btn-roll').disabled=false;
+  state.phase='idle';
+  if(extra && !state.over){
+    updateTurnUI(); markSelectable();
+    status('🌟 Jawaban benar + dadu 6 = <b>GILIRAN EKSTRA!</b> Lempar lagi!');
+  }else{
+    state.turn=(state.turn+1)%state.active.length;
+    updateTurnUI(); markSelectable();
+    status('<b>'+esc(state.names[state.turn])+'</b>, lempar dadumu! 🎲');
+  }
+}
+
+/* ===== PEMENANG ===== */
+function gameOver(){
+  state.over=true; state.phase='over';
+  markSelectable();
+  $('#btn-roll').disabled=true;
+  const wSeq=state.turn, wAbs=state.active[wSeq], wp=PLAYERS[wAbs];
+  let rows='';
+  state.active.forEach((abs,seq)=>{
+    const st=state.stats[seq];
+    rows+='<tr class="'+(seq===wSeq?'winner-row':'')+'">'
+      +'<td style="text-align:left"><span class="pchip mini" style="background:'+PLAYERS[abs].color+'">'+PLAYERS[abs].label[0]+'</span> '+esc(state.names[seq])+(seq===wSeq?' 🏆':'')+'</td>'
+      +'<td>✅ '+st.ok+'</td><td>❌ '+st.no+'</td></tr>';
+  });
+  $('#win-fill').innerHTML=
+    '<div class="win-trophy">🏆</div>'
+    +'<div class="win-title">🎉 SELAMAT, '+esc(state.names[wSeq]).toUpperCase()+'!</div>'
+    +'<div class="win-sub">Pemenang Ludo Bangun Ruang! Kelima pion <b>'+esc(state.names[wSeq])+'</b> telah berhasil mencapai tengah papan. Luar biasa! 👏</div>'
+    +'<table class="win-table"><thead><tr><th style="text-align:left">Pemain</th><th>Benar</th><th>Salah</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  $('#modal-win').classList.remove('hidden');
+  renderPanel();
+  confetti(130);
+  sWin();
+}
+
+/* ===== KONFETI ===== */
+function confetti(n){
+  const colors=['#ef4444','#22c55e','#f59e0b','#3b82f6','#a855f7','#ec4899','#14b8a6'];
+  for(let i=0;i<n;i++){
+    const d=document.createElement('div');
+    d.className='confetti';
+    d.style.left=(Math.random()*100)+'vw';
+    d.style.background=colors[i%colors.length];
+    d.style.animationDuration=(2.4+Math.random()*2.4)+'s';
+    d.style.animationDelay=(Math.random()*.9)+'s';
+    if(Math.random()<.4) d.style.borderRadius='50%';
+    document.body.appendChild(d);
+    setTimeout(()=>d.remove(),6500);
+  }
+}
+
+/* ===== SUARA (WebAudio) ===== */
+let audioCtx=null;
+function ensureAudio(){
+  if(!audioCtx){
+    try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
+  }
+  if(audioCtx && audioCtx.state==='suspended') audioCtx.resume();
+}
+function tone(freq,dur,type,vol,delay){
+  if(state.muted) return;
+  const c=audioCtx; if(!c) return;
+  try{
+    const o=c.createOscillator(), g=c.createGain();
+    o.type=type||'sine'; o.frequency.value=freq;
+    o.connect(g); g.connect(c.destination);
+    const t=c.currentTime+(delay||0);
+    g.gain.setValueAtTime(vol||.12,t);
+    g.gain.exponentialRampToValueAtTime(.001,t+dur);
+    o.start(t); o.stop(t+dur+.05);
+  }catch(e){}
+}
+function sDice(){ for(let i=0;i<6;i++) tone(280+Math.random()*420,.045,'square',.05,i*.1); }
+function sStep(){ tone(560,.05,'triangle',.09); }
+function sOk(){ tone(660,.12,'sine',.14); tone(880,.2,'sine',.14,.12); }
+function sNo(){ tone(196,.22,'sawtooth',.09); tone(147,.3,'sawtooth',.09,.16); }
+function sCenter(){ [523,659,784].forEach((f,i)=>tone(f,.13,'sine',.13,i*.1)); }
+function sWin(){ [523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.2,'sine',.15,i*.14)); }
+
+/* ===== ATURAN MAIN ===== */
+const RULES_HTML =
+ '<h3>🎯 Tujuan Permainan</h3>'
+ +'<p>Jadilah pemain <b>pertama</b> yang berhasil membawa <b>kelima pionnya</b> mencapai <b>tengah papan</b>!</p>'
+ +'<h3>📋 Langkah Bermain</h3>'
+ +'<ol>'
+ +'<li>Pada giliranmu, tekan tombol <b>🎲 Lempar Dadu</b>.</li>'
+ +'<li><b>Klik salah satu pionmu</b> yang ingin dimajukan. Setiap pion memiliki <b>jenis soal yang berbeda</b>:</li>'
+ +'</ol>'
+ +'<div class="mini-legend">'
+ +'<div>🧊 <b>Pion 1:</b> Panjang Rusuk Kubus</div>'
++'<div>📦 <b>Pion 2:</b> Panjang Rusuk Balok</div>'
++'<div>⛺ <b>Pion 3:</b> Panjang Rusuk Prisma</div>'
++'<div>🔺 <b>Pion 4:</b> Panjang Rusuk Limas</div>'
++'<div>🥫 <b>Pion 5:</b> Volume Tabung dan Kerucut</div>'
+ +'</div>'
+ +'<ol start="3">'
+ +'<li><b>Jawab soal</b> sesuai jenis pion yang dipilih:'
+ +'<ul><li>✅ <b>Benar</b> → pion maju sebanyak angka dadu. Pion yang masih di rumah akan keluar ke petak start.</li>'
+ +'<li>❌ <b>Salah</b> → pion <b>tidak jadi maju</b> dan giliran berpindah ke pemain lain.</li></ul></li>'
+ +'<li>⭐ Mode 1 dadu: dapat <b>angka 6</b> dan menjawab benar = <b>giliran ekstra</b>.</li>'
+ +'<li>🏠 Ikuti jalur searah jarum jam, lalu belok masuk ke <b>jalur warnamu</b> menuju tengah papan. Jika angka dadu melebihi sisa langkah, pion tetap berhenti di tengah.</li>'
+ +'<li>🤝 Pion boleh berbagi petak dengan pion pemain lain — tidak ada pion yang dikirim pulang.</li>'
+ +'<li>🏆 Pemain pertama dengan <b>5 pion di tengah papan</b> adalah pemenangnya!</li>'
+ +'</ol>'
+ +'<h3>⚡ Mode Dadu Ganda (opsional)</h3>'
+ +'<p>Aktifkan di layar pengisian nama: setiap giliran melempar <b>2 dadu</b> dan pion maju sesuai <b>jumlah</b> keduanya. Cocok agar permainan selesai lebih cepat.</p>';
+
+/* ===== INISIALISASI ===== */
+function init(){
+  buildBoard();
+  $('#rules-menu').innerHTML=RULES_HTML;
+  $('#rules-modal').innerHTML=RULES_HTML;
+  wireMenu();
+  $('#btn-roll').addEventListener('click',doRoll);
+  $('#q-next').addEventListener('click',onQuestionContinue);
+  $('#btn-rules').addEventListener('click',()=>$('#modal-rules').classList.remove('hidden'));
+  $('#btn-close-rules').addEventListener('click',()=>$('#modal-rules').classList.add('hidden'));
+  $('#btn-sound').addEventListener('click',function(){
+    state.muted=!state.muted;
+    this.textContent=state.muted?'🔇':'🔊';
+  });
+  $('#btn-restart').addEventListener('click',()=>$('#modal-restart').classList.remove('hidden'));
+  $('#btn-restart-no').addEventListener('click',()=>$('#modal-restart').classList.add('hidden'));
+  $('#btn-restart-yes').addEventListener('click',()=>location.reload());
+  $('#btn-again').addEventListener('click',()=>location.reload());
+  setFace($('#dice-1'),6); setFace($('#dice-2'),6);
+  if('ResizeObserver' in window){
+    new ResizeObserver(setCellSize).observe(document.querySelector('.board-wrap'));
+  }
+  setCellSize();
+}
+init();
+</script>
+</body>
+</html>
