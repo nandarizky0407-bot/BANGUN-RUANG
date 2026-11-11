@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jaring-Jaring Prisma, Limas, Tabung &amp; Kerucut — Presentasi Interaktif Kelas 5-6 SD</title>
+<meta name="description" content="Presentasi interaktif jaring-jaring bangun ruang untuk siswa kelas 5-6 SD: prisma segitiga, prisma segi lima, limas segitiga, limas segiempat, tabung, dan kerucut — animasi melipat 3D, galeri, lab tebak bangun, serta 15 soal latihan dan kuis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Jaring-Jaring Prisma, Limas, Tabung & Kerucut
+   Presentasi Interaktif Kelas 5-6 SD
+   Gaya: ceria warna-warni (gradasi biru-ungu, kartu membulat)
+   ============================================================ */
+:root {
+  --bg1: #4f46e5; --bg2: #7c3aed; --bg3: #db2777;
+  --ink: #1e1b4b; --ink-soft: #4b4768;
+  --card: #ffffff;
+  --yellow: #facc15; --orange: #f97316; --red: #ef4444;
+  --green: #22c55e; --blue: #3b82f6; --purple: #a855f7; --pink: #ec4899; --teal: #14b8a6;
+  --shadow: 0 10px 30px rgba(30, 27, 75, .18);
+  --radius: 22px;
+  --font-head: 'Baloo 2', 'Comic Sans MS', 'Segoe UI', sans-serif;
+  --font-body: 'Nunito', 'Segoe UI', 'Comic Sans MS', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 48%, var(--bg3) 100%);
+  overflow: hidden;
+}
+
+/* ---------- dekorasi latar ---------- */
+#bgDecor { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+#bgDecor span {
+  position: absolute; opacity: .16; border-radius: 18%;
+  background: #fff; animation: floaty 9s ease-in-out infinite;
+}
+@keyframes floaty { 0%,100% { transform: translateY(0) rotate(8deg); } 50% { transform: translateY(-26px) rotate(-6deg); } }
+
+/* ---------- topbar ---------- */
+#topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 18px;
+}
+#brand {
+  font-family: var(--font-head); font-weight: 800; color: #fff;
+  font-size: 15px; letter-spacing: .4px; text-shadow: 0 2px 8px rgba(0,0,0,.25);
+  white-space: nowrap; display: flex; align-items: center; gap: 8px;
+}
+#brand .dotlogo { width: 22px; height: 22px; border-radius: 6px; background: conic-gradient(#facc15,#ef4444,#a855f7,#3b82f6,#22c55e,#facc15); box-shadow: 0 2px 6px rgba(0,0,0,.3); }
+#progressWrap { flex: 1; height: 12px; background: rgba(255,255,255,.25); border-radius: 99px; overflow: hidden; box-shadow: inset 0 1px 4px rgba(0,0,0,.15); }
+#progressBar { height: 100%; width: 10%; border-radius: 99px; background: linear-gradient(90deg, #facc15, #f97316, #ec4899); transition: width .5s cubic-bezier(.5,1.4,.5,1); }
+#slideCounter { color: #fff; font-weight: 800; font-size: 13px; background: rgba(255,255,255,.18); padding: 5px 12px; border-radius: 99px; white-space: nowrap; }
+.icon-btn {
+  width: 36px; height: 36px; border: none; border-radius: 12px; cursor: pointer;
+  background: rgba(255,255,255,.2); color: #fff; display: grid; place-items: center;
+  transition: background .2s, transform .15s; flex: 0 0 auto;
+}
+.icon-btn:hover { background: rgba(255,255,255,.38); transform: translateY(-1px); }
+.icon-btn svg { width: 19px; height: 19px; }
+.icon-btn.off { opacity: .5; }
+
+/* ---------- deck & slide ---------- */
+#deck { position: fixed; inset: 0; z-index: 10; }
+.slide {
+  position: absolute; inset: 0; display: none;
+  padding: 58px 26px 86px;
+}
+.slide.active { display: flex; }
+.slide-inner {
+  margin: auto; width: min(1180px, 100%); max-height: 100%;
+  display: flex; flex-direction: column; gap: 18px;
+  overflow-y: auto; padding: 6px 4px 10px;
+  scrollbar-width: thin;
+}
+.slide.anim-r .slide-inner { animation: slideR .55s cubic-bezier(.3,1.25,.45,1) both; }
+.slide.anim-l .slide-inner { animation: slideL .55s cubic-bezier(.3,1.25,.45,1) both; }
+@keyframes slideR { from { opacity: 0; transform: translateX(70px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes slideL { from { opacity: 0; transform: translateX(-70px) scale(.97); } to { opacity: 1; transform: none; } }
+
+.kicker {
+  align-self: center; font-weight: 900; font-size: 12.5px; letter-spacing: 2.5px;
+  color: #fff; background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.35);
+  padding: 6px 18px; border-radius: 99px; text-transform: uppercase;
+}
+h1.judul {
+  font-family: var(--font-head); font-weight: 800; text-align: center; color: #fff;
+  font-size: clamp(28px, 5vw, 54px); line-height: 1.12; text-shadow: 0 4px 0 rgba(0,0,0,.12);
+}
+h1.judul .grad { background: linear-gradient(90deg, #fde047, #fca5a5, #f0abfc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+h2.slide-title {
+  font-family: var(--font-head); font-weight: 800; color: #fff; text-align: center;
+  font-size: clamp(22px, 3.4vw, 36px); text-shadow: 0 3px 0 rgba(0,0,0,.12);
+}
+p.sub { text-align: center; color: rgba(255,255,255,.92); font-weight: 700; font-size: clamp(14px, 1.9vw, 17px); max-width: 820px; align-self: center; }
+
+/* ---------- tombol umum ---------- */
+.btn {
+  font-family: var(--font-head); font-weight: 700; font-size: 16.5px; color: var(--ink);
+  border: none; cursor: pointer; border-radius: 99px; padding: 13px 30px;
+  background: #fff; box-shadow: 0 6px 0 rgba(30,27,75,.22), var(--shadow);
+  display: inline-flex; align-items: center; gap: 10px; justify-content: center;
+  transition: transform .15s, box-shadow .15s, filter .2s;
+}
+.btn:hover { transform: translateY(-2px); filter: brightness(1.03); }
+.btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(30,27,75,.22); }
+.btn.primary { background: linear-gradient(135deg, #facc15, #fb923c); color: #7c2d12; font-size: 18px; padding: 15px 36px; }
+.btn.green { background: linear-gradient(135deg, #4ade80, #22c55e); color: #052e16; }
+.btn.pink { background: linear-gradient(135deg, #f9a8d4, #ec4899); color: #831843; }
+.btn.small { font-size: 14px; padding: 9px 20px; box-shadow: 0 4px 0 rgba(30,27,75,.2); }
+.btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.btn svg { width: 18px; height: 18px; }
+
+/* ---------- kartu ---------- */
+.card {
+  background: var(--card); border-radius: var(--radius); padding: 18px 20px;
+  box-shadow: var(--shadow); border: 3px solid rgba(30,27,75,.06);
+}
+.card h3 { font-family: var(--font-head); font-weight: 800; font-size: 19px; margin-bottom: 6px; display: flex; align-items: center; gap: 9px; }
+.card p { font-size: 15px; font-weight: 600; color: var(--ink-soft); line-height: 1.55; }
+.chip {
+  display: inline-flex; align-items: center; gap: 7px; font-weight: 800; font-size: 13px;
+  background: #eef2ff; color: #3730a3; border-radius: 99px; padding: 7px 14px;
+}
+.chip .sw { width: 13px; height: 13px; border-radius: 4px; display: inline-block; flex: 0 0 auto; }
+.chip b { font-size: 14px; }
+
+/* ---------- COVER ---------- */
+#slide-cover .slide-inner { align-items: center; justify-content: center; text-align: center; gap: 20px; }
+.cover-shapes { display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.cover-shapes .cshape { width: clamp(84px, 11vw, 128px); height: clamp(84px, 11vw, 128px); animation: floaty2 4.2s ease-in-out infinite; filter: drop-shadow(0 12px 16px rgba(30,27,75,.35)); }
+.cover-shapes .cshape svg { width: 100%; height: 100%; }
+@keyframes floaty2 { 0%,100% { transform: translateY(0) rotate(-2.5deg); } 50% { transform: translateY(-13px) rotate(2.5deg); } }
+.cover-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.cover-note { color: rgba(255,255,255,.75); font-size: 13px; font-weight: 700; }
+
+/* ---------- PETA MATERI ---------- */
+.menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; }
+.menu-card {
+  position: relative; background: #fff; border-radius: 20px; padding: 16px 18px 15px;
+  cursor: pointer; border: none; text-align: left; font-family: var(--font-body);
+  box-shadow: 0 6px 0 rgba(30,27,75,.16), var(--shadow);
+  transition: transform .18s cubic-bezier(.3,1.4,.5,1), box-shadow .18s;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.menu-card:hover { transform: translateY(-5px) rotate(-.6deg); }
+.menu-card .m-icon {
+  width: 52px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+  overflow: hidden;
+}
+.menu-card .m-icon svg { width: 46px; height: 40px; }
+.menu-card h4 { font-family: var(--font-head); font-weight: 800; font-size: 17px; color: var(--ink); }
+.menu-card p { font-size: 12.5px; color: var(--ink-soft); font-weight: 600; line-height: 1.45; }
+.menu-card .go {
+  position: absolute; right: 14px; top: 16px; width: 30px; height: 30px; border-radius: 10px;
+  display: grid; place-items: center; background: #eef2ff; color: #4f46e5; font-weight: 900;
+}
+.menu-card .go svg { width: 16px; height: 16px; }
+
+/* ---------- layout 2 kolom ---------- */
+.two-col { display: grid; grid-template-columns: 1.08fr 1fr; gap: 20px; align-items: stretch; }
+@media (max-width: 880px) { .two-col { grid-template-columns: 1fr; } }
+.panel3d {
+  position: relative; border-radius: var(--radius); overflow: hidden; min-height: 320px; flex: 1;
+  background: radial-gradient(120% 120% at 30% 20%, rgba(255,255,255,.28), rgba(255,255,255,.06));
+  border: 3px solid rgba(255,255,255,.35); box-shadow: inset 0 0 40px rgba(30,27,75,.12);
+  display: grid; place-items: center; touch-action: none; cursor: grab;
+}
+.panel3d:active { cursor: grabbing; }
+.panel3d svg.fv-svg, .panel3d svg.stat-svg { width: 100%; height: 100%; display: block; }
+.panel3d .drag-hint {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  font-size: 12px; font-weight: 800; color: #fff; background: rgba(30,27,75,.35);
+  padding: 5px 14px; border-radius: 99px; pointer-events: none; white-space: nowrap; z-index: 6;
+}
+.panel3d .drag-hint svg { width: 14px; height: 14px; vertical-align: -2px; }
+.panel3d .corner-tag {
+  position: absolute; top: 10px; left: 12px; font-family: var(--font-head); font-weight: 800;
+  color: #fff; font-size: 14px; background: rgba(30,27,75,.3); padding: 4px 13px; border-radius: 99px;
+  pointer-events: none; z-index: 6;
+}
+
+/* ---------- kolom penampil (viewer) ---------- */
+.viewer-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.fctrl {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  background: rgba(255,255,255,.16); border: 2px solid rgba(255,255,255,.28);
+  border-radius: 99px; padding: 8px 16px;
+}
+.fctrl input[type=range] {
+  -webkit-appearance: none; appearance: none; flex: 1; min-width: 110px; height: 8px;
+  border-radius: 99px; background: linear-gradient(90deg, #4ade80, #facc15, #ec4899);
+  outline: none; cursor: pointer;
+}
+.fctrl input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; border: 3px solid #4f46e5; box-shadow: 0 2px 6px rgba(30,27,75,.3); cursor: grab;
+}
+.fctrl input[type=range]::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%; background: #fff;
+  border: 3px solid #4f46e5; box-shadow: 0 2px 6px rgba(30,27,75,.3); cursor: grab;
+}
+.fctrl .rng-label { font-size: 12px; font-weight: 800; color: #fff; white-space: nowrap; }
+.fv-info {
+  min-height: 54px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  gap: 10px; font-weight: 800; font-size: 14.5px; text-align: center; padding: 10px 16px;
+  background: #eef2ff; color: #3730a3; border: 2.5px dashed #c7d2fe; flex-wrap: wrap;
+}
+.fv-info b.tag { color: #4f46e5; }
+
+/* ---------- sisi SVG viewer ---------- */
+.fv-face { cursor: pointer; transition: filter .15s; stroke-linejoin: round; }
+.fv-face:hover { filter: brightness(1.14); }
+.fv-face.fv-sel { }
+.fv-txt { pointer-events: none; font-family: var(--font-head); font-weight: 800; fill: #fff; paint-order: stroke; stroke: rgba(30,27,75,.45); text-anchor: middle; }
+.fv-dimtxt { pointer-events: none; font-family: var(--font-body); font-weight: 800; fill: #fff; paint-order: stroke; stroke: rgba(30,27,75,.5); text-anchor: middle; }
+
+/* ---------- galeri & tabel perbandingan ---------- */
+.shape-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.shape-card {
+  background: #fff; border-radius: 18px; padding: 10px 10px 12px; text-align: center;
+  box-shadow: 0 5px 0 rgba(30,27,75,.14), var(--shadow); cursor: pointer; border: none;
+  font-family: var(--font-body); transition: transform .16s;
+}
+.shape-card:hover { transform: translateY(-4px) rotate(-.8deg); }
+.shape-card.sel { outline: 3.5px solid #facc15; }
+.shape-card .sc-svg { height: 88px; display: grid; place-items: center; }
+.shape-card .sc-svg svg { max-width: 100%; max-height: 88px; }
+.shape-card h4 { font-family: var(--font-head); font-weight: 800; font-size: 14.5px; margin-top: 6px; }
+.shape-card p { font-size: 11px; color: var(--ink-soft); font-weight: 700; line-height: 1.35; margin-top: 2px; }
+.tbl-wrap { background: #fff; border-radius: 18px; box-shadow: var(--shadow); overflow-x: auto; }
+table.props { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 620px; }
+.props th {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; font-family: var(--font-head);
+  padding: 10px 14px; text-align: left; font-size: 13.5px; white-space: nowrap;
+}
+.props th:first-child { border-radius: 0; }
+.props td { padding: 8px 14px; border-top: 2px solid #eef2ff; font-weight: 700; color: var(--ink-soft); }
+.props td:first-child { font-weight: 800; color: var(--ink); white-space: nowrap; }
+.props td .dotc { width: 12px; height: 12px; border-radius: 4px; display: inline-block; vertical-align: -1px; margin-right: 7px; }
+.props tr:hover td { background: #f5f7ff; }
+.props td.center { text-align: center; font-family: var(--font-head); font-weight: 800; color: var(--ink); font-size: 15px; }
+
+/* ---------- lab tebak bangun ---------- */
+#labMsg {
+  min-height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  gap: 10px; font-weight: 800; font-size: 14.5px; text-align: center; padding: 10px 16px;
+  background: #eef2ff; color: #3730a3; border: 2.5px dashed #c7d2fe; flex-wrap: wrap;
+}
+#labMsg.good { background: #f0fdf4; border-color: #86efac; color: #14532d; }
+#labMsg.bad { background: #fef2f2; border-color: #fca5a5; color: #7f1d1d; }
+.lab-svg-wrap { width: 100%; display: grid; place-items: center; min-height: 220px; }
+.lab-svg-wrap svg { width: 100%; max-width: 420px; max-height: 240px; height: auto; }
+.opt {
+  font-family: var(--font-head); font-weight: 800; font-size: 15px; color: var(--ink);
+  background: #fff; border: 3px solid #e2e8f0; border-radius: 16px; padding: 13px 12px;
+  cursor: pointer; display: flex; align-items: center; gap: 10px; justify-content: center;
+  transition: transform .14s, border-color .14s, background .2s; box-shadow: 0 4px 0 rgba(30,27,75,.12);
+  min-height: 56px;
+}
+.opt:hover { transform: translateY(-2px); border-color: #a5b4fc; }
+.opt .sw { width: 20px; height: 20px; border-radius: 6px; flex: 0 0 auto; box-shadow: inset 0 -3px 6px rgba(0,0,0,.18); }
+.opt.correct { background: #dcfce7; border-color: #22c55e; color: #166534; }
+.opt.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+.opt.dim { opacity: .5; }
+.opt:disabled { cursor: default; }
+.opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+
+/* ---------- latihan / kuis ---------- */
+#quizArea { display: flex; flex-direction: column; gap: 14px; }
+.mode-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; }
+.mode-card {
+  background: #fff; border-radius: 22px; padding: 22px; cursor: pointer; text-align: center;
+  border: none; font-family: var(--font-body); box-shadow: 0 7px 0 rgba(30,27,75,.16), var(--shadow);
+  transition: transform .18s cubic-bezier(.3,1.4,.5,1); display: flex; flex-direction: column; gap: 9px; align-items: center;
+}
+.mode-card:hover { transform: translateY(-5px); }
+.mode-card .m-emoji { width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; }
+.mode-card h4 { font-family: var(--font-head); font-size: 20px; font-weight: 800; }
+.mode-card p { font-size: 13.5px; color: var(--ink-soft); font-weight: 600; line-height: 1.5; }
+.q-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.q-prog { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+.q-prog i { width: 11px; height: 11px; border-radius: 4px; background: rgba(255,255,255,.35); }
+.q-prog i.done { background: #4ade80; } .q-prog i.now { background: #facc15; transform: scale(1.25); } .q-prog i.fail { background: #f87171; }
+.level-chip { font-weight: 900; font-size: 12px; letter-spacing: 1.2px; padding: 5px 14px; border-radius: 99px; color: #fff; text-transform: uppercase; }
+.level-Mudah { background: #22c55e; } .level-Sedang { background: #f59e0b; } .level-Tantangan { background: #ef4444; }
+.q-card { display: grid; grid-template-columns: minmax(230px, 380px) 1fr; gap: 18px; align-items: start; }
+.q-card.no-svg { grid-template-columns: 1fr; }
+@media (max-width: 880px) { .q-card { grid-template-columns: 1fr; } }
+.q-svg-wrap { background: #fff; border-radius: 18px; padding: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.q-svg-wrap .qsv { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 100%; }
+.q-svg-wrap .qsv svg { width: 100%; max-width: 330px; height: auto; }
+.q-svg-wrap .qsv figcaption { font-size: 12px; font-weight: 800; color: var(--ink-soft); }
+.q-svg-wrap svg.multi { max-width: 240px; }
+.q-body { display: flex; flex-direction: column; gap: 13px; }
+.q-prompt { background: #fff; border-radius: 18px; padding: 16px 18px; font-weight: 700; font-size: 15.5px; line-height: 1.55; color: var(--ink); box-shadow: var(--shadow); }
+.explain {
+  border-radius: 18px; padding: 15px 18px; background: #fefce8; border: 3px solid #fde047;
+  font-weight: 600; font-size: 14.5px; line-height: 1.6; color: #713f12;
+  display: none; flex-direction: column; gap: 10px;
+}
+.explain.show { display: flex; animation: popIn .4s cubic-bezier(.3,1.4,.5,1); }
+.explain.good { background: #f0fdf4; border-color: #86efac; color: #14532d; }
+.explain.bad { background: #fef2f2; border-color: #fca5a5; color: #7f1d1d; }
+.explain .ex-title { font-family: var(--font-head); font-weight: 800; font-size: 16.5px; display: flex; gap: 8px; align-items: center; }
+@keyframes popIn { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: none; } }
+.q-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.result-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.score-big {
+  font-family: var(--font-head); font-weight: 800; font-size: clamp(44px, 8vw, 74px); color: #fff;
+  text-shadow: 0 4px 0 rgba(0,0,0,.15); line-height: 1;
+}
+.stars { font-size: 0; letter-spacing: 6px; }
+.stars svg { width: 44px; height: 44px; }
+.review-grid { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; max-width: 560px; }
+.review-grid .rv {
+  width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
+  font-weight: 900; font-size: 14px; color: #fff; font-family: var(--font-head);
+}
+.rv.ok { background: #22c55e; } .rv.no { background: #ef4444; }
+.ex-title svg, .opt svg, .rv svg, .m-emoji svg { width: 1.2em; height: 1.2em; flex: 0 0 auto; }
+.m-emoji svg { width: 30px; height: 30px; }
+
+/* ---------- penutup ---------- */
+.recap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; }
+
+/* ---------- nav bawah ---------- */
+#navBtns { position: fixed; right: 20px; bottom: 18px; z-index: 60; display: flex; gap: 10px; align-items: center; }
+.nav-btn {
+  border: none; cursor: pointer; border-radius: 16px; background: rgba(255,255,255,.92);
+  color: var(--ink); display: grid; place-items: center;
+  box-shadow: 0 5px 0 rgba(30,27,75,.2), var(--shadow); transition: transform .15s, box-shadow .15s;
+}
+.nav-btn:hover { transform: translateY(-2px); }
+.nav-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(30,27,75,.2); }
+.nav-btn.big { width: 54px; height: 54px; }
+.nav-btn.small-r { width: 44px; height: 44px; }
+.nav-btn svg { width: 24px; height: 24px; }
+.nav-btn:disabled { opacity: .4; cursor: default; transform: none; }
+#pageTip {
+  position: fixed; left: 20px; bottom: 24px; z-index: 60; color: rgba(255,255,255,.8);
+  font-size: 12.5px; font-weight: 700; display: flex; align-items: center; gap: 7px;
+}
+#pageTip kbd {
+  background: rgba(255,255,255,.22); border: 1.5px solid rgba(255,255,255,.4);
+  border-radius: 6px; padding: 1px 7px; font-family: var(--font-body); font-size: 11.5px;
+}
+
+/* ---------- confetti ---------- */
+.confetti { position: fixed; z-index: 100; width: 12px; height: 12px; pointer-events: none; border-radius: 3px; }
+
+/* ---------- responsif kecil ---------- */
+@media (max-width: 640px) {
+  .slide { padding: 52px 12px 92px; }
+  #pageTip { display: none; }
+  .panel3d { min-height: 260px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .15s !important; }
+}
+
+</style>
+</head>
+<body>
+<div id="bgDecor"></div>
+
+<header id="topbar">
+  <div id="brand"><span class="dotlogo"></span> Jaring-Jaring Bangun Ruang</div>
+  <div id="progressWrap"><div id="progressBar"></div></div>
+  <div id="slideCounter">1 / 12</div>
+  <button id="soundBtn" class="icon-btn" title="Nyalakan / matikan suara" aria-label="Suara"></button>
+  <button id="fsBtn" class="icon-btn" title="Layar penuh" aria-label="Layar penuh"></button>
+</header>
+
+<main id="deck"></main>
+
+<nav id="navBtns">
+  <button id="homeBtn" class="nav-btn small-r" title="Ke peta materi" aria-label="Peta materi"></button>
+  <button id="prevBtn" class="nav-btn big" title="Slide sebelumnya" aria-label="Sebelumnya"></button>
+  <button id="nextBtn" class="nav-btn big" title="Slide berikutnya" aria-label="Berikutnya"></button>
+</nav>
+<div id="pageTip">Geser dengan <kbd>&larr;</kbd> <kbd>&rarr;</kbd></div>
+
+<script>
+// data.js — dihasilkan oleh data_gen2.js (geometri terverifikasi numerik, tol 1e-6)
+window.PRESENTATION_DATA = {"order":["prisma3","limas4","tabung","kerucut","prisma5","limas3"],"meta":{"prisma3":{"name":"Prisma Segitiga","color":"#3b82f6","desc":"Alas & tutupnya segitiga, dindingnya 3 persegi panjang","props":[["Sisi","5"],["Rusuk","9"],["Titik Sudut","6"]],"compParts":[{"n":3,"text":"persegi panjang — sisi tegak","color":"#3b82f6"},{"n":2,"text":"segitiga sama sisi — alas & tutup","color":"#10b981"}],"fact":"Contoh nyata: prisma kaca pemecah cahaya, keju segitiga, dan atap tenda pramuka."},"prisma5":{"name":"Prisma Segi Lima","color":"#8b5cf6","desc":"Alas & tutupnya segi lima, dindingnya 5 persegi panjang","props":[["Sisi","7"],["Rusuk","15"],["Titik Sudut","10"]],"compParts":[{"n":5,"text":"persegi panjang — sisi tegak","color":"#8b5cf6"},{"n":2,"text":"segi lima — alas & tutup","color":"#f59e0b"}],"fact":"Kalau alasnya segi enam, jaringnya jadi 2 segi enam + 6 persegi panjang. Pola yang sama berlaku untuk prisma segi-n!"},"limas3":{"name":"Limas Segitiga","color":"#f59e0b","desc":"4 sisi — semuanya segitiga sama sisi","props":[["Sisi","4"],["Rusuk","6"],["Titik Sudut","4"]],"compParts":[{"n":4,"text":"segitiga sama sisi (alas + 3 sisi tegak)","color":"#f59e0b"}],"fact":"Namanya tetrahedron — satu-satunya bangun ruang yang SEMUA sisinya segitiga! Rangka atap rumah sering memakainya."},"limas4":{"name":"Limas Segiempat","color":"#ec4899","desc":"Alas persegi + 4 segitiga yang bertemu di puncak","props":[["Sisi","5"],["Rusuk","8"],["Titik Sudut","5"]],"compParts":[{"n":1,"text":"persegi — alas","color":"#ec4899"},{"n":4,"text":"segitiga sama kaki — sisi tegak","color":"#f472b6"}],"fact":"Piramida Giza di Mesir adalah limas segiempat raksasa dengan alas persegi selebih-lebihnya 230 meter!"},"tabung":{"name":"Tabung","color":"#14b8a6","desc":"Selimutnya persegi panjang, alas & tutupnya lingkaran","props":[["Sisi","3"],["Rusuk","2"],["Titik Sudut","0"]],"compParts":[{"n":1,"text":"persegi panjang — selimut (sisi lengkung)","color":"#14b8a6"},{"n":2,"text":"lingkaran — alas & tutup","color":"#f59e0b"}],"fact":"Rusuk tabung berbentuk LENGKUNG (2 buah), dan tabung tidak punya titik sudut. Lebar persegi panjangnya harus persis keliling lingkaran!","formula":{"title":"Kunci jaring tabung","html":"Lebar persegi panjang = <b>keliling alas</b> = 2 × π × r.<br>Panjangnya bebas — itu tinggi tabung (t)."}},"kerucut":{"name":"Kerucut","color":"#ef4444","desc":"Selimutnya juring, alasnya lingkaran","props":[["Sisi","2"],["Rusuk","1"],["Titik Sudut","0"]],"compParts":[{"n":1,"text":"juring — selimut (seperti potongan pizza)","color":"#ef4444"},{"n":1,"text":"lingkaran — alas","color":"#f59e0b"}],"fact":"Contoh: topi ulang tahun, cone es krim, dan kerucut lalu lintas! Juringnya seperti potongan pizza yang dilipat melingkar.","formula":{"title":"Kunci juring kerucut","html":"Sudut juring = <b>(r / s) × 360°</b>, dengan s = garis pelukis.<br>Jari-jari juring = <b>garis pelukis (s)</b> — garis miring dari puncak ke tepi alas."}}},"questions":[{"id":"E1","level":"Mudah","prompt":"Sebuah tabung dibuka lewat rusuk-rusuknya hingga rata. Jaring-jaring tabung terdiri atas…","options":[{"label":"2 lingkaran dan 1 persegi panjang","correct":true,"sw":"#14b8a6"},{"label":"1 lingkaran dan 1 juring","sw":"#ef4444"},{"label":"1 persegi dan 4 segitiga","sw":"#ec4899"},{"label":"2 segitiga dan 3 persegi panjang","sw":"#3b82f6"}],"explanation":"Selimut tabung jika dibuka menjadi <b>persegi panjang</b>, sedangkan alas dan tutupnya berupa <b>dua lingkaran sama besar</b>. Jadi: 1 persegi panjang + 2 lingkaran."},{"id":"E2","level":"Mudah","prompt":"Jaring-jaring sebuah kerucut terdiri atas…","options":[{"label":"1 lingkaran dan 1 juring","correct":true,"sw":"#ef4444"},{"label":"2 lingkaran dan 1 persegi panjang","sw":"#14b8a6"},{"label":"1 segitiga dan 1 lingkaran","sw":"#f59e0b"},{"label":"1 persegi dan 4 segitiga","sw":"#ec4899"}],"explanation":"Selimut kerucut berbentuk <b>juring</b> (seperti potongan pizza), dan alasnya berbentuk <b>lingkaran</b>. Saat juring dilipat melingkar, ia menjadi permukaan lengkung kerucut."},{"id":"E3","level":"Mudah","prompt":"Jaring-jaring limas segiempat terdiri atas…","options":[{"label":"1 persegi dan 4 segitiga","correct":true,"sw":"#ec4899"},{"label":"2 persegi dan 4 segitiga","sw":"#3b82f6"},{"label":"1 persegi dan 3 segitiga","sw":"#f59e0b"},{"label":"4 persegi dan 2 segitiga","sw":"#10b981"}],"explanation":"Alas limas segiempat berbentuk <b>persegi</b>, dan selimutnya <b>4 segitiga</b> yang keempat puncaknya bertemu di satu titik (puncak limas)."},{"id":"E4","level":"Mudah","prompt":"Jaring-jaring prisma segitiga terdiri atas…","options":[{"label":"2 segitiga dan 3 persegi panjang","correct":true,"sw":"#3b82f6"},{"label":"2 segitiga dan 2 persegi panjang","sw":"#8b5cf6"},{"label":"3 segitiga dan 2 persegi panjang","sw":"#f59e0b"},{"label":"1 segitiga dan 3 persegi panjang","sw":"#10b981"}],"explanation":"Prisma segitiga punya 2 sisi berbentuk <b>segitiga</b> (alas & tutup) dan 3 sisi tegak berbentuk <b>persegi panjang</b>. Total 5 sisi."},{"id":"E5","level":"Mudah","prompt":"Perhatikan jaring-jaring pada gambar! Bangun ruang yang jaring-jaringnya seperti gambar itu adalah…","svg":["limas3"],"options":[{"label":"Limas segitiga","correct":true,"sw":"#f59e0b"},{"label":"Limas segiempat","sw":"#ec4899"},{"label":"Prisma segitiga","sw":"#3b82f6"},{"label":"Kerucut","sw":"#ef4444"}],"explanation":"Jaring itu tersusun dari <b>4 segitiga sama sisi</b>. Bangun dengan 4 sisi segitiga semuanya adalah <b>limas segitiga</b> — alasnya pun segitiga (tetrahedron)."},{"id":"M1","level":"Sedang","prompt":"Prisma segi lima tersusun dari 2 sisi segi lima dan 5 sisi persegi panjang. Berapa banyak sisi prisma segi lima?","options":[{"label":"7","correct":true,"sw":"#8b5cf6"},{"label":"5","sw":"#f59e0b"},{"label":"10","sw":"#14b8a6"},{"label":"15","sw":"#ef4444"}],"explanation":"Banyak sisi = sisi segi lima + sisi persegi panjang = 2 + 5 = <b>7</b>. Ingat: setiap sisi alas segi-n \"ditemani\" satu persegi panjang."},{"id":"M2","level":"Sedang","prompt":"Limas segiempat memiliki 1 sisi alas persegi dan 4 sisi segitiga. Banyak rusuknya adalah…","options":[{"label":"8","correct":true,"sw":"#ec4899"},{"label":"5","sw":"#f59e0b"},{"label":"6","sw":"#3b82f6"},{"label":"12","sw":"#10b981"}],"explanation":"Rusuk = <b>4 rusuk keliling alas</b> + <b>4 rusuk yang naik menuju puncak</b> = 8."},{"id":"M3","level":"Sedang","prompt":"Perhatikan gambar! Sebuah tabung dengan jari-jari alas 7 cm. Berapa lebar persegi panjang pada jaring-jaringnya? (π = 22/7)","svg":["tabung_q"],"options":[{"label":"44 cm","correct":true,"sw":"#14b8a6"},{"label":"14 cm","sw":"#f59e0b"},{"label":"22 cm","sw":"#ef4444"},{"label":"49 cm","sw":"#8b5cf6"}],"explanation":"Lebar persegi panjang = keliling lingkaran alas = 2 × π × r = 2 × 22/7 × 7 = <b>44 cm</b>. Hati-hati: 14 cm itu diameter (2 × r), bukan keliling!"},{"id":"M4","level":"Sedang","prompt":"Pada jaring-jaring kerucut, bagian yang menjadi SELIMUT kerucut (permukaan lengkung dari alas ke puncak) adalah…","options":[{"label":"Juring (potongan pizza)","correct":true,"sw":"#ef4444"},{"label":"Lingkaran","sw":"#f59e0b"},{"label":"Persegi panjang","sw":"#14b8a6"},{"label":"Segitiga","sw":"#3b82f6"}],"explanation":"Saat juring dilipat melingkar, kedua sisi lurusnya bertemu dan membentuk permukaan lengkung — itulah <b>selimut kerucut</b>. Lingkaran hanya menjadi alas."},{"id":"M5","level":"Sedang","prompt":"Limas segitiga memiliki sisi…","options":[{"label":"4 sisi, semuanya segitiga","correct":true,"sw":"#f59e0b"},{"label":"4 sisi: 1 persegi dan 3 segitiga","sw":"#ec4899"},{"label":"5 sisi, semuanya segitiga","sw":"#8b5cf6"},{"label":"3 sisi, semuanya segitiga","sw":"#14b8a6"}],"explanation":"Limas segitiga = limas dengan alas segitiga: 1 alas segitiga + 3 sisi tegak segitiga = <b>4 sisi segitiga semua</b>. Bangun ini juga disebut tetrahedron."},{"id":"H1","level":"Tantangan","prompt":"Perhatikan ukuran pada gambar (r = 7 cm, t = 10 cm). Berapa luas selimut tabung — yaitu luas persegi panjangnya? (π = 22/7)","svg":["tabung_q"],"options":[{"label":"440 cm²","correct":true,"sw":"#14b8a6"},{"label":"154 cm²","sw":"#f59e0b"},{"label":"308 cm²","sw":"#ef4444"},{"label":"748 cm²","sw":"#8b5cf6"}],"explanation":"Panjang persegi panjang = keliling = 44 cm, lebar = 10 cm. Luas = 44 × 10 = <b>440 cm²</b>. (154 cm² itu luas satu lingkaran; 308 cm² luas dua lingkaran; 748 cm² luas permukaan tabung seluruhnya.)"},{"id":"H2","level":"Tantangan","prompt":"Pada jaring-jaring kerucut, besar sudut juring dihitung dengan (r/s) × 360°. Jika jari-jari alas r = 6 cm dan garis pelukis s = 12 cm, berapa besar sudut juringnya?","svg":["kerucut_q"],"options":[{"label":"180°","correct":true,"sw":"#ef4444"},{"label":"90°","sw":"#f59e0b"},{"label":"120°","sw":"#14b8a6"},{"label":"270°","sw":"#8b5cf6"}],"explanation":"Sudut = r/s × 360° = 6/12 × 360° = <b>180°</b>. Juringnya berupa setengah lingkaran penuh!"},{"id":"H3","level":"Tantangan","prompt":"Jaring-jaring limas pada gambar dilipat dengan semua segitiga berdiri ke atas. Apa yang terjadi pada keempat puncak segitiga P, Q, R, dan S?","svg":["limas4_q"],"options":[{"label":"Bertemu di satu titik, menjadi puncak limas","correct":true,"sw":"#ec4899"},{"label":"Tetap terpisah dan tidak bertemu","sw":"#f59e0b"},{"label":"Bertemu dua-dua di rusuk alas","sw":"#3b82f6"},{"label":"Menutupi alas persegi T","sw":"#10b981"}],"explanation":"Keempat segitiga sama kaki dilipat ke atas sehingga keempat puncaknya <b>bertemu tepat di satu titik</b> — titik itu menjadi puncak limas. Persegi T tetap menjadi alas."},{"id":"H4","level":"Tantangan","prompt":"Prisma segi lima memiliki 2 sisi segi lima dan 5 sisi persegi panjang. Banyak rusuknya adalah…","options":[{"label":"15","correct":true,"sw":"#8b5cf6"},{"label":"10","sw":"#f59e0b"},{"label":"12","sw":"#14b8a6"},{"label":"20","sw":"#ef4444"}],"explanation":"Rusuk = 5 rusuk keliling alas atas + 5 rusuk keliling alas bawah + 5 rusuk tegak = <b>15</b>."},{"id":"H5","level":"Tantangan","prompt":"Dua gambar berikut adalah susunan jaring-jaring yang berbeda. Manakah pernyataan yang benar?","svg":["prisma3","prisma3alt"],"caps":["Gambar 1","Gambar 2"],"options":[{"label":"Keduanya bisa dilipat menjadi prisma segitiga","correct":true,"sw":"#3b82f6"},{"label":"Hanya Gambar 1 yang benar","sw":"#f59e0b"},{"label":"Hanya Gambar 2 yang benar","sw":"#10b981"},{"label":"Tidak ada yang menjadi prisma segitiga","sw":"#ef4444"}],"explanation":"Susunan jaring prisma segitiga bisa bermacam-macam! Yang penting: ada <b>3 persegi panjang</b> dan <b>2 segitiga</b> yang menempel pada posisi yang tepat. Kedua gambar sama-sama bisa dilipat menjadi prisma segitiga — buktinya sudah diuji komputer di slide materi."}],"shapes":{"prisma3":{"view":{"rx":-30,"ry":-58},"faces":[{"poly":[[0,0],[0,6],[4,6],[4,0]],"parent":null,"delta":null,"color":"#3b82f6","label":"A","name":"Sisi tegak","info":"Persegi panjang 4 × 6 — tiga lembar kembar menyusun dinding prisma.","dims":[{"x":2,"y":1.5,"text":"tinggi = 6"},{"x":2,"y":6.55,"text":"4"}]},{"poly":[[4,0],[4,6],[8,6],[8,0]],"parent":0,"delta":2.0943951,"color":"#60a5fa","label":"B","name":"Sisi tegak","info":"Persegi panjang 4 × 6 — tiga lembar kembar menyusun dinding prisma.","dims":null},{"poly":[[8,0],[8,6],[12,6],[12,0]],"parent":1,"delta":2.0943951,"color":"#2563eb","label":"C","name":"Sisi tegak","info":"Persegi panjang 4 × 6 — tiga lembar kembar menyusun dinding prisma.","dims":null},{"poly":[[0,0],[4,0],[2,-3.4641]],"parent":0,"delta":1.5707963,"color":"#10b981","label":"D","name":"Alas","info":"Segitiga sama sisi — menutup ujung bawah prisma.","dims":null},{"poly":[[8,6],[12,6],[10,9.4641]],"parent":2,"delta":-1.5707963,"color":"#a855f7","label":"E","name":"Tutup","info":"Segitiga sama sisi — menutup ujung atas prisma.","dims":null}]},"prisma3alt":{"view":{"rx":-30,"ry":-58},"faces":[{"poly":[[0,0],[0,6],[4,6],[4,0]],"parent":null,"delta":null,"color":"#3b82f6","label":"A","name":"Sisi tegak","info":"Persegi panjang 4 × 6 — tiga lembar kembar menyusun dinding prisma.","dims":null},{"poly":[[4,0],[4,6],[8,6],[8,0]],"parent":0,"delta":2.0943951,"color":"#60a5fa","label":"B","name":"Sisi tegak","info":"Persegi panjang 4 × 6 — tiga lembar kembar menyusun dinding prisma.","dims":null},{"poly":[[8,0],[8,6],[12,6],[12,0]],"parent":1,"delta":2.0943951,"color":"#2563eb","label":"C","name":"Sisi tegak","info":"Persegi panjang 4 × 6 — tiga lembar kembar menyusun dinding prisma.","dims":null},{"poly":[[4,0],[8,0],[6,-3.4641]],"parent":1,"delta":1.5707963,"color":"#10b981","label":"D","name":"Alas","info":"Segitiga sama sisi — menutup ujung bawah prisma.","dims":null},{"poly":[[4,6],[8,6],[6,9.4641]],"parent":1,"delta":-1.5707963,"color":"#a855f7","label":"E","name":"Tutup","info":"Segitiga sama sisi — menutup ujung atas prisma.","dims":null}]},"prisma5":{"view":{"rx":-26,"ry":-55},"faces":[{"poly":[[0,0],[0,5],[3.5,5],[3.5,0]],"parent":null,"delta":null,"color":"#8b5cf6","label":"A","name":"Sisi tegak","info":"Persegi panjang 3,5 × 5 — lima lembar menyusun dinding prisma.","dims":[{"x":1.75,"y":1.1,"text":"tinggi = 5"},{"x":1.75,"y":5.55,"text":"3,5"}]},{"poly":[[3.5,0],[3.5,5],[7,5],[7,0]],"parent":0,"delta":1.2566371,"color":"#a78bfa","label":"B","name":"Sisi tegak","info":"Persegi panjang 3,5 × 5 — lima lembar menyusun dinding prisma.","dims":null},{"poly":[[7,0],[7,5],[10.5,5],[10.5,0]],"parent":1,"delta":1.2566371,"color":"#7c3aed","label":"C","name":"Sisi tegak","info":"Persegi panjang 3,5 × 5 — lima lembar menyusun dinding prisma.","dims":null},{"poly":[[10.5,0],[10.5,5],[14,5],[14,0]],"parent":2,"delta":1.2566371,"color":"#9333ea","label":"D","name":"Sisi tegak","info":"Persegi panjang 3,5 × 5 — lima lembar menyusun dinding prisma.","dims":null},{"poly":[[14,0],[14,5],[17.5,5],[17.5,0]],"parent":3,"delta":1.2566371,"color":"#6d28d9","label":"E","name":"Sisi tegak","info":"Persegi panjang 3,5 × 5 — lima lembar menyusun dinding prisma.","dims":null},{"poly":[[0,0],[3.5,0],[4.5816,-3.3287],[1.75,-5.3859],[-1.0816,-3.3287]],"parent":0,"delta":1.5707963,"color":"#f59e0b","label":"F","name":"Alas","info":"Segi lima beraturan — menutup ujung bawah prisma.","dims":null},{"poly":[[14,5],[17.5,5],[18.5816,8.3287],[15.75,10.3859],[12.9184,8.3287]],"parent":4,"delta":-1.5707963,"color":"#ec4899","label":"G","name":"Tutup","info":"Segi lima beraturan — menutup ujung atas prisma.","dims":null}]},"limas3":{"view":{"rx":-25,"ry":-20},"faces":[{"poly":[[0,0],[4,0],[2,3.4641]],"parent":null,"delta":null,"color":"#f59e0b","label":"A","name":"Alas","info":"Segitiga sama sisi — menjadi alas limas.","dims":null},{"poly":[[0,0],[4,0],[2,-3.4641]],"parent":0,"delta":-1.9106332,"color":"#fb923c","label":"B","name":"Sisi tegak","info":"Segitiga sama sisi — puncaknya bertemu di puncak limas.","dims":null},{"poly":[[0,0],[2,3.4641],[-2,3.4641]],"parent":0,"delta":1.9106332,"color":"#f97316","label":"C","name":"Sisi tegak","info":"Segitiga sama sisi — puncaknya bertemu di puncak limas.","dims":null},{"poly":[[2,3.4641],[4,0],[6,3.4641]],"parent":0,"delta":1.9106332,"color":"#ea580c","label":"D","name":"Sisi tegak","info":"Segitiga sama sisi — puncaknya bertemu di puncak limas.","dims":null}]},"limas4":{"view":{"rx":-25,"ry":-20},"faces":[{"poly":[[0,0],[4,0],[4,4],[0,4]],"parent":null,"delta":null,"color":"#ec4899","label":"A","name":"Alas","info":"Persegi — menjadi alas limas.","dims":null},{"poly":[[0,4],[4,4],[2,7.6056]],"parent":0,"delta":2.1587989,"color":"#f472b6","label":"B","name":"Sisi tegak","info":"Segitiga sama kaki — puncaknya bertemu di puncak limas.","dims":null},{"poly":[[4,4],[4,0],[7.6056,2]],"parent":0,"delta":2.1587989,"color":"#fb7185","label":"C","name":"Sisi tegak","info":"Segitiga sama kaki — puncaknya bertemu di puncak limas.","dims":null},{"poly":[[4,0],[0,0],[2,-3.6056]],"parent":0,"delta":2.1587989,"color":"#e879f9","label":"D","name":"Sisi tegak","info":"Segitiga sama kaki — puncaknya bertemu di puncak limas.","dims":null},{"poly":[[0,4],[0,0],[-3.6056,2]],"parent":0,"delta":-2.1587989,"color":"#f9a8d4","label":"E","name":"Sisi tegak","info":"Segitiga sama kaki — puncaknya bertemu di puncak limas.","dims":null}]},"limas4_q":{"view":{"rx":-25,"ry":-20},"faces":[{"poly":[[0,0],[4,0],[4,4],[0,4]],"parent":null,"delta":null,"color":"#ec4899","label":"T","name":"Alas","info":"Persegi — menjadi alas limas.","dims":null},{"poly":[[0,4],[4,4],[2,7.6056]],"parent":0,"delta":2.1587989,"color":"#f472b6","label":"P","name":"Sisi tegak","info":"Segitiga sama kaki — puncaknya bertemu di puncak limas.","dims":null},{"poly":[[4,4],[4,0],[7.6056,2]],"parent":0,"delta":2.1587989,"color":"#fb7185","label":"Q","name":"Sisi tegak","info":"Segitiga sama kaki — puncaknya bertemu di puncak limas.","dims":null},{"poly":[[4,0],[0,0],[2,-3.6056]],"parent":0,"delta":2.1587989,"color":"#e879f9","label":"R","name":"Sisi tegak","info":"Segitiga sama kaki — puncaknya bertemu di puncak limas.","dims":null},{"poly":[[0,4],[0,0],[-3.6056,2]],"parent":0,"delta":-2.1587989,"color":"#f9a8d4","label":"S","name":"Sisi tegak","info":"Segitiga sama kaki — puncaknya bertemu di puncak limas.","dims":null}]},"tabung":{"view":{"rx":-32,"ry":-45},"faces":[{"poly":[[0,0],[0,5],[0.6283,5],[0.6283,0]],"parent":null,"delta":null,"color":"#14b8a6","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":[{"x":6.283185307179586,"y":5.55,"text":"keliling = 2πr ≈ 12,57"}]},{"poly":[[0.6283,0],[0.6283,5],[1.2566,5],[1.2566,0]],"parent":0,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[1.2566,0],[1.2566,5],[1.885,5],[1.885,0]],"parent":1,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[1.885,0],[1.885,5],[2.5133,5],[2.5133,0]],"parent":2,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[2.5133,0],[2.5133,5],[3.1416,5],[3.1416,0]],"parent":3,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[3.1416,0],[3.1416,5],[3.7699,5],[3.7699,0]],"parent":4,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[3.7699,0],[3.7699,5],[4.3982,5],[4.3982,0]],"parent":5,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[4.3982,0],[4.3982,5],[5.0265,5],[5.0265,0]],"parent":6,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[5.0265,0],[5.0265,5],[5.6549,5],[5.6549,0]],"parent":7,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[5.6549,0],[5.6549,5],[6.2832,5],[6.2832,0]],"parent":8,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[6.2832,0],[6.2832,5],[6.9115,5],[6.9115,0]],"parent":9,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[6.9115,0],[6.9115,5],[7.5398,5],[7.5398,0]],"parent":10,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[7.5398,0],[7.5398,5],[8.1681,5],[8.1681,0]],"parent":11,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[8.1681,0],[8.1681,5],[8.7965,5],[8.7965,0]],"parent":12,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[8.7965,0],[8.7965,5],[9.4248,5],[9.4248,0]],"parent":13,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[9.4248,0],[9.4248,5],[10.0531,5],[10.0531,0]],"parent":14,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[10.0531,0],[10.0531,5],[10.6814,5],[10.6814,0]],"parent":15,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[10.6814,0],[10.6814,5],[11.3097,5],[11.3097,0]],"parent":16,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[11.3097,0],[11.3097,5],[11.9381,5],[11.9381,0]],"parent":17,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":null},{"poly":[[11.9381,0],[11.9381,5],[12.5664,5],[12.5664,0]],"parent":18,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Potongan-potongan ini menyambung menjadi SATU persegi panjang — selimut tabung!","dims":[{"x":13.116370614359173,"y":2.5,"text":"t = 5"}]},{"poly":[[0,0],[0.6283,0],[1.2259,-0.1942],[1.7342,-0.5635],[2.1035,-1.0718],[2.2977,-1.6694],[2.2977,-2.2977],[2.1035,-2.8952],[1.7342,-3.4036],[1.2259,-3.7729],[0.6283,-3.967],[0,-3.967],[-0.5976,-3.7729],[-1.1059,-3.4036],[-1.4752,-2.8952],[-1.6694,-2.2977],[-1.6694,-1.6694],[-1.4752,-1.0718],[-1.1059,-0.5635],[-0.5976,-0.1942]],"parent":0,"delta":1.5707963,"color":"#f59e0b","label":"Alas","name":"Alas","info":"Lingkaran sama besar dengan tutup — berjari-jari r.","dims":[{"x":0.3141592653589794,"y":-1.9835235375094542,"text":"r = 2"}]},{"poly":[[11.9381,5],[12.5664,5],[13.1639,5.1942],[13.6723,5.5635],[14.0416,6.0718],[14.2357,6.6694],[14.2357,7.2977],[14.0416,7.8952],[13.6723,8.4036],[13.1639,8.7729],[12.5664,8.967],[11.9381,8.967],[11.3405,8.7729],[10.8322,8.4036],[10.4628,7.8952],[10.2687,7.2977],[10.2687,6.6694],[10.4628,6.0718],[10.8322,5.5635],[11.3405,5.1942]],"parent":19,"delta":-1.5707963,"color":"#ec4899","label":"Tutup","name":"Tutup","info":"Lingkaran — kelilingnya harus sama dengan lebar persegi panjang!","dims":[{"x":12.252211349000195,"y":6.983523537509454,"text":"r = 2"}]}]},"tabung_q":{"view":{"rx":-32,"ry":-45},"faces":[{"poly":[[0,0],[0,5],[0.6283,5],[0.6283,0]],"parent":null,"delta":null,"color":"#14b8a6","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":[{"x":6.283185307179586,"y":5.55,"text":"keliling = 2 × 22/7 × 7 = 44 cm"}]},{"poly":[[0.6283,0],[0.6283,5],[1.2566,5],[1.2566,0]],"parent":0,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[1.2566,0],[1.2566,5],[1.885,5],[1.885,0]],"parent":1,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[1.885,0],[1.885,5],[2.5133,5],[2.5133,0]],"parent":2,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[2.5133,0],[2.5133,5],[3.1416,5],[3.1416,0]],"parent":3,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[3.1416,0],[3.1416,5],[3.7699,5],[3.7699,0]],"parent":4,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[3.7699,0],[3.7699,5],[4.3982,5],[4.3982,0]],"parent":5,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[4.3982,0],[4.3982,5],[5.0265,5],[5.0265,0]],"parent":6,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[5.0265,0],[5.0265,5],[5.6549,5],[5.6549,0]],"parent":7,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[5.6549,0],[5.6549,5],[6.2832,5],[6.2832,0]],"parent":8,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[6.2832,0],[6.2832,5],[6.9115,5],[6.9115,0]],"parent":9,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[6.9115,0],[6.9115,5],[7.5398,5],[7.5398,0]],"parent":10,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[7.5398,0],[7.5398,5],[8.1681,5],[8.1681,0]],"parent":11,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[8.1681,0],[8.1681,5],[8.7965,5],[8.7965,0]],"parent":12,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[8.7965,0],[8.7965,5],[9.4248,5],[9.4248,0]],"parent":13,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[9.4248,0],[9.4248,5],[10.0531,5],[10.0531,0]],"parent":14,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[10.0531,0],[10.0531,5],[10.6814,5],[10.6814,0]],"parent":15,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[10.6814,0],[10.6814,5],[11.3097,5],[11.3097,0]],"parent":16,"delta":0.3141593,"color":"#2dd4bf","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[11.3097,0],[11.3097,5],[11.9381,5],[11.9381,0]],"parent":17,"delta":0.3141593,"color":"#14b8a6","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":null},{"poly":[[11.9381,0],[11.9381,5],[12.5664,5],[12.5664,0]],"parent":18,"delta":0.3141593,"color":"#0d9488","label":"","name":"Selimut","info":"Selimut tabung berbentuk persegi panjang.","dims":[{"x":13.116370614359173,"y":2.5,"text":"t = 10 cm"}]},{"poly":[[0,0],[0.6283,0],[1.2259,-0.1942],[1.7342,-0.5635],[2.1035,-1.0718],[2.2977,-1.6694],[2.2977,-2.2977],[2.1035,-2.8952],[1.7342,-3.4036],[1.2259,-3.7729],[0.6283,-3.967],[0,-3.967],[-0.5976,-3.7729],[-1.1059,-3.4036],[-1.4752,-2.8952],[-1.6694,-2.2977],[-1.6694,-1.6694],[-1.4752,-1.0718],[-1.1059,-0.5635],[-0.5976,-0.1942]],"parent":0,"delta":1.5707963,"color":"#f59e0b","label":"","name":"Alas","info":"Lingkaran alas.","dims":[{"x":0.3141592653589794,"y":-1.9835235375094542,"text":"r = 7 cm"}]},{"poly":[[11.9381,5],[12.5664,5],[13.1639,5.1942],[13.6723,5.5635],[14.0416,6.0718],[14.2357,6.6694],[14.2357,7.2977],[14.0416,7.8952],[13.6723,8.4036],[13.1639,8.7729],[12.5664,8.967],[11.9381,8.967],[11.3405,8.7729],[10.8322,8.4036],[10.4628,7.8952],[10.2687,7.2977],[10.2687,6.6694],[10.4628,6.0718],[10.8322,5.5635],[11.3405,5.1942]],"parent":19,"delta":-1.5707963,"color":"#ec4899","label":"","name":"Tutup","info":"Lingkaran tutup.","dims":[{"x":12.252211349000195,"y":6.983523537509454,"text":"r = 7 cm"}]}]},"kerucut":{"view":{"rx":-75,"ry":40},"faces":[{"poly":[[0,0],[4,0],[3.9508,0.6257]],"parent":null,"delta":null,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":[{"x":2,"y":-0.38,"text":"s = 4"},{"x":-0.72,"y":2.12,"text":"sudut = 216°"}]},{"poly":[[0,0],[3.9508,0.6257],[3.8042,1.2361]],"parent":0,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[3.8042,1.2361],[3.564,1.816]],"parent":1,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[3.564,1.816],[3.2361,2.3511]],"parent":2,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[3.2361,2.3511],[2.8284,2.8284]],"parent":3,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[2.8284,2.8284],[2.3511,3.2361]],"parent":4,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[2.3511,3.2361],[1.816,3.564]],"parent":5,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[1.816,3.564],[1.2361,3.8042]],"parent":6,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[1.2361,3.8042],[0.6257,3.9508]],"parent":7,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[0.6257,3.9508],[0,4]],"parent":8,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[0,4],[-0.6257,3.9508]],"parent":9,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-0.6257,3.9508],[-1.2361,3.8042]],"parent":10,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-1.2361,3.8042],[-1.816,3.564]],"parent":11,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-1.816,3.564],[-2.3511,3.2361]],"parent":12,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-2.3511,3.2361],[-2.8284,2.8284]],"parent":13,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-2.8284,2.8284],[-3.2361,2.3511]],"parent":14,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.2361,2.3511],[-3.564,1.816]],"parent":15,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.564,1.816],[-3.8042,1.2361]],"parent":16,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.8042,1.2361],[-3.9508,0.6257]],"parent":17,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.9508,0.6257],[-4,0]],"parent":18,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-4,0],[-3.9508,-0.6257]],"parent":19,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.9508,-0.6257],[-3.8042,-1.2361]],"parent":20,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.8042,-1.2361],[-3.564,-1.816]],"parent":21,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.564,-1.816],[-3.2361,-2.3511]],"parent":22,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[4,0],[3.9508,0.6257],[4.0651,1.2429],[4.3354,1.8094],[4.743,2.2867],[5.2603,2.6422],[5.852,2.8518],[6.4777,2.901],[7.0949,2.7866],[7.6614,2.5164],[8.1387,2.1088],[8.4942,1.5915],[8.7037,0.9998],[8.753,0.3741],[8.6386,-0.2431],[8.3683,-0.8096],[7.9607,-1.2869],[7.4434,-1.6424],[6.8518,-1.852],[6.226,-1.9012],[5.6089,-1.7868],[5.0423,-1.5166],[4.565,-1.109],[4.2095,-0.5917]],"parent":0,"delta":2.2115488,"color":"#f59e0b","label":"Alas","name":"Alas","info":"Lingkaran alas kerucut — berjari-jari r.","dims":[{"x":6.351852143592861,"y":0.49990160519836885,"text":"r = 2,4"}]}]},"kerucut_q":{"view":{"rx":-75,"ry":40},"faces":[{"poly":[[0,0],[4,0],[3.9508,0.6257]],"parent":null,"delta":null,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":[{"x":2,"y":-0.38,"text":"s = 12 cm"},{"x":-0.72,"y":2.12,"text":"sudut = ?"}]},{"poly":[[0,0],[3.9508,0.6257],[3.8042,1.2361]],"parent":0,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[3.8042,1.2361],[3.564,1.816]],"parent":1,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[3.564,1.816],[3.2361,2.3511]],"parent":2,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[3.2361,2.3511],[2.8284,2.8284]],"parent":3,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[2.8284,2.8284],[2.3511,3.2361]],"parent":4,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[2.3511,3.2361],[1.816,3.564]],"parent":5,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[1.816,3.564],[1.2361,3.8042]],"parent":6,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[1.2361,3.8042],[0.6257,3.9508]],"parent":7,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[0.6257,3.9508],[0,4]],"parent":8,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[0,4],[-0.6257,3.9508]],"parent":9,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-0.6257,3.9508],[-1.2361,3.8042]],"parent":10,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-1.2361,3.8042],[-1.816,3.564]],"parent":11,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-1.816,3.564],[-2.3511,3.2361]],"parent":12,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-2.3511,3.2361],[-2.8284,2.8284]],"parent":13,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-2.8284,2.8284],[-3.2361,2.3511]],"parent":14,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.2361,2.3511],[-3.564,1.816]],"parent":15,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.564,1.816],[-3.8042,1.2361]],"parent":16,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.8042,1.2361],[-3.9508,0.6257]],"parent":17,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.9508,0.6257],[-4,0]],"parent":18,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-4,0],[-3.9508,-0.6257]],"parent":19,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.9508,-0.6257],[-3.8042,-1.2361]],"parent":20,"delta":-0.2096554,"color":"#ef4444","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.8042,-1.2361],[-3.564,-1.816]],"parent":21,"delta":-0.2096554,"color":"#f87171","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[0,0],[-3.564,-1.816],[-3.2361,-2.3511]],"parent":22,"delta":-0.2096554,"color":"#dc2626","label":"","name":"Selimut","info":"Juring! Saat melingkar, ia membentuk permukaan lengkung kerucut.","dims":null},{"poly":[[4,0],[3.9508,0.6257],[4.0651,1.2429],[4.3354,1.8094],[4.743,2.2867],[5.2603,2.6422],[5.852,2.8518],[6.4777,2.901],[7.0949,2.7866],[7.6614,2.5164],[8.1387,2.1088],[8.4942,1.5915],[8.7037,0.9998],[8.753,0.3741],[8.6386,-0.2431],[8.3683,-0.8096],[7.9607,-1.2869],[7.4434,-1.6424],[6.8518,-1.852],[6.226,-1.9012],[5.6089,-1.7868],[5.0423,-1.5166],[4.565,-1.109],[4.2095,-0.5917]],"parent":0,"delta":2.2115488,"color":"#f59e0b","label":"Alas","name":"Alas","info":"Lingkaran alas kerucut — berjari-jari r.","dims":[{"x":6.351852143592861,"y":0.49990160519836885,"text":"r = 6 cm"}]}]}}};
+
+</script>
+<script>
+// ============================================================
+// app.js — Mesin presentasi: deck, fold-viewer SVG (engsel kaku),
+// galeri, lab tebak bangun
+// ============================================================
+(function () {
+'use strict';
+const D = window.PRESENTATION_DATA;
+const App = window.App = {};
+const DEG = Math.PI / 180;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+App.clamp = clamp;
+
+// ---------- util ----------
+App.$ = (s, r) => (r || document).querySelector(s);
+App.el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+App.PALETTE = { A: '#ef4444', B: '#3b82f6', C: '#22c55e', D: '#f97316', E: '#a855f7', F: '#ec4899', G: '#14b8a6' };
+function shade(hex, pct) {
+  const n = parseInt(hex.slice(1), 16);
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const f = c => clamp(Math.round(c * (100 + pct) / 100), 0, 255);
+  return '#' + ((1 << 24) + (f(r) << 16) + (f(g) << 8) + f(b)).toString(16).slice(1);
+}
+App.shade = shade;
+const easeIO = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+// ---------- ikon svg ----------
+const I = {
+  right: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+  left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>',
+  sound: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/></svg>',
+  mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>',
+  full: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="#facc15" stroke="#f59e0b" stroke-width="1.4"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>',
+  starDim: '<svg viewBox="0 0 24 24" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.4"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-2.6-6.4"/><path d="M21 3v6h-6"/></svg>',
+  hand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 00-4 0v5"/><path d="M14 10V4a2 2 0 00-4 0v6"/><path d="M10 10.5V6a2 2 0 00-4 0v9"/><path d="M6 14l-1.6 1.6a2 2 0 000 2.8L8 22h8a4 4 0 004-4v-6a2 2 0 00-4 0"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+};
+App.icon = n => I[n] || '';
+
+// ---------- confetti & suara ----------
+App.burst = function (x, y) {
+  const cols = ['#facc15', '#fb923c', '#f87171', '#4ade80', '#60a5fa', '#c084fc', '#f472b6'];
+  for (let i = 0; i < 18; i++) {
+    const c = App.el('div', 'confetti');
+    c.style.left = x + 'px'; c.style.top = y + 'px';
+    c.style.background = cols[i % cols.length];
+    document.body.appendChild(c);
+    const a = Math.random() * Math.PI * 2, v = 60 + Math.random() * 130;
+    c.animate([
+      { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+      { transform: `translate(${Math.cos(a) * v}px, ${Math.sin(a) * v - 60}px) rotate(${Math.random() * 500}deg)`, opacity: 0 },
+    ], { duration: 850 + Math.random() * 350, easing: 'cubic-bezier(.2,.7,.4,1)' }).onfinish = () => c.remove();
+  }
+};
+let actx = null;
+App.sfx = {
+  muted: false,
+  _ctx() { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } return actx; },
+  tone(freq, t0, dur, type) {
+    const c = this._ctx(); if (!c || this.muted) return;
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type || 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, c.currentTime + t0);
+    g.gain.exponentialRampToValueAtTime(0.16, c.currentTime + t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + t0 + dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(c.currentTime + t0); o.stop(c.currentTime + t0 + dur + 0.05);
+  },
+  ok() { this.tone(523, 0, .16); this.tone(659, .1, .16); this.tone(784, .2, .26); },
+  no() { this.tone(196, 0, .22, 'square'); this.tone(147, .14, .3, 'square'); },
+  click() { this.tone(660, 0, .07, 'triangle'); },
+  pop() { this.tone(880, 0, .1, 'triangle'); },
+};
+
+// ============================================================
+// MATEMATIKA LIPAT (engsel kaku) & PROYEKSI
+// ============================================================
+function rotMatArr(u, th) {
+  const c = Math.cos(th), s = Math.sin(th), k = 1 - c;
+  const x = u[0], y = u[1], z = u[2];
+  return [
+    [1 + k * (x * x - 1), k * x * y - s * z, k * x * z + s * y],
+    [k * x * y + s * z, 1 + k * (y * y - 1), k * y * z - s * x],
+    [k * x * z - s * y, k * y * z + s * x, 1 + k * (z * z - 1)],
+  ];
+}
+function composeAff(M1, M2) {
+  const A = M1.R, B = M2.R;
+  return {
+    R: [
+      [A[0][0]*B[0][0]+A[0][1]*B[1][0]+A[0][2]*B[2][0], A[0][0]*B[0][1]+A[0][1]*B[1][1]+A[0][2]*B[2][1], A[0][0]*B[0][2]+A[0][1]*B[1][2]+A[0][2]*B[2][2]],
+      [A[1][0]*B[0][0]+A[1][1]*B[1][0]+A[1][2]*B[2][0], A[1][0]*B[0][1]+A[1][1]*B[1][1]+A[1][2]*B[2][1], A[1][0]*B[0][2]+A[1][1]*B[1][2]+A[1][2]*B[2][2]],
+      [A[2][0]*B[0][0]+A[2][1]*B[1][0]+A[2][2]*B[2][0], A[2][0]*B[0][1]+A[2][1]*B[1][1]+A[2][2]*B[2][1], A[2][0]*B[0][2]+A[2][1]*B[1][2]+A[2][2]*B[2][2]],
+    ],
+    t: [
+      A[0][0]*M2.t[0]+A[0][1]*M2.t[1]+A[0][2]*M2.t[2]+M1.t[0],
+      A[1][0]*M2.t[0]+A[1][1]*M2.t[1]+A[1][2]*M2.t[2]+M1.t[1],
+      A[2][0]*M2.t[0]+A[2][1]*M2.t[1]+A[2][2]*M2.t[2]+M1.t[2],
+    ],
+  };
+}
+function applyAff(M, p) {
+  const R = M.R, t = M.t;
+  return [
+    R[0][0]*p[0]+R[0][1]*p[1]+R[0][2]*p[2]+t[0],
+    R[1][0]*p[0]+R[1][1]*p[1]+R[1][2]*p[2]+t[1],
+    R[2][0]*p[0]+R[2][1]*p[1]+R[2][2]*p[2]+t[2],
+  ];
+}
+const IDENT3 = { R: [[1,0,0],[0,1,0],[0,0,1]], t: [0,0,0] };
+function foldMats(faces, t) {
+  const Ms = [];
+  faces.forEach((f, i) => {
+    if (f.parent == null || f.parent < 0) { Ms.push(IDENT3); return; }
+    const a = f.poly[0], b = f.poly[1];
+    const dx = b[0] - a[0], dy = b[1] - a[1], dl = Math.hypot(dx, dy) || 1;
+    const u = [dx / dl, dy / dl, 0];
+    const R = rotMatArr(u, f.delta * t);
+    const A = [a[0], a[1], 0];
+    const rot = { R, t: [
+      A[0] - (R[0][0]*A[0]+R[0][1]*A[1]+R[0][2]*A[2]),
+      A[1] - (R[1][0]*A[0]+R[1][1]*A[1]+R[1][2]*A[2]),
+      A[2] - (R[2][0]*A[0]+R[2][1]*A[1]+R[2][2]*A[2]),
+    ] };
+    Ms.push(composeAff(Ms[f.parent], rot));
+  });
+  return Ms;
+}
+function viewRot(p, yaw, pitch) {
+  const cy = Math.cos(yaw), sy = Math.sin(yaw);
+  const x = p[0] * cy + p[2] * sy;
+  const z = -p[0] * sy + p[2] * cy;
+  const cx = Math.cos(pitch), sx = Math.sin(pitch);
+  return [x, p[1] * cx - z * sx, p[1] * sx + z * cx];
+}
+const LIGHT = (() => { const l = [-0.45, 0.62, 0.64]; const m = Math.hypot(...l); return l.map(v => v / m); })();
+function faceNormal(vs) {
+  const ax = vs[1][0]-vs[0][0], ay = vs[1][1]-vs[0][1], az = vs[1][2]-vs[0][2];
+  const bx = vs[2][0]-vs[0][0], by = vs[2][1]-vs[0][1], bz = vs[2][2]-vs[0][2];
+  let nx = ay*bz-az*by, ny = az*bx-ax*bz, nz = ax*by-ay*bx;
+  const m = Math.hypot(nx, ny, nz) || 1;
+  return [nx/m, ny/m, nz/m];
+}
+
+// ============================================================
+// FOLD VIEWER interaktif
+// ============================================================
+const VBW = 600, VBH = 440;
+App._viewers = [];
+App.FoldViewer = function (mount, shapeId, opts = {}) {
+  const shape = D.shapes[shapeId];
+  const faces = shape.faces;
+  const st = {
+    t: opts.folded ? 1 : 0, anim: null,
+    yaw: shape.view.ry * DEG, pitch: shape.view.rx * DEG,
+    spin: opts.spin !== false, dragging: false, sel: -1, active: false, autoDone: false,
+    viewTouched: false,
+  };
+  const NS = 'http://www.w3.org/2000/svg';
+  mount.querySelectorAll('svg.fv-svg').forEach(s => s.remove());
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${VBW} ${VBH}`);
+  svg.setAttribute('class', 'fv-svg');
+  svg.style.touchAction = 'none';
+  mount.appendChild(svg);
+
+  // skala tetap dari bbox model (t=0 dan t=1)
+  let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+  [0, 1].forEach(tt => {
+    const Ms = foldMats(faces, tt);
+    faces.forEach((f, i) => f.poly.forEach(p => {
+      const w = applyAff(Ms[i], [p[0], p[1], 0]);
+      minX = Math.min(minX, w[0]); maxX = Math.max(maxX, w[0]);
+      minY = Math.min(minY, w[1]); maxY = Math.max(maxY, w[1]);
+    }));
+  });
+  const scale = Math.min((VBW - 110) / (maxX - minX), (VBH - 96) / (maxY - minY));
+
+  let rafId = 0, lastT = -1;
+  function frame() {
+    if (!st.active) { rafId = 0; return; }
+    if (st.anim) {
+      const k = clamp((performance.now() - st.anim.t0) / st.anim.dur, 0, 1);
+      st.t = st.anim.from + (st.anim.to - st.anim.from) * easeIO(k);
+      if (k >= 1) st.anim = null;
+    }
+    if (st.spin && !st.dragging && !st.anim) st.yaw += 0.0011;
+    if (Math.abs(st.t - lastT) > 1e-4) { if (opts.slider) opts.slider.value = Math.round(st.t * 1000); lastT = st.t; }
+    draw();
+    rafId = requestAnimationFrame(frame);
+  }
+
+  function draw() {
+    const mixT = easeIO(st.t);
+    const yaw = st.viewTouched ? st.yaw : st.yaw * mixT;               // net datar dilihat frontal
+    const pitch = st.viewTouched ? st.pitch : (-8 * DEG * (1 - mixT) + st.pitch * mixT);
+    const Ms = foldMats(faces, st.t);
+    const worlds = faces.map((f, i) => f.poly.map(p => applyAff(Ms[i], [p[0], p[1], 0])));
+    const projs = worlds.map(vs => vs.map(p => {
+      const v = viewRot(p, yaw, pitch);
+      return [v[0], v[1], v[2]];
+    }));
+    // bbox terproyeksi untuk pemusatan
+    let ax0 = 1e9, ay0 = 1e9, ax1 = -1e9, ay1 = -1e9;
+    projs.flat().forEach(p => { ax0 = Math.min(ax0, p[0]); ax1 = Math.max(ax1, p[0]); ay0 = Math.min(ay0, p[1]); ay1 = Math.max(ay1, p[1]); });
+    const cx = VBW / 2 - (ax0 + ax1) / 2 * scale;
+    const cy = VBH / 2 + (ay0 + ay1) / 2 * scale;
+    const P = projs.map(vs => vs.map(p => [(cx + p[0] * scale).toFixed(1), (cy - p[1] * scale).toFixed(1), p[2]]));
+    const order = faces.map((_, i) => i).sort((a, b) => avgZ(a) - avgZ(b));
+    function avgZ(i) { const vs = P[i]; let s = 0; for (const v of vs) s += v[2]; return s / vs.length; }
+    const dimOp = st.t < 0.55 ? ((0.55 - st.t) / 0.55 * 0.95).toFixed(2) : '0';
+    let html = `<rect x="0" y="0" width="${VBW}" height="${VBH}" fill="rgba(255,255,255,0)" data-fi="-1"/>`;
+    order.forEach(i => {
+      const f = faces[i];
+      const vs = P[i];
+      const pts = vs.map(p => p[0] + ',' + p[1]).join(' ');
+      const nv = viewRot(faceNormal(worlds[i]), yaw, pitch);
+      const b = 0.52 + 0.48 * Math.max(0, nv[0]*LIGHT[0] + nv[1]*LIGHT[1] + nv[2]*LIGHT[2]);
+      const fill = shade(f.color, Math.round((b - 0.72) * 70));
+      const sel = st.sel === i, dimd = st.sel >= 0 && !sel;
+      html += `<polygon class="fv-face${sel ? ' fv-sel' : ''}" points="${pts}" fill="${fill}" fill-opacity="${dimd ? 0.55 : 1}" stroke="${sel ? '#facc15' : 'rgba(30,27,75,.5)'}" stroke-width="${sel ? 4.5 : 2}" data-fi="${i}"/>`;
+      if (f.label) {
+        const mx = vs.reduce((s, v) => s + +v[0], 0) / vs.length;
+        const my = vs.reduce((s, v) => s + +v[1], 0) / vs.length;
+        const fs = f.label.length > 1 ? scale * 0.62 : scale * 1.0;
+        html += `<text class="fv-txt" x="${mx.toFixed(1)}" y="${(my + fs * 0.35).toFixed(1)}" font-size="${fs.toFixed(1)}" stroke-width="${(fs * 0.18).toFixed(1)}" fill-opacity="${dimd ? 0.5 : 1}">${f.label}</text>`;
+      }
+    });
+    if (+dimOp > 0.01) {
+      faces.forEach((f, i) => {
+        if (!f.dims) return;
+        f.dims.forEach(dm => {
+          const w = applyAff(Ms[i], [dm.x, dm.y, 0]);
+          const v = viewRot(w, yaw, pitch);
+          html += `<text class="fv-dimtxt" x="${(cx + v[0] * scale).toFixed(1)}" y="${(cy - v[1] * scale).toFixed(1)}" font-size="${(scale * 0.62).toFixed(1)}" stroke-width="${(scale * 0.62 * 0.15).toFixed(1)}" opacity="${dimOp}">${dm.text}</text>`;
+        });
+      });
+    }
+    svg.innerHTML = html;
+  }
+
+  // interaksi
+  let px = 0, py = 0, downX = 0, downY = 0;
+  svg.addEventListener('pointerdown', e => {
+    st.dragging = true; st.spin = false;
+    px = downX = e.clientX; py = downY = e.clientY;
+    svg.setPointerCapture(e.pointerId);
+  });
+  svg.addEventListener('pointermove', e => {
+    if (!st.dragging) return;
+    st.viewTouched = true;
+    st.yaw += (e.clientX - px) * 0.008;
+    st.pitch = clamp(st.pitch - (e.clientY - py) * 0.006, -1.5, 1.5);
+    px = e.clientX; py = e.clientY;
+  });
+  const up = () => { st.dragging = false; };
+  svg.addEventListener('pointerup', up);
+  svg.addEventListener('pointercancel', up);
+  svg.addEventListener('click', e => {
+    if (Math.hypot(e.clientX - downX, e.clientY - downY) > 8) return;
+    let el = e.target;
+    if (!el.getAttribute || el.getAttribute('data-fi') == null) {
+      el = document.elementFromPoint(e.clientX, e.clientY) || el; // pointer capture membuat target = svg
+    }
+    const fi = el.getAttribute && el.getAttribute('data-fi');
+    st.sel = fi == null || +fi < 0 ? -1 : +fi;
+    if (st.sel >= 0) App.sfx.pop();
+    if (opts.onSel) opts.onSel(st.sel >= 0 ? faces[st.sel] : null);
+  });
+
+  const api = {
+    foldTo(v) { st.anim = { from: st.t, to: clamp(v, 0, 1), t0: performance.now(), dur: 1300 }; },
+    setT(v) { st.anim = null; st.t = clamp(v, 0, 1); lastT = -1; },
+    getT: () => st.t,
+    replay() { st.setT && 0; st.t = 0; lastT = -1; st.viewTouched = false; st.yaw = shape.view.ry * DEG; st.pitch = shape.view.rx * DEG; this.foldTo(1); },
+    setActive(v) {
+      st.active = v;
+      if (v && !rafId) rafId = requestAnimationFrame(frame);
+      if (v && opts.autofold !== false && !st.autoDone) {
+        st.autoDone = true;
+        st.t = 0;
+        setTimeout(() => { if (st.active) api.foldTo(1); }, 700);
+      }
+      if (!v && st.anim) st.anim = null;
+    },
+  };
+  App._viewers.push(api);
+  return api;
+};
+
+// ============================================================
+// RENDER STATIS (jaring datar & potongan terlipat)
+// ============================================================
+function statSVG(shapeId, mode, opts = {}) {
+  const shape = D.shapes[shapeId];
+  const faces = shape.faces;
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  let parts = [];
+  if (mode === 'flat') {
+    let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+    faces.forEach(f => f.poly.forEach(p => {
+      minX = Math.min(minX, p[0]); maxX = Math.max(maxX, p[0]);
+      minY = Math.min(minY, p[1]); maxY = Math.max(maxY, p[1]);
+    }));
+    const pad = 1.2;
+    svg.setAttribute('viewBox', `${(minX - pad).toFixed(2)} ${(-maxY - pad).toFixed(2)} ${(maxX - minX + pad * 2).toFixed(2)} ${(maxY - minY + pad * 2).toFixed(2)}`);
+    const span = Math.max(maxX - minX, maxY - minY); // skala referensi (unit model)
+    faces.forEach((f, i) => {
+      const pts = f.poly.map(p => p[0].toFixed(2) + ',' + (-p[1]).toFixed(2)).join(' ');
+      parts.push(`<polygon points="${pts}" fill="${f.color}" stroke="rgba(30,27,75,.5)" stroke-width="${(span * 0.012).toFixed(3)}" stroke-linejoin="round"/>`);
+      if (f.label && opts.labels !== false) {
+        const mx = f.poly.reduce((s, p) => s + p[0], 0) / f.poly.length;
+        const my = f.poly.reduce((s, p) => s + p[1], 0) / f.poly.length;
+        const fs = f.label.length > 1 ? 0.55 : 0.95;
+        parts.push(`<text class="fv-txt" x="${mx.toFixed(2)}" y="${(-my + fs * 0.35).toFixed(2)}" font-size="${fs.toFixed(2)}" stroke-width="${(fs * 0.16).toFixed(3)}">${f.label}</text>`);
+      }
+      if (f.dims && opts.dims) {
+        f.dims.forEach(dm => {
+          const fs = 0.5;
+          parts.push(`<text class="fv-dimtxt" x="${dm.x.toFixed(2)}" y="${(-dm.y + fs * 0.35).toFixed(2)}" font-size="${fs.toFixed(2)}" stroke-width="${(fs * 0.14).toFixed(3)}">${dm.text}</text>`);
+        });
+      }
+    });
+  } else { // folded
+    const Ms = foldMats(faces, 1);
+    const worlds = faces.map((f, i) => f.poly.map(p => applyAff(Ms[i], [p[0], p[1], 0])));
+    const yaw = (opts.ry != null ? opts.ry : shape.view.ry) * DEG;
+    const pitch = (opts.rx != null ? opts.rx : shape.view.rx) * DEG;
+    const vp = worlds.map(vs => vs.map(p => viewRot(p, yaw, pitch)));
+    let ax0 = 1e9, ay0 = 1e9, ax1 = -1e9, ay1 = -1e9;
+    vp.flat().forEach(p => { ax0 = Math.min(ax0, p[0]); ax1 = Math.max(ax1, p[0]); ay0 = Math.min(ay0, p[1]); ay1 = Math.max(ay1, p[1]); });
+    const pad = 0.5;
+    const w = ax1 - ax0 + pad * 2, h = ay1 - ay0 + pad * 2;
+    svg.setAttribute('viewBox', `0 0 ${w.toFixed(2)} ${h.toFixed(2)}`);
+    const sc = 1;
+    const order = faces.map((_, i) => i).sort((a, b) => {
+      const za = vp[a].reduce((s, p) => s + p[2], 0) / vp[a].length;
+      const zb = vp[b].reduce((s, p) => s + p[2], 0) / vp[b].length;
+      return za - zb;
+    });
+    order.forEach(i => {
+      const f = faces[i];
+      const pts = vp[i].map(p => (p[0] - ax0 + pad).toFixed(2) + ',' + (ay1 - p[1] + pad).toFixed(2)).join(' ');
+      const nv = viewRot(faceNormal(worlds[i]), yaw, pitch);
+      const b = 0.52 + 0.48 * Math.max(0, nv[0]*LIGHT[0] + nv[1]*LIGHT[1] + nv[2]*LIGHT[2]);
+      const fill = shade(f.color, Math.round((b - 0.72) * 70));
+      parts.push(`<polygon points="${pts}" fill="${fill}" stroke="rgba(30,27,75,.5)" stroke-width="${(w * 0.008).toFixed(3)}" stroke-linejoin="round"/>`);
+      if (f.label && opts.labels !== false) {
+        const mx = vp[i].reduce((s, p) => s + p[0], 0) / vp[i].length;
+        const my = vp[i].reduce((s, p) => s + p[1], 0) / vp[i].length;
+        const fs = f.label.length > 1 ? w * 0.12 : w * 0.17;
+        parts.push(`<text class="fv-txt" x="${(mx - ax0 + pad).toFixed(2)}" y="${(ay1 - my + pad + fs * 0.35).toFixed(2)}" font-size="${fs.toFixed(2)}" stroke-width="${(fs * 0.16).toFixed(3)}">${f.label}</text>`);
+      }
+    });
+  }
+  svg.innerHTML = parts.join('');
+  return svg;
+}
+App.netSVGFlat = (id, opts) => statSVG(id, 'flat', opts);
+App.foldedSnapshot = (id, opts) => statSVG(id, 'folded', opts);
+
+// ============================================================
+// DECK
+// ============================================================
+const deck = App.deck = {
+  slides: [], cur: -1, built: [],
+  add(def) { this.slides.push(def); },
+  goTo(i, dir) {
+    i = clamp(i, 0, this.slides.length - 1);
+    if (i === this.cur) return;
+    this.cur = i;
+    const sl = this.slides[i];
+    const elSl = document.getElementById(sl.id);
+    if (!this.built[i]) { sl.build(document.getElementById(sl.id)); this.built[i] = true; }
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active', 'anim-r', 'anim-l'));
+    elSl.classList.add('active', dir === -1 ? 'anim-l' : 'anim-r');
+    App.$('#progressBar').style.width = ((i + 1) / this.slides.length * 100) + '%';
+    App.$('#slideCounter').textContent = (i + 1) + ' / ' + this.slides.length;
+    App.$('#prevBtn').disabled = i === 0;
+    App.$('#nextBtn').disabled = i === this.slides.length - 1;
+    App.sfx.click();
+    if (sl.onShow) sl.onShow();
+  },
+  next() { this.goTo(this.cur + 1, 1); },
+  prev() { this.goTo(this.cur - 1, -1); },
+};
+function slideShell(inner) { return `<div class="slide-inner">${inner}</div>`; }
+function decorBG() {
+  const d = App.$('#bgDecor');
+  for (let i = 0; i < 10; i++) {
+    const s = App.el('span');
+    const sz = 30 + Math.random() * 90;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random() * 100}%;top:${Math.random() * 100}%;animation-delay:${-Math.random() * 9}s;animation-duration:${7 + Math.random() * 7}s`;
+    d.appendChild(s);
+  }
+}
+const SHAPE_ORDER = ['prisma3', 'prisma5', 'limas3', 'limas4', 'tabung', 'kerucut'];
+
+// ============================================================
+// SLIDE 0 — COVER
+// ============================================================
+deck.add({
+  id: 'slide-cover',
+  build(el) {
+    const snaps = ['prisma3', 'limas4', 'tabung', 'kerucut', 'prisma5', 'limas3'];
+    el.innerHTML = slideShell(`
+      <div class="kicker">Matematika Ceria • Kelas 5-6 SD</div>
+      <h1 class="judul">Jaring-Jaring <span class="grad">Prisma</span> &amp; <span class="grad">Limas</span>,<br>Tabung &amp; Kerucut</h1>
+      <div class="cover-shapes">${snaps.map((id, i) =>
+        `<span class="cshape" style="animation-delay:${-i * 0.7}s">${App.foldedSnapshot(id, { labels: false }).outerHTML}</span>`).join('')}</div>
+      <p class="sub">Enam bangun ruang baru menanti! Lipat jaring-jaringnya pelan-pelan, putar model 3D-nya, lalu buktikan kamu bisa menebak bangunnya.</p>
+      <div class="cover-actions">
+        <button class="btn primary" id="startBtn">${App.icon('play')} Mulai Belajar</button>
+        <button class="btn" id="startQuizBtn">Langsung Berlatih</button>
+      </div>
+      <div class="cover-note">Gunakan tombol panah kiri / kanan pada keyboard untuk berpindah slide</div>
+    `);
+    App.$('#startBtn', el).onclick = () => deck.goTo(1, 1);
+    App.$('#startQuizBtn', el).onclick = () => { deck.goTo(10, 1); if (window.Quiz) Quiz.open(); };
+  },
+});
+
+// ============================================================
+// SLIDE 1 — PETA MATERI
+// ============================================================
+deck.add({
+  id: 'slide-menu',
+  build(el) {
+    const shapeItems = SHAPE_ORDER.map((id, k) => {
+      const m = D.meta[id];
+      return `<button class="menu-card" data-go="${2 + k}">
+        <span class="go">${App.icon('right')}</span>
+        <span class="m-icon" style="background:linear-gradient(135deg,${m.color}22,${m.color}44)">${App.foldedSnapshot(id, { labels: false }).outerHTML}</span>
+        <h4>${m.name}</h4><p>${m.desc}</p>
+      </button>`;
+    }).join('');
+    el.innerHTML = slideShell(`
+      <h2 class="slide-title">Peta Petualangan</h2>
+      <p class="sub">Pilih bangun ruang mana yang ingin kamu jelajahi — kamu bisa melompat ke mana saja!</p>
+      <div class="menu-grid">
+        ${shapeItems}
+        <button class="menu-card" data-go="8">
+          <span class="go">${App.icon('right')}</span>
+          <span class="m-icon" style="background:linear-gradient(135deg,#fde04755,#fb923c55);font-size:24px">📊</span>
+          <h4>Galeri &amp; Perbandingan</h4><p>Bandingkan sisi, rusuk, dan titik sudut keenam bangun</p>
+        </button>
+        <button class="menu-card" data-go="9">
+          <span class="go">${App.icon('right')}</span>
+          <span class="m-icon" style="background:linear-gradient(135deg,#86efac55,#22c55e55);font-size:24px">🔍</span>
+          <h4>Lab Tebak Bangun</h4><p>Lihat jaring-jaringnya, tebak bangun ruangnya!</p>
+        </button>
+        <button class="menu-card" data-go="10">
+          <span class="go">${App.icon('right')}</span>
+          <span class="m-icon" style="background:linear-gradient(135deg,#fca5a555,#ef444455);font-size:24px">🏆</span>
+          <h4>Berlatih &amp; Kuis</h4><p>15 soal berjenjang: latihan terpandu + kuis skor</p>
+        </button>
+      </div>
+    `);
+    el.querySelectorAll('.menu-card').forEach(c => c.onclick = () => deck.goTo(+c.dataset.go, 1));
+  },
+});
+
+// ============================================================
+// SLIDE 2..7 — ENAM BANGUN
+// ============================================================
+SHAPE_ORDER.forEach((id, k) => {
+  const m = D.meta[id];
+  deck.add({
+    id: 'slide-' + id,
+    build(el) {
+      el.innerHTML = slideShell(`
+        <h2 class="slide-title">${m.name}</h2>
+        <div class="two-col">
+          <div class="viewer-col">
+            <div class="panel3d" id="vp-${id}" style="min-height:330px">
+              <span class="corner-tag">${m.name}</span>
+              <span class="drag-hint">${App.icon('hand')} Tarik untuk memutar • klik bagian untuk info</span>
+            </div>
+            <div class="fctrl">
+              <button class="btn small green" data-act="fold">${App.icon('play')} Lipat</button>
+              <button class="btn small pink" data-act="unfold">Buka</button>
+              <input type="range" min="0" max="1000" value="0" aria-label="Geser untuk melipat">
+              <span class="rng-label">geser = lipat</span>
+              <button class="btn small" data-act="replay" title="Putar ulang">${App.icon('refresh')}</button>
+            </div>
+            <div class="fv-info" data-info>Klik bagian jaring-jaring untuk tahu fungsinya!</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+            <div class="card"><h3>🪪 Kartu Identitas</h3>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                ${m.props.map(([kk, v]) => `<span class="chip"><b>${v}</b>&nbsp;${kk}</span>`).join('')}
+              </div>
+              <p style="margin-top:8px">Putar modelnya dan hitung sendiri untuk memastikan!</p>
+            </div>
+            <div class="card"><h3>🧩 Jaring-jaringnya terdiri dari</h3>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                ${m.compParts.map(p => `<span class="chip"><span class="sw" style="background:${p.color}"></span>${p.n} × ${p.text}</span>`).join('')}
+              </div>
+            </div>
+            ${m.formula ? `<div class="card" style="background:#fefce8;border-color:#fde047"><h3>📌 ${m.formula.title}</h3><p>${m.formula.html}</p></div>` : ''}
+            <div class="card"><h3>✨ Tahukah kamu?</h3><p>${m.fact}</p></div>
+          </div>
+        </div>
+      `);
+      const infoEl = App.$('[data-info]', el);
+      const defInfo = infoEl.innerHTML;
+      const viewer = App.FoldViewer(App.$(`#vp-${id}`, el), id, {
+        slider: App.$('.fctrl input', el),
+        onSel(f) {
+          if (f) infoEl.innerHTML = `<b class="tag">${f.label ? f.label + ' — ' + f.name : f.name}</b>&nbsp;${f.info}`;
+          else infoEl.innerHTML = defInfo;
+        },
+      });
+      el.querySelector('[data-act=fold]').onclick = () => { viewer.foldTo(1); App.sfx.pop(); };
+      el.querySelector('[data-act=unfold]').onclick = () => { viewer.foldTo(0); App.sfx.pop(); };
+      el.querySelector('[data-act=replay]').onclick = () => { viewer.replay(); App.sfx.click(); };
+      App.$('.fctrl input', el).addEventListener('input', e => viewer.setT(+e.target.value / 1000));
+      this.onShow = () => {
+        App._viewers.forEach(v => v.setActive(false));
+        viewer.setActive(true);
+      };
+    },
+  });
+});
+
+// ============================================================
+// SLIDE 8 — GALERI & PERBANDINGAN
+// ============================================================
+deck.add({
+  id: 'slide-galeri',
+  build(el) {
+    el.innerHTML = slideShell(`
+      <h2 class="slide-title">Galeri &amp; Perbandingan</h2>
+      <p class="sub">Enam jaring-jaring, enam karakter. Klik kartunya, lalu bandingkan ciri-cirinya lewat tabel!</p>
+      <div class="shape-grid" id="galGrid"></div>
+      <div class="tbl-wrap"><table class="props" id="galTable"></table></div>
+    `);
+    const grid = App.$('#galGrid', el);
+    SHAPE_ORDER.forEach(id => {
+      const m = D.meta[id];
+      const b = App.el('button', 'shape-card');
+      b.dataset.id = id;
+      b.innerHTML = `<div class="sc-svg">${App.netSVGFlat(id, { dims: false, labels: true, maxW: 170 }).outerHTML}</div>
+        <h4>${m.name}</h4><p>${m.compParts.map(p => p.n + ' × ' + p.text.split(' — ')[0]).join(' + ')}</p>`;
+      b.onclick = () => {
+        App.sfx.pop();
+        grid.querySelectorAll('.shape-card').forEach(c => c.classList.toggle('sel', c === b));
+      };
+      grid.appendChild(b);
+    });
+    const comp = id => D.meta[id].compParts.map(p => `${p.n} × ${p.text}`).join(' + ');
+    App.$('#galTable', el).innerHTML = `
+      <tr><th>Bangun</th><th>Sisi</th><th>Rusuk</th><th>Titik Sudut</th><th>Jaring-jaring terdiri dari</th></tr>
+      ${SHAPE_ORDER.map(id => {
+        const m = D.meta[id];
+        return `<tr><td><span class="dotc" style="background:${m.color}"></span>${m.name}</td>
+          <td class="center">${m.props[0][1]}</td><td class="center">${m.props[1][1]}</td><td class="center">${m.props[2][1]}</td>
+          <td>${comp(id)}</td></tr>`;
+      }).join('')}`;
+  },
+});
+
+// ============================================================
+// SLIDE 9 — LAB TEBAK BANGUN
+// ============================================================
+deck.add({
+  id: 'slide-lab',
+  build(el) {
+    el.innerHTML = slideShell(`
+      <h2 class="slide-title">Lab: Tebak Bangunnya!</h2>
+      <p class="sub">Perhatikan jaring-jaring yang muncul, hitung bagiannya, lalu tebak bangun ruang apa yang terbentuk!</p>
+      <div class="two-col" style="grid-template-columns:1.12fr 1fr">
+        <div class="card" style="display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center">
+          <div class="lab-svg-wrap" id="labSvg"></div>
+          <div id="labMsg">Berapa banyak segitiga, persegi panjang, lingkaran, atau juring yang kamu lihat?</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <span class="chip">Ronde <b id="labRound">1</b>&nbsp;/ 6</span>
+            <span class="chip">Skor <b id="labScore">0</b></span>
+          </div>
+          <div class="opts" id="labOpts"></div>
+          <div class="card"><h3>🔎 Tips detektif jaring</h3>
+            <p>Hitung dulu jumlah bagiannya: ada berapa <b>segitiga</b>? <b>persegi panjang</b>? <b>lingkaran</b>? <b>juring</b>? Lalu ingat kartu identitas di slide tiap bangun — polanya selalu sama!</p>
+          </div>
+        </div>
+      </div>
+    `);
+    const svgWrap = App.$('#labSvg', el);
+    const msg = App.$('#labMsg', el);
+    const optsEl = App.$('#labOpts', el);
+    const roundEl = App.$('#labRound', el);
+    const scoreEl = App.$('#labScore', el);
+    let rounds = [], idx = 0, score = 0, answered = false;
+
+    function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+    function start() {
+      rounds = shuffle(D.order);
+      idx = 0; score = 0; render();
+    }
+    function render() {
+      answered = false;
+      roundEl.textContent = idx + 1;
+      scoreEl.textContent = score;
+      msg.className = ''; msg.id = 'labMsg';
+      msg.textContent = 'Berapa banyak segitiga, persegi panjang, lingkaran, atau juring yang kamu lihat?';
+      svgWrap.innerHTML = '';
+      svgWrap.appendChild(App.netSVGFlat(rounds[idx], { dims: false, labels: true }));
+      const correct = D.meta[rounds[idx]].name;
+      const names = shuffle(SHAPE_ORDER.map(s2 => D.meta[s2].name).filter(n => n !== correct)).slice(0, 3).concat(correct);
+      const orderOpts = shuffle(names);
+      optsEl.innerHTML = orderOpts.map(n => {
+        const col = D.meta[SHAPE_ORDER.find(s2 => D.meta[s2].name === n)].color;
+        return `<button class="opt" data-n="${n}"><span class="sw" style="background:${col}"></span>${n}</button>`;
+      }).join('');
+      optsEl.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+        if (answered) return;
+        answered = true;
+        const ok = b.dataset.n === correct;
+        if (ok) score++;
+        scoreEl.textContent = score;
+        optsEl.querySelectorAll('.opt').forEach(o => {
+          o.disabled = true;
+          if (o.dataset.n === correct) o.classList.add('correct');
+          else if (o === b) o.classList.add('wrong');
+          else o.classList.add('dim');
+        });
+        const m = D.meta[rounds[idx]];
+        msg.className = ok ? 'good' : 'bad';
+        msg.innerHTML = ok
+          ? `${App.icon('check')} Benar! Ini jaring-jaring <b>${m.name}</b> — ${m.compParts.map(p => p.n + ' × ' + p.text.split(' — ')[0]).join(' + ')}.`
+          : `Belum tepat. Ini jaring-jaring <b>${m.name}</b> — ${m.compParts.map(p => p.n + ' × ' + p.text.split(' — ')[0]).join(' + ')}.`;
+        if (ok) { App.sfx.ok(); const r = b.getBoundingClientRect(); App.burst(r.left + r.width / 2, r.top + r.height / 2); }
+        else App.sfx.no();
+        setTimeout(() => {
+          idx++;
+          if (idx < rounds.length) render();
+          else finish();
+        }, 2100);
+      });
+    }
+    function finish() {
+      svgWrap.innerHTML = '';
+      const emo = score === 6 ? '🏆' : score >= 4 ? '🎉' : '💪';
+      optsEl.innerHTML = `<div class="card" style="grid-column:1/-1;text-align:center">
+        <h3>${emo} Skor akhir: ${score} / 6</h3>
+        <p>${score === 6 ? 'Sempurna! Kamu detektif jaring-jaring sejati!' : score >= 4 ? 'Hebat! Sedikit lagi sempurna.' : 'Terus berlatih — buka lagi slide materinya ya!'}</p>
+        <button class="btn green" id="labAgain">${App.icon('refresh')} Main Lagi</button>
+      </div>`;
+      msg.className = 'good';
+      msg.textContent = 'Game selesai — coba lagi untuk memperbaiki skormu!';
+      App.$('#labAgain', optsEl).onclick = () => { App.sfx.click(); start(); };
+    }
+    start();
+  },
+});
+
+// ============================================================
+// SLIDE 10 — BERLATIH (kontainer kuis)
+// ============================================================
+deck.add({
+  id: 'slide-quiz',
+  build(el) {
+    el.innerHTML = slideShell(`
+      <h2 class="slide-title">Arena Berlatih</h2>
+      <div id="quizArea"></div>
+    `);
+    if (window.Quiz) Quiz.mount(App.$('#quizArea', el));
+  },
+});
+
+// ============================================================
+// SLIDE 11 — PENUTUP
+// ============================================================
+deck.add({
+  id: 'slide-end',
+  build(el) {
+    el.innerHTML = slideShell(`
+      <div class="kicker">Selamat!</div>
+      <h1 class="judul">Kamu <span class="grad">Hebat</span>!</h1>
+      <p class="sub">Kini kamu sudah mengenal jaring-jaring enam bangun ruang. Simpan tiga kunci pengetahuan ini:</p>
+      <div class="recap-grid">
+        <div class="card"><h3>📐 Prisma</h3><p>Alas &amp; tutup <b>sebangun</b> (segitiga, segi lima, dst.), dindingnya <b>persegi panjang</b>. Sisi = n + 2, rusuk = 3n, titik sudut = 2n.</p></div>
+        <div class="card"><h3>🔺 Limas</h3><p>Alas segi-n + <b>n segitiga</b> yang puncaknya bertemu di satu titik. Limas segitiga = tetrahedron: 4 sisi segitiga semua!</p></div>
+        <div class="card"><h3>🥫 Tabung &amp; Kerucut</h3><p>Punya <b>sisi lengkung</b>! Lebar persegi panjang tabung = <b>keliling alas</b>; selimut kerucut = <b>juring</b> bersudut (r/s) × 360°.</p></div>
+      </div>
+      <div class="cover-actions" style="justify-content:center">
+        <button class="btn primary" id="againBtn">${App.icon('refresh')} Pelajari Lagi</button>
+        <button class="btn green" id="reQuiz">Uji Lagi Kemampuanmu</button>
+      </div>
+    `);
+    App.$('#againBtn', el).onclick = () => deck.goTo(1, -1);
+    App.$('#reQuiz', el).onclick = () => { deck.goTo(10, -1); if (window.Quiz) Quiz.open(); };
+  },
+});
+
+// ---------- init ----------
+function init() {
+  decorBG();
+  App.$('#prevBtn').innerHTML = App.icon('left');
+  App.$('#nextBtn').innerHTML = App.icon('right');
+  App.$('#homeBtn').innerHTML = App.icon('home');
+  App.$('#soundBtn').innerHTML = App.icon('sound');
+  App.$('#fsBtn').innerHTML = App.icon('full');
+  const d = App.$('#deck');
+  deck.slides.forEach(s => {
+    const el = App.el('section', 'slide'); el.id = s.id;
+    d.appendChild(el);
+  });
+  App.$('#prevBtn').onclick = () => deck.prev();
+  App.$('#nextBtn').onclick = () => deck.next();
+  App.$('#homeBtn').onclick = () => deck.goTo(1, -1);
+  App.$('#soundBtn').onclick = function () {
+    App.sfx.muted = !App.sfx.muted;
+    this.innerHTML = App.sfx.muted ? App.icon('mute') : App.icon('sound');
+    this.classList.toggle('off', App.sfx.muted);
+  };
+  App.$('#fsBtn').onclick = () => {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+  };
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') deck.next();
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') deck.prev();
+    else if (e.key === 'Home') deck.goTo(0, -1);
+    else if (e.key === 'End') deck.goTo(deck.slides.length - 1, 1);
+  });
+  deck.goTo(0, 1);
+}
+document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init) : init();
+})();
+
+</script>
+<script>
+// ============================================================
+// quiz.js — Arena berlatih: mode latihan terpandu & kuis ber-skor
+// 15 soal: 5 Mudah, 5 Sedang, 5 Tantangan
+// ============================================================
+(function () {
+'use strict';
+const D = window.PRESENTATION_DATA;
+const App = window.App;
+const Quiz = window.Quiz = {};
+let area = null;
+const S = { mode: null, idx: 0, answers: [], done: false };
+
+Quiz.mount = function (el) { area = el; home(); };
+Quiz.open = function () { if (area) home(); };
+
+function home() {
+  S.mode = null; S.idx = 0; S.answers = []; S.done = false;
+  area.innerHTML = `
+    <p class="sub">Ayo uji kemampuanmu dengan <b>15 soal berjenjang</b>: 5 soal mudah, 5 sedang, dan 5 tantangan. Pilih mode yang kamu mau:</p>
+    <div class="mode-cards">
+      <button class="mode-card" id="modeLatihan">
+        <span class="m-emoji" style="background:linear-gradient(135deg,#86efac,#22c55e)">${App.icon('eye')}</span>
+        <h4>Mode Latihan</h4>
+        <p>Setiap jawaban langsung diberi tahu <b>benar atau salah</b> lengkap dengan <b>pembahasannya</b>. Cocok untuk belajar pelan-pelan.</p>
+        <span class="btn small green">${App.icon('play')} Mulai Latihan</span>
+      </button>
+      <button class="mode-card" id="modeKuis">
+        <span class="m-emoji" style="background:linear-gradient(135deg,#fde047,#f59e0b)">${App.icon('star')}</span>
+        <h4>Mode Kuis</h4>
+        <p>Jawab 15 soal tanpa pembahasan. Di akhir, lihat <b>skor dan bintangmu</b>! Berani mencoba?</p>
+        <span class="btn small primary">${App.icon('play')} Mulai Kuis</span>
+      </button>
+    </div>
+    <div class="card" style="align-self:center;max-width:760px;text-align:center;background:#eef2ff;border-color:#c7d2fe">
+      <p>Jenis soal: <b>komposisi jaring-jaring</b> tiap bangun, <b>sisi–rusuk–titik sudut</b>, lebar persegi panjang tabung = keliling alas, sudut juring kerucut, serta <b>mengenali jaring-jaring dari gambar</b>.</p>
+    </div>
+  `;
+  App.$('#modeLatihan', area).onclick = () => start('latihan');
+  App.$('#modeKuis', area).onclick = () => start('kuis');
+}
+
+function start(mode) {
+  S.mode = mode; S.idx = 0; S.answers = []; S.done = false;
+  App.sfx.pop();
+  render();
+}
+
+function stemSVG(q) {
+  if (!q.svg) return '';
+  const many = q.svg.length > 1;
+  return `<div class="qsv">${q.svg.map((id, i) => `
+    <figure style="margin:0;display:flex;flex-direction:column;align-items:center;gap:4px;width:100%">
+      ${App.netSVGFlat(id, { dims: true, labels: true, maxW: many ? 230 : 330 }).outerHTML}
+      ${q.caps && q.caps[i] ? `<figcaption>${q.caps[i]}</figcaption>` : ''}
+    </figure>`).join(many ? '' : '')}</div>`;
+}
+
+function render() {
+  const q = D.questions[S.idx];
+  const dots = D.questions.map((_, i) => {
+    let cls = '';
+    if (S.answers[i] != null) cls = S.answers[i] ? 'done' : 'fail';
+    if (i === S.idx) cls = 'now';
+    return `<i class="${cls}"></i>`;
+  }).join('');
+  const optsHtml = q.options.map((o, i) =>
+    `<button class="opt" data-i="${i}"><span class="sw" style="background:${o.sw || '#e2e8f0'}"></span>${o.label}</button>`).join('');
+
+  area.innerHTML = `
+    <div class="q-top">
+      <span class="level-chip level-${q.level}">${q.level}</span>
+      <span class="chip">Soal <b>&nbsp;${S.idx + 1} / ${D.questions.length}</b></span>
+      ${S.mode === 'kuis' ? `<span class="chip">Mode Kuis</span>` : `<span class="chip">Mode Latihan</span>`}
+      <button class="btn small" id="qExit">Keluar</button>
+    </div>
+    <div class="q-prog">${dots}</div>
+    <div class="q-card${q.svg ? '' : ' no-svg'}">
+      ${q.svg ? `<div class="q-svg-wrap" id="qSvg">${stemSVG(q)}</div>` : ''}
+      <div class="q-body">
+        <div class="q-prompt">${q.prompt}</div>
+        <div class="opts" id="qOpts">${optsHtml}</div>
+        <div class="explain" id="qExplain"></div>
+        <div class="q-actions" id="qActions"></div>
+      </div>
+    </div>
+  `;
+  App.$('#qExit', area).onclick = () => { App.sfx.click(); home(); };
+
+  let answered = false;
+  area.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    if (answered) return;
+    answered = true;
+    const o = q.options[+b.dataset.i];
+    S.answers[S.idx] = o.correct;
+    if (S.mode === 'latihan') answerLatihan(q, o, b);
+    else { if (o.correct) { App.sfx.ok(); } else { App.sfx.no(); } setTimeout(next, 750); }
+  });
+}
+
+function answerLatihan(q, chosen, btn) {
+  const opts = area.querySelectorAll('.opt');
+  opts.forEach((b, i) => {
+    b.disabled = true;
+    if (q.options[i].correct) b.classList.add('correct');
+    else if (b === btn) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  const ex = App.$('#qExplain', area);
+  ex.className = 'explain show ' + (chosen.correct ? 'good' : 'bad');
+  ex.innerHTML = `
+    <div class="ex-title">${chosen.correct ? App.icon('check') + ' Benar sekali!' : 'Belum tepat. Tidak apa-apa, yuk belajar!'}</div>
+    <div>${q.explanation}</div>`;
+  if (chosen.correct) { App.sfx.ok(); } else { App.sfx.no(); }
+  const act = App.$('#qActions', area);
+  const last = S.idx === D.questions.length - 1;
+  act.innerHTML = `
+    <button class="btn small" id="qRetry">Coba Soal Ini Lagi</button>
+    <button class="btn small ${last ? 'primary' : 'green'}" id="qNext">${last ? 'Lihat Hasil' : 'Soal Berikutnya'} ${App.icon('right')}</button>`;
+  App.$('#qNext', act).onclick = () => { App.sfx.click(); last ? result() : next(); };
+  App.$('#qRetry', act).onclick = () => { App.sfx.click(); S.answers[S.idx] = null; render(); };
+  if (chosen.correct) {
+    const r = btn.getBoundingClientRect();
+    App.burst(r.left + r.width / 2, r.top + r.height / 2);
+  }
+}
+
+function next() {
+  if (S.idx < D.questions.length - 1) { S.idx++; render(); }
+  else result();
+}
+
+function result() {
+  S.done = true;
+  const n = D.questions.length;
+  const score = S.answers.filter(Boolean).length;
+  const pct = Math.round(score / n * 100);
+  const stars = pct >= 90 ? 3 : pct >= 65 ? 2 : pct >= 40 ? 1 : 0;
+  const pesan = stars === 3 ? 'LUAR BIASA! Kamu master jaring-jaring!'
+    : stars === 2 ? 'Hebat! Sedikit lagi menuju sempurna!'
+    : stars === 1 ? 'Bagus, terus berlatih ya!' : 'Jangan menyerah — pelajari lagi lalu coba lagi!';
+  const starSvg = [0, 1, 2].map(i => (i < stars ? App.icon('star') : App.icon('starDim'))).join('');
+  const review = D.questions.map((q, i) => {
+    const ok = S.answers[i];
+    return `<span class="rv ${ok ? 'ok' : 'no'}" title="Soal ${i + 1}: ${q.level} — ${ok ? 'benar' : 'salah'}">${ok ? App.icon('check') : (i + 1)}</span>`;
+  }).join('');
+  area.innerHTML = `
+    <div class="result-wrap">
+      <div class="kicker">${S.mode === 'kuis' ? 'Hasil Kuis' : 'Hasil Latihan'}</div>
+      <div class="score-big">${score} / ${n}</div>
+      <div class="stars">${starSvg}</div>
+      <p class="sub">${pesan}</p>
+      <div class="review-grid">${review}</div>
+      ${score < n ? `<div class="card" style="max-width:680px;text-align:left">
+        <h3>Periksa soal yang keliru</h3>
+        ${D.questions.map((q, i) => S.answers[i] ? '' : `
+          <p style="margin-top:8px"><b>Soal ${i + 1}</b> (${q.level}): Jawaban benar: <b>${q.options.find(o => o.correct).label}</b>. ${q.explanation}</p>`).join('')}
+      </div>` : ''}
+      <div class="cover-actions">
+        <button class="btn primary" id="rAgain">${App.icon('refresh')} Ulangi</button>
+        <button class="btn green" id="rSwitch">${S.mode === 'kuis' ? 'Coba Mode Latihan' : 'Coba Mode Kuis'}</button>
+        <button class="btn" id="rHome">Ke Peta Materi</button>
+      </div>
+    </div>`;
+  if (stars >= 2) {
+    const r = App.$('.score-big', area).getBoundingClientRect();
+    let k = 0;
+    const iv = setInterval(() => { App.burst(r.left + r.width / 2 + (Math.random() - .5) * 300, r.top + 40); if (++k >= 3) clearInterval(iv); }, 350);
+  }
+  if (score === n) App.sfx.ok(); else App.sfx.pop();
+  App.$('#rAgain', area).onclick = () => start(S.mode);
+  App.$('#rSwitch', area).onclick = () => start(S.mode === 'kuis' ? 'latihan' : 'kuis');
+  App.$('#rHome', area).onclick = () => { App.deck.goTo(1, -1); };
+}
+})();
+
+</script>
+</body>
+</html>
