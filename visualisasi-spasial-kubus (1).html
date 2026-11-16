@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualisasi Spasial: Kubus — Tampak Depan, Belakang, Kanan &amp; Kiri</title>
+<style>
+:root{
+  --bg1:#0b1220; --bg2:#101b33; --panel:#152238; --panel2:#1b2b47;
+  --ink:#eaf1ff; --ink-dim:#9fb3d9; --line:#2a3d63;
+  --acc:#38bdf8; --acc2:#f472b6; --ok:#34d399; --bad:#f87171; --warn:#fbbf24;
+  --shadow:0 10px 30px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"Segoe UI","Trebuchet MS",system-ui,-apple-system,sans-serif;
+  background:radial-gradient(1200px 700px at 70% -10%,#1e3a8a33,transparent),
+             radial-gradient(900px 600px at 10% 110%,#7c3aed22,transparent),
+             linear-gradient(160deg,var(--bg1),var(--bg2));
+  color:var(--ink); overflow:hidden;
+}
+#wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{width:1280px;height:720px;position:relative;flex:none;transform-origin:center center}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;padding:26px 46px 74px}
+.slide.active{display:flex;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- header / footer nav ---------- */
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex:none}
+.chip{font-size:13px;font-weight:700;letter-spacing:.5px;color:#031019;background:var(--acc);
+  padding:4px 12px;border-radius:999px;white-space:nowrap}
+.chip.alt{background:var(--acc2);color:#3d0b24}
+h1.slidetitle{font-size:30px;font-weight:800;line-height:1.15}
+h1.slidetitle small{display:block;font-size:15px;font-weight:500;color:var(--ink-dim);margin-top:4px}
+.topbar .spacer{flex:1}
+.progress{position:absolute;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--acc),var(--acc2));
+  transition:width .3s;z-index:50}
+#navbar{position:absolute;left:0;right:0;bottom:0;height:58px;display:flex;align-items:center;gap:12px;
+  padding:0 46px;background:rgba(8,14,28,.75);border-top:1px solid var(--line);backdrop-filter:blur(4px);z-index:40}
+#navbar .hint{font-size:12.5px;color:var(--ink-dim);flex:1;text-align:center}
+.navbtn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--panel);
+  color:var(--ink);font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:.15s;flex:none}
+.navbtn:hover:not(:disabled){background:var(--acc);color:#04121c;border-color:var(--acc)}
+.navbtn:disabled{opacity:.3;cursor:default}
+#dots{display:flex;gap:9px}
+#dots .dot{width:11px;height:11px;border-radius:50%;background:#2a3d63;cursor:pointer;transition:.15s;position:relative}
+#dots .dot.on{background:var(--acc);transform:scale(1.25)}
+#dots .dot:hover::after{content:attr(data-t);position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+  background:#0b1220;border:1px solid var(--line);padding:3px 9px;border-radius:8px;font-size:11.5px;white-space:nowrap;color:var(--ink)}
+#slidecount{font-size:13px;color:var(--ink-dim);min-width:44px;text-align:right}
+
+/* ---------- generic UI ---------- */
+.btn{border:none;border-radius:12px;padding:10px 20px;font-size:15px;font-weight:700;cursor:pointer;
+  background:var(--panel2);color:var(--ink);border:1px solid var(--line);transition:.15s;font-family:inherit}
+.btn:hover{border-color:var(--acc);color:#fff}
+.btn.primary{background:linear-gradient(135deg,var(--acc),#0ea5e9);color:#031019;border:none}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.pink{background:linear-gradient(135deg,var(--acc2),#db2777);color:#fff;border:none}
+.btn.small{padding:6px 12px;font-size:13px;border-radius:9px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:3px 11px;border-radius:999px}
+.badge.blue{background:#0ea5e926;color:#7dd3fc;border:1px solid #0ea5e955}
+.badge.green{background:#22c55e26;color:#86efac;border:1px solid #22c55e55}
+.badge.pink{background:#f472b626;color:#f9a8d4;border:1px solid #f472b655}
+.badge.yellow{background:#eab30826;color:#fde047;border:1px solid #eab30855}
+canvas{display:block}
+
+/* ---------- cover ---------- */
+#cover{align-items:center;justify-content:center;text-align:center;background:
+  radial-gradient(900px 500px at 50% 0%,#1d4ed83a,transparent),linear-gradient(180deg,#0b1220,#111c36)}
+#cover .kicker{font-size:15px;letter-spacing:4px;color:var(--acc);font-weight:700;margin-bottom:14px}
+#cover h1{font-size:52px;font-weight:900;line-height:1.1;margin-bottom:10px;
+  background:linear-gradient(90deg,#7dd3fc,#f9a8d4,#fde047);-webkit-background-clip:text;background-clip:text;color:transparent}
+#cover .sub{font-size:19px;color:var(--ink-dim);max-width:760px;line-height:1.55;margin-bottom:26px}
+#cover .sub b{color:var(--ink)}
+#coverCubes{margin:6px auto 20px}
+#cover .meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
+.floaty{animation:floaty 5s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+
+/* ---------- tujuan ---------- */
+.goal-list{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;align-content:center}
+.goal{display:flex;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);
+  border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+.goal .ico{font-size:30px;line-height:1;flex:none}
+.goal h3{font-size:17px;margin-bottom:5px}
+.goal p{font-size:14px;color:var(--ink-dim);line-height:1.55}
+
+/* ---------- konsep ---------- */
+.concept-grid{display:grid;grid-template-columns:640px 1fr;gap:20px;flex:1;min-height:0}
+.dirbtns{display:flex;gap:8px;margin:10px 0 8px}
+.dirbtn{flex:1;padding:9px 6px;border-radius:11px;border:1.5px solid var(--line);background:var(--panel2);
+  color:var(--ink);font-weight:700;font-size:14px;cursor:pointer;transition:.15s;font-family:inherit}
+.dirbtn:hover{border-color:var(--acc)}
+.dirbtn.on{background:linear-gradient(135deg,var(--acc),#0284c7);color:#04121c;border-color:transparent}
+.concept-side{display:flex;flex-direction:column;gap:12px;min-height:0}
+#conceptViewWrap{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center}
+#conceptViewWrap h4{font-size:16px;margin-bottom:2px}
+#conceptInfo{font-size:14px;color:var(--ink-dim);line-height:1.6;min-height:66px}
+#conceptInfo b{color:var(--ink)}
+.viewbig{margin:8px auto 0}
+.callout{background:#0ea5e914;border:1px dashed #0ea5e988;border-radius:12px;padding:10px 14px;font-size:13.5px;line-height:1.55;color:#bae6fd}
+.callout b{color:#fff}
+
+/* ---------- laboratorium ---------- */
+.lab-grid{display:grid;grid-template-columns:600px 1fr;gap:18px;flex:1;min-height:0}
+.lab-left{display:flex;flex-direction:column;gap:10px;min-height:0}
+#labCanvasWrap{position:relative;flex:1;min-height:0;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+#labCanvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair}
+.lab-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toolbtn{padding:7px 13px;border-radius:10px;border:1.5px solid var(--line);background:var(--panel2);color:var(--ink);
+  font-size:13.5px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit}
+.toolbtn.on{background:var(--acc);color:#04121c;border-color:transparent}
+.swatches{display:flex;gap:6px;align-items:center;margin-left:2px}
+.sw{width:26px;height:26px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:.12s;position:relative}
+.sw.on{border-color:#fff;transform:scale(1.15);box-shadow:0 0 0 2px var(--acc)}
+.sw.eraser{background:repeating-linear-gradient(45deg,#334155 0 4px,#1e293b 4px 8px)}
+.lab-right{display:flex;flex-direction:column;gap:10px;min-height:0}
+.viewpanels{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;min-height:0}
+.vpanel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 10px;display:flex;
+  flex-direction:column;gap:5px;transition:.2s}
+.vpanel.hot{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc),0 6px 18px #38bdf833}
+.vpanel h4{font-size:13.5px;display:flex;align-items:center;gap:6px;justify-content:space-between}
+.vpanel h4 .cnt{font-size:12px;background:#0ea5e926;color:#7dd3fc;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.vpanel canvas{margin:0 auto}
+.vpanel .hid{font-size:11.5px;color:var(--ink-dim);text-align:center;min-height:15px}
+.vpanel .hid b{color:var(--warn)}
+.lab-stats{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:7px 13px;font-size:13.5px}
+.stat b{font-size:17px;color:var(--acc)}
+select.sel{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:10px;
+  padding:7px 10px;font-size:13.5px;font-family:inherit;cursor:pointer}
+label.tgl{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink-dim);cursor:pointer;user-select:none}
+label.tgl input{accent-color:var(--acc);width:15px;height:15px;cursor:pointer}
+
+/* ---------- poin kunci ---------- */
+.keygrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1;align-content:center}
+.keycard{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:14px;
+  padding:14px 16px;display:flex;gap:13px;box-shadow:var(--shadow)}
+.keycard:nth-child(2){border-left-color:var(--acc2)}
+.keycard:nth-child(3){border-left-color:var(--ok)}
+.keycard:nth-child(4){border-left-color:var(--warn)}
+.keycard:nth-child(5){border-left-color:#a78bfa}
+.keycard:nth-child(6){border-left-color:#fb923c}
+.keycard .n{font-size:22px;font-weight:900;color:var(--acc);flex:none;width:30px}
+.keycard h3{font-size:15.5px;margin-bottom:4px}
+.keycard p{font-size:13px;color:var(--ink-dim);line-height:1.55}
+.keycard p b{color:var(--ink)}
+.formula{display:inline-block;background:#0b1220;border:1px solid var(--line);border-radius:8px;
+  padding:2px 9px;font-weight:700;color:var(--warn);font-size:12.5px;margin-top:5px}
+
+/* ---------- panduan ---------- */
+.guide-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;flex:1;min-height:0}
+.steps{display:flex;flex-direction:column;gap:11px}
+.step{display:flex;gap:13px;align-items:flex-start}
+.step .num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc),#0369a1);
+  color:#04121c;font-weight:900;display:flex;align-items:center;justify-content:center;flex:none;font-size:15px}
+.step p{font-size:14.5px;line-height:1.6;color:var(--ink-dim);padding-top:4px}
+.step p b{color:var(--ink)}
+.quizdemo{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+.quizdemo h3{font-size:16px;margin-bottom:10px}
+.optdemo{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.optdemo .opt{border:1.5px solid var(--line);border-radius:11px;padding:9px 13px;font-size:14px;background:var(--panel2);cursor:default}
+.optdemo .opt.sel{border-color:var(--acc);background:#0ea5e922}
+.optdemo .opt.right{border-color:var(--ok);background:#22c55e22}
+.optdemo .opt.wrong{border-color:var(--bad);background:#f8717122}
+
+/* ---------- latihan ---------- */
+.quiz-grid{display:grid;grid-template-columns:224px 1fr;gap:16px;flex:1;min-height:0}
+.qside{display:flex;flex-direction:column;gap:9px;min-height:0}
+.qside h3{font-size:14.5px;color:var(--ink-dim);font-weight:600}
+#qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.qcell{aspect-ratio:1;border-radius:9px;border:1.5px solid var(--line);background:var(--panel2);color:var(--ink);
+  font-weight:700;font-size:13.5px;cursor:pointer;transition:.12s;font-family:inherit;display:flex;align-items:center;justify-content:center}
+.qcell:hover{border-color:var(--acc)}
+.qcell.cur{border-color:var(--acc);box-shadow:0 0 0 2px #38bdf855}
+.qcell.ok{background:#16a34a44;border-color:var(--ok);color:#bbf7d0}
+.qcell.bad{background:#dc262644;border-color:var(--bad);color:#fecaca}
+#qscoreline{font-size:13px;color:var(--ink-dim);text-align:center;background:var(--panel);border:1px solid var(--line);
+  border-radius:11px;padding:8px}
+#qscoreline b{color:var(--ok);font-size:15px}
+.qmain{display:flex;flex-direction:column;gap:10px;min-height:0;overflow:auto;padding-right:4px}
+.qmain::-webkit-scrollbar{width:8px}
+.qmain::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+.qtop{display:flex;align-items:center;gap:10px}
+.qbody{display:grid;grid-template-columns:270px 1fr;gap:14px;align-items:start}
+.qfig{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px;text-align:center}
+.qfig canvas{margin:0 auto}
+.qfig .cap{font-size:11.5px;color:var(--ink-dim);margin-top:2px}
+.qtext{font-size:16.5px;line-height:1.6;font-weight:600}
+.qopts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.opt{display:flex;align-items:center;gap:11px;border:1.5px solid var(--line);border-radius:12px;padding:9px 14px;
+  font-size:15px;background:var(--panel2);cursor:pointer;transition:.13s;text-align:left;color:var(--ink);font-family:inherit;width:100%}
+.opt:hover:not(:disabled){border-color:var(--acc)}
+.opt .letter{width:26px;height:26px;border-radius:8px;background:#2a3d63;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13.5px;flex:none}
+.opt.sel{border-color:var(--acc);background:#0ea5e922}
+.opt.sel .letter{background:var(--acc);color:#04121c}
+.opt.right{border-color:var(--ok);background:#22c55e22}
+.opt.right .letter{background:var(--ok);color:#052e16}
+.opt.wrong{border-color:var(--bad);background:#f8717122}
+.opt.wrong .letter{background:var(--bad);color:#450a0a}
+.opt:disabled{cursor:default;opacity:.92}
+.qactions{display:flex;gap:10px;align-items:center;margin-top:2px}
+.verdict{font-size:14.5px;font-weight:800;display:none;align-items:center;gap:8px}
+.verdict.ok{display:flex;color:var(--ok)}
+.verdict.bad{display:flex;color:var(--bad)}
+.explain{display:none;background:#132036;border:1px solid #31476f;border-left:4px solid var(--warn);
+  border-radius:13px;padding:13px 16px}
+.explain.show{display:block;animation:fadeIn .3s ease}
+.explain h4{font-size:14.5px;color:var(--warn);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.explain p{font-size:13.8px;line-height:1.65;color:var(--ink-dim)}
+.explain p b{color:var(--ink)}
+.explain .expviews{display:flex;gap:14px;flex-wrap:wrap;margin:9px 0 4px}
+.expview{text-align:center;background:#0b1220;border:1px solid var(--line);border-radius:11px;padding:8px 10px}
+.expview .t{font-size:11.5px;font-weight:700;color:#7dd3fc;margin-top:3px}
+.explain .formulaline{margin-top:7px;font-size:13.5px;color:var(--ink)}
+.explain .formulaline .formula{margin:0 3px}
+
+/* ---------- penutup ---------- */
+#end{align-items:center;justify-content:center;text-align:center}
+.scorecircle{width:210px;height:210px;border-radius:50%;margin:6px auto 14px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;background:
+  radial-gradient(closest-side,#101b33 78%,transparent 79% 100%,#1b2b47 100%),
+  conic-gradient(var(--ok) calc(var(--pct)*1%),#2a3d63 0);
+  border:1px solid var(--line);box-shadow:var(--shadow)}
+.scorecircle .big{font-size:46px;font-weight:900;color:var(--ok);line-height:1}
+.scorecircle .sm{font-size:13px;color:var(--ink-dim);margin-top:5px}
+#endPredikat{font-size:22px;font-weight:800;margin-bottom:6px}
+#endMsg{font-size:14.5px;color:var(--ink-dim);max-width:700px;line-height:1.6;margin-bottom:14px}
+#recap{display:grid;grid-template-columns:repeat(20,1fr);gap:6px;width:820px;margin:0 auto 18px}
+.recapchip{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:12.5px;border:1.5px solid var(--line);background:var(--panel2);color:var(--ink-dim)}
+.recapchip.ok{background:#16a34a55;border-color:var(--ok);color:#bbf7d0}
+.recapchip.bad{background:#dc262655;border-color:var(--bad);color:#fecaca}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="stage">
+<div class="progress" id="progress" style="width:0%"></div>
+<div id="navbar">
+  <button class="navbtn" id="btnPrev" title="Slide sebelumnya">&#8249;</button>
+  <div id="dots"></div>
+  <div class="hint">Navigasi: tombol &#8592; &#8594; papan ketik atau titik di bawah ini &bull; Slide 4 = laboratorium: rakit kubusmu sendiri!</div>
+  <span id="slidecount">1 / 8</span>
+  <button class="navbtn" id="btnNext" title="Slide berikutnya">&#8250;</button>
+</div>
+<!-- ============ SLIDE 1: COVER ============ -->
+<section class="slide active" id="cover">
+  <div class="kicker">MATEMATIKA &bull; BANGUN RUANG &bull; VISUALISASI SPASIAL</div>
+  <h1>Visualisasi Spasial: Kubus</h1>
+  <p class="sub">Membaca susunan kubus satuan dari empat arah: <b>tampak depan</b>, <b>tampak belakang</b>,
+  <b>tampak samping kanan</b>, dan <b>tampak samping kiri</b> — lengkap dengan <b>laboratorium kubus interaktif</b>
+  dan <b>20 soal latihan berpembahasan</b>.</p>
+  <canvas id="coverCubes" class="floaty" width="640" height="230"></canvas>
+  <div class="meta">
+    <span class="badge blue">🧊 Laboratorium 3D</span>
+    <span class="badge pink">🎨 Materi berwarna</span>
+    <span class="badge green">✏️ 20 Soal + Pembahasan</span>
+    <span class="badge yellow">🎯 Skor otomatis</span>
+  </div>
+  <button class="btn primary" style="font-size:17px;padding:13px 34px" onclick="go(1)">Mulai Belajar &nbsp;➜</button>
+</section>
+
+<!-- ============ SLIDE 2: TUJUAN ============ -->
+<section class="slide" id="tujuan">
+  <div class="topbar">
+    <span class="chip">SLIDE 2</span>
+    <h1 class="slidetitle">Tujuan Pembelajaran <small>Apa yang akan kita kuasai hari ini?</small></h1>
+    <div class="spacer"></div><span class="chip alt">🎯 6 Tujuan</span>
+  </div>
+  <div class="goal-list">
+    <div class="goal"><div class="ico">👁️</div><div><h3>Memahami arah pandang</h3>
+      <p>Menjelaskan arti <b>tampak depan, belakang, kanan, dan kiri</b>: kita membayangkan berdiri di sisi
+      tertentu bangunan kubus, lalu menggambar hanya sisi yang menghadap kita.</p></div></div>
+    <div class="goal"><div class="ico">🔢</div><div><h3>Menghitung kubus yang tampak</h3>
+      <p>Menghitung <b>jumlah kubus yang tampak</b> dari tiap arah dengan strategi <b>per kolom</b>:
+      kiri ke kanan, dicatat tingginya, lalu dijumlahkan.</p></div></div>
+    <div class="goal"><div class="ico">🎨</div><div><h3>Membaca warna pada tampak</h3>
+      <p>Menentukan <b>warna kubus yang terlihat</b> dari suatu arah — hanya kubus <b>paling dekat</b>
+      dengan pengamat yang tampak; kubus di belakangnya tertutup.</p></div></div>
+    <div class="goal"><div class="ico">🕵️</div><div><h3>Menemukan kubus tersembunyi</h3>
+      <p>Melacak kubus yang <b>tertutup</b> dari suatu arah dan menghitungnya dengan rumus
+      <b>tersembunyi = seluruh kubus − kubus tampak</b>.</p></div></div>
+    <div class="goal"><div class="ico">🪞</div><div><h3>Melihat pola &amp; hubungan antar tampak</h3>
+      <p>Menemukan aturan menarik: jumlah petak tampak depan <b>selalu sama</b> dengan tampak belakang,
+      dan tampak kanan <b>selalu sama</b> dengan tampak kiri — hanya posisinya seperti cermin.</p></div></div>
+    <div class="goal"><div class="ico">🧠</div><div><h3>Berlatih 20 soal bertahap</h3>
+      <p>Mengerjakan <b>20 soal</b> dari mudah sampai menantang, lengkap dengan <b>tombol cek jawaban</b>,
+      <b>pembahasan bergambar</b>, dan <b>skor akhir</b>.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3: KONSEP ARAH PANDANG ============ -->
+<section class="slide" id="konsep">
+  <div class="topbar">
+    <span class="chip">SLIDE 3</span>
+    <h1 class="slidetitle">Empat Arah Pandang <small>Klik salah satu arah — lihat apa yang dilihat si pengamat!</small></h1>
+    <div class="spacer"></div><span class="chip alt">👆 Interaktif</span>
+  </div>
+  <div class="concept-grid">
+    <div class="card" style="display:flex;flex-direction:column">
+      <canvas id="conceptCanvas" width="608" height="360" style="margin:0 auto"></canvas>
+      <div class="dirbtns" id="dirbtns">
+        <button class="dirbtn on" data-dir="depan">⬇️ Depan</button>
+        <button class="dirbtn" data-dir="belakang">↗️ Belakang</button>
+        <button class="dirbtn" data-dir="kanan">➡️ Kanan</button>
+        <button class="dirbtn" data-dir="kiri">⬅️ Kiri</button>
+      </div>
+      <div class="callout">🧭 Susunan contoh: <b>8 kubus satuan</b>. Panah berwarna pada gambar menunjukkan arah pandang
+      yang sedang kamu pilih. Ingat: pengamat berdiri <b>di luar susunan</b>, sejajar dengan dasar bangunan.</div>
+    </div>
+    <div class="concept-side">
+      <div id="conceptViewWrap">
+        <h4 id="conceptTitle">Tampak Depan</h4>
+        <canvas id="conceptView" class="viewbig" width="240" height="240"></canvas>
+        <div style="font-size:13px;color:var(--ink-dim);margin-top:6px" id="conceptCount"></div>
+      </div>
+      <div id="conceptInfo"></div>
+      <div class="callout">💡 <b>Tips membaca gambar 3D:</b> sisi <b>persegi penuh</b> menghadap kita = sisi <b>depan</b>;
+      sisi miring ke <b>kanan-atas</b> adalah arah <b>kedalaman (ke belakang)</b>; sisi atas bangunan juga ikut terlihat
+      karena kita menggambar seperti <b>melihat dari atas-bawah</b>.</div>
+    </div>
+  </div>
+</section>
+<!-- ============ SLIDE 4: LABORATORIUM ============ -->
+<section class="slide" id="lab">
+  <div class="topbar">
+    <span class="chip">SLIDE 4</span>
+    <h1 class="slidetitle">Laboratorium Kubus <small>Rakit susunan, atur warna, dan lihat 4 tampak menghitung dirinya sendiri!</small></h1>
+    <div class="spacer"></div><span class="chip alt">🧪 Untuk Tutor</span>
+  </div>
+  <div class="lab-grid">
+    <div class="lab-left">
+      <div id="labCanvasWrap"><canvas id="labCanvas"></canvas></div>
+      <div class="lab-tools">
+        <button class="toolbtn on" id="toolAdd">➕ Bangun</button>
+        <button class="toolbtn" id="toolPaint">🎨 Warnai</button>
+        <button class="toolbtn" id="toolDel">🗑️ Hapus</button>
+        <div class="swatches" id="swatches"></div>
+        <select class="sel" id="autoColor" title="Mode warna otomatis">
+          <option value="manual">🎨 Warna manual</option>
+          <option value="z">🌈 Otomatis: warna per tingkat</option>
+          <option value="y">🌈 Otomatis: warna per kedalaman</option>
+          <option value="x">🌈 Otomatis: warna per kolom</option>
+        </select>
+      </div>
+      <div class="lab-tools">
+        <select class="sel" id="presetSel">
+          <option value="">📂 Contoh susunan…</option>
+          <option value="tangga">Tangga naik</option>
+          <option value="piramida">Piramida</option>
+          <option value="hurufT">Huruf T besar</option>
+          <option value="bingkai">Bingkai (berongga)</option>
+          <option value="duaBaris">Dinding 2 baris warna</option>
+          <option value="solid">Kubus solid 3×3×3</option>
+        </select>
+        <button class="toolbtn" id="btnClear">♻️ Bersihkan</button>
+        <label class="tgl"><input type="checkbox" id="tglDepth">Tampilkan jumlah lapisan di tampak</label>
+      </div>
+      <div class="lab-tools">
+        <span style="font-size:12.5px;color:var(--ink-dim);font-weight:700;align-self:center">🎥 Putar:</span>
+        <button class="toolbtn viewbtn" data-view="depan" title="Ratakan pandangan ke tampak depan">⬇️ Depan</button>
+        <button class="toolbtn viewbtn" data-view="kanan" title="Ratakan pandangan ke tampak kanan">➡️ Kanan</button>
+        <button class="toolbtn viewbtn" data-view="belakang" title="Ratakan pandangan ke tampak belakang">↗️ Belakang</button>
+        <button class="toolbtn viewbtn" data-view="kiri" title="Ratakan pandangan ke tampak kiri">⬅️ Kiri</button>
+        <button class="toolbtn viewbtn on" data-view="iso" title="Pandangan 3D bebas">🧊 3D</button>
+      </div>
+      <div class="callout">👆 <b>Cara pakai:</b> klik kotak di gambar 3D untuk menaruh kubus, pilih warna lalu mode
+      <b>Warnai</b> untuk mewarnai. <b>Seret (drag) gambar untuk memutar bebas</b> — atau pakai tombol <b>🎥 Putar</b>:
+      saat diratakan ke Depan/Kanan/Belakang/Kiri, gambar 3D menjadi <b>persis sama</b> dengan panel tampak di kanan.
+      Keempat panel <b>selalu menghitung dari data</b>, ke arah mana pun kamu memutarnya!</div>
+    </div>
+    <div class="lab-right">
+      <div class="viewpanels">
+        <div class="vpanel" id="vp-depan"><h4>⬇️ Tampak Depan <span class="cnt">0 kubus</span></h4><canvas width="136" height="136"></canvas><div class="hid"></div></div>
+        <div class="vpanel" id="vp-belakang"><h4>↗️ Tampak Belakang <span class="cnt">0 kubus</span></h4><canvas width="136" height="136"></canvas><div class="hid"></div></div>
+        <div class="vpanel" id="vp-kanan"><h4>➡️ Tampak Kanan <span class="cnt">0 kubus</span></h4><canvas width="136" height="136"></canvas><div class="hid"></div></div>
+        <div class="vpanel" id="vp-kiri"><h4>⬅️ Tampak Kiri <span class="cnt">0 kubus</span></h4><canvas width="136" height="136"></canvas><div class="hid"></div></div>
+      </div>
+      <div class="lab-stats">
+        <div class="stat">🧊 Total kubus: <b id="statTotal">0</b></div>
+        <div class="stat">👁️ Terlihat dari depan: <b id="statFront">0</b></div>
+        <div class="stat">🕵️ Tersembunyi: <b id="statHidden" style="color:var(--warn)">0</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 5: POIN KUNCI ============ -->
+<section class="slide" id="kunci">
+  <div class="topbar">
+    <span class="chip">SLIDE 5</span>
+    <h1 class="slidetitle">Poin Kunci &amp; Jembatan Keledai <small>Enam aturan emas membaca tampak kubus</small></h1>
+    <div class="spacer"></div><span class="chip alt">🔑 Aturan Emas</span>
+  </div>
+  <div class="keygrid">
+    <div class="keycard"><div class="n">1</div><div>
+      <h3>Berdirilah di arah itu</h3>
+      <p>Tampak depan = yang dilihat saat <b>berdiri di depan</b> bangunan. Tampak kanan = berdiri di <b>sisi kanan</b>,
+      dst. Setiap tampak hanya menampilkan sisi yang <b>menghadap pengamat</b>, digambar sebagai petak-persegi.</p></div></div>
+    <div class="keycard"><div class="n">2</div><div>
+      <h3>Hitung per kolom</h3>
+      <p>Baca tampak <b>dari kiri ke kanan</b>, catat jumlah petak tiap kolom, lalu jumlahkan.
+      Contoh: kolom 2 + kolom 3 + kolom 1 = <b>6 kubus</b>. Cara ini mencegah salah hitung.</p></div></div>
+    <div class="keycard"><div class="n">3</div><div>
+      <h3>Depan ↔ Belakang: jumlahnya selalu sama</h3>
+      <p>Tampak belakang punya <b>jumlah petak yang sama persis</b> dengan tampak depan, tetapi gambarnya
+      <b>tercermin kiri-kanan</b>. Yang berbeda hanya <b>warnanya</b> — karena yang terlihat adalah kubus
+      paling dekat dengan pengamat.</p></div></div>
+    <div class="keycard"><div class="n">4</div><div>
+      <h3>Kanan ↔ Kiri: jumlahnya selalu sama</h3>
+      <p>Aturan yang sama berlaku untuk samping: <b>jumlah petak kanan = jumlah petak kiri</b>,
+      gambarnya tercermin. Jadi kalau tampak kanan 4 petak, tampak kiri <b>pasti 4 petak</b> juga.</p></div></div>
+    <div class="keycard"><div class="n">5</div><div>
+      <h3>Kubus tersembunyi</h3>
+      <p>Dari satu arah, kubus yang berada <b>di belakang</b> kubus lain tertutup dan tidak terhitung.
+      <span class="formula">tersembunyi = total kubus − kubus tampak</span> Gunakan warna per lapisan agar
+      kubus tersembunyi mudah dilacak.</p></div></div>
+    <div class="keycard"><div class="n">6</div><div>
+      <h3>Susun ulang dalam pikiran</h3>
+      <p>Soal paling menantang meminta <b>total kubus</b>. Hitung <b>per lapisan tinggi</b> (dasar → puncak)
+      atau <b>per baris kedalaman</b> (depan → belakang), lalu jumlahkan. Gambar bantu = 50% jawaban.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6: PANDUAN LATIHAN ============ -->
+<section class="slide" id="panduan">
+  <div class="topbar">
+    <span class="chip">SLIDE 6</span>
+    <h1 class="slidetitle">Panduan Latihan <small>20 soal pilihan ganda — cek jawaban, baca pembahasan, kejar skor maksimal!</small></h1>
+    <div class="spacer"></div><span class="chip alt">✏️ 20 Soal</span>
+  </div>
+  <div class="guide-grid">
+    <div class="card">
+      <h3 style="font-size:17px;margin-bottom:14px">📋 Alur mengerjakan</h3>
+      <div class="steps">
+        <div class="step"><div class="num">1</div><p>Perhatikan <b>gambar susunan kubus</b> pada tiap soal. Boleh menelusuri keempat panel tampak kembali di Laboratorium (Slide 4).</p></div>
+        <div class="step"><div class="num">2</div><p>Pilih jawaban <b>A, B, C, atau D</b> dengan mengeklik pilihannya. Jawaban terpilih disorot biru.</p></div>
+        <div class="step"><div class="num">3</div><p>Klik tombol <b>✅ Cek Jawaban</b>. Hasil langsung muncul: hijau untuk benar, merah untuk salah.</p></div>
+        <div class="step"><div class="num">4</div><p>Buka <b>💡 Pembahasan</b>: berisi gambar tampak yang relevan, jumlah per kolom, dan langkah berpikirnya.</p></div>
+        <div class="step"><div class="num">5</div><p>Lanjut ke soal berikutnya. Gunakan <b>daftar nomor di kiri</b> untuk melompat antar soal — nomor berubah <b>hijau/merah</b> sesuai hasil.</p></div>
+        <div class="step"><div class="num">6</div><p>Setelah soal ke-20, klik <b>🏁 Lihat Hasil</b> untuk melihat <b>skor akhir</b> di slide penutup.</p></div>
+      </div>
+    </div>
+    <div class="quizdemo">
+      <h3>👁️ Beginilah bentuk soalnya</h3>
+      <div class="optdemo">
+        <div class="opt sel"><span class="letter">B</span> Berdirilah di sisi kanan susunan…</div>
+        <div class="opt right"><span class="letter">C</span> Jawaban benar → hijau ✔</div>
+        <div class="opt wrong"><span class="letter">D</span> Jawaban salah → merah ✘</div>
+      </div>
+      <div class="callout" style="margin-bottom:10px">💡 <b>Tips:</b> pada soal berwarna, selalu tanyakan
+      <b>“kubus mana yang paling dekat dengan pengamat?”</b> — hanya itu yang terlihat.</div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:14px">
+        <button class="btn pink" style="font-size:16px;padding:12px 30px" onclick="go(6)">Mulai Latihan ➜</button>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ SLIDE 7: LATIHAN ============ -->
+<section class="slide" id="latihan">
+  <div class="topbar">
+    <span class="chip">SLIDE 7</span>
+    <h1 class="slidetitle">Latihan: 20 Soal <small>Pilih jawaban → cek → baca pembahasan. Semangat!</small></h1>
+    <div class="spacer"></div><span class="badge green" id="qScoreBadge">Skor: 0 benar / 0 dikerjakan</span>
+  </div>
+  <div class="quiz-grid">
+    <div class="qside">
+      <h3>📝 Daftar Soal</h3>
+      <div id="qgrid"></div>
+      <div id="qscoreline">Benar: <b>0</b> &nbsp;•&nbsp; Salah: <b style="color:var(--bad)">0</b></div>
+      <button class="btn small" id="btnResetQuiz" style="width:100%">🔄 Ulangi dari awal</button>
+    </div>
+    <div class="qmain">
+      <div class="qtop">
+        <span class="badge blue" id="qNum">Soal 1 / 20</span>
+        <span class="badge yellow" id="qLevel">Mudah</span>
+        <div style="flex:1"></div>
+        <button class="btn small" id="btnPrevQ">← Sebelumnya</button>
+        <button class="btn small primary" id="btnNextQ">Berikutnya →</button>
+      </div>
+      <div class="qbody">
+        <div class="qfig">
+          <canvas id="qFig" width="252" height="238"></canvas>
+          <div class="cap">Susunan kubus satuan untuk soal ini</div>
+        </div>
+        <div>
+          <div class="qtext" id="qText"></div>
+          <div class="qopts" id="qOpts"></div>
+          <div class="qactions">
+            <button class="btn primary" id="btnCheck" disabled>✅ Cek Jawaban</button>
+            <div class="verdict" id="qVerdict"></div>
+          </div>
+        </div>
+      </div>
+      <div class="explain" id="qExplain">
+        <h4>💡 Pembahasan</h4>
+        <div class="expviews" id="qExpViews"></div>
+        <p id="qExpText"></p>
+        <div class="formulaline" id="qExpFormula"></div>
+      </div>
+      <div style="text-align:center;margin-top:2px">
+        <button class="btn pink" id="btnFinish" style="display:none;font-size:15px;padding:11px 28px">🏁 Lihat Hasil</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8: PENUTUP ============ -->
+<section class="slide" id="end">
+  <div class="topbar" style="position:absolute;top:0;left:0;right:0">
+    <span class="chip">SLIDE 8</span>
+    <h1 class="slidetitle" style="font-size:24px">Hasil Belajarmu</h1>
+    <div class="spacer"></div>
+  </div>
+  <div class="scorecircle" id="scoreCircle" style="--pct:0">
+    <div class="big" id="endScore">0/20</div>
+    <div class="sm" id="endPct">0% benar</div>
+  </div>
+  <div id="endPredikat">—</div>
+  <div id="endMsg">Kerjakan latihannya dulu, lalu kembalilah ke slide ini untuk melihat hasilnya.</div>
+  <div id="recap"></div>
+  <div style="display:flex;gap:12px">
+    <button class="btn primary" onclick="go(6);resetQuiz()">🔄 Ulangi Latihan</button>
+    <button class="btn" onclick="go(3)">🧪 Kembali ke Laboratorium</button>
+    <button class="btn" onclick="go(4)">🔑 Baca Poin Kunci</button>
+  </div>
+</section>
+<script>
+/*ENGINE-START*/
+"use strict";
+const NC=3;
+const COLORS=[
+  {name:'Merah',   hex:'#ef4444', light:'#fca5a5', dark:'#991b1b'},
+  {name:'Biru',    hex:'#3b82f6', light:'#93c5fd', dark:'#1e40af'},
+  {name:'Hijau',   hex:'#22c55e', light:'#86efac', dark:'#166534'},
+  {name:'Kuning',  hex:'#facc15', light:'#fde68a', dark:'#a16207'},
+  {name:'Ungu',    hex:'#a855f7', light:'#d8b4fe', dark:'#6b21a8'},
+  {name:'Oranye',  hex:'#fb923c', light:'#fdba74', dark:'#9a3412'}
+];
+const ZCOLORS=[1,2,3];  // warna per tingkat z0..z2: biru, hijau, kuning
+const YCOLORS=[0,4,5];  // warna per kedalaman y0..y2: merah, ungu, oranye
+const XCOLORS=[0,5,1];  // warna per kolom x0..x2: merah, oranye, biru
+function kk(x,y,z){return x+'.'+y+'.'+z;}
+function pk(k){return k.split('.').map(Number);}
+function buildStruct(cells){ // cells: [x,y,z] atau [x,y,z,colorIdx]
+  const m=new Map();
+  for(const c of cells){m.set(kk(c[0],c[1],c[2]), c.length>3?c[3]:null);}
+  return m;
+}
+function autoColorIdx(x,y,z,mode){
+  if(mode==='z')return ZCOLORS[z];
+  if(mode==='y')return YCOLORS[y];
+  if(mode==='x')return XCOLORS[x];
+  return null;
+}
+function colorOf(struct,key,mode){ // warna tampilan sebuah kubus
+  const [x,y,z]=pk(key); const c=struct.get(key);
+  if(mode&&mode!=='manual')return autoColorIdx(x,y,z,mode);
+  return (c===null||c===undefined)?0:c;
+}
+/* viewOf(struct,dir) -> {cells:[{col,row,x,y,z,color,depth}],count,colCounts:[a,b,c],hidden,total}
+   Orientasi gambar 2D: kolom 0 = kiri gambar, baris 0 = atas gambar (z tinggi). */
+function viewOf(struct,dir,mode){
+  const cells=[];const colCounts=[0,0,0];let count=0;
+  for(let col=0;col<3;col++){
+    for(let row=0;row<3;row++){
+      const z=2-row;
+      let x,y,lo,hi,step,axis;
+      if(dir==='depan'){x=col;   axis='y';lo=0;hi=2;step=1;}
+      else if(dir==='belakang'){x=2-col;axis='y';lo=2;hi=0;step=-1;}
+      else if(dir==='kanan'){y=col;   axis='x';lo=2;hi=0;step=-1;}
+      else {y=2-col;axis='x';lo=0;hi=2;step=1;}
+      const stack=[];
+      for(let d=lo;step>0?d<=hi:d>=hi;d+=step){
+        const k = axis==='y'?kk(x,d,z):kk(d,y,z);
+        if(struct.has(k))stack.push({key:k,color:colorOf(struct,k,mode),x:axis==='y'?x:d,y:axis==='y'?d:y,z});
+      }
+      if(stack.length>0){
+        count++;colCounts[col]++;
+        const near=stack[0];
+        cells.push({col,row,x:near.x,y:near.y,z,color:near.color,depth:stack.length,
+                    stackColors:stack.map(s=>s.color),stackKeys:stack.map(s=>s.key)});
+      }
+    }
+  }
+  return {cells,count,colCounts,hidden:struct.size-count,total:struct.size,dir};
+}
+function structTotal(struct){return struct.size;}
+function hiddenFrom(struct,dir,mode){return struct.size-viewOf(struct,dir,mode).count;}
+function colorVisibleCount(struct,dir,cIdx,mode){
+  return viewOf(struct,dir,mode).cells.filter(c=>c.color===cIdx).length;
+}
+function visibleKeys(struct,dir,mode){ // kubus yang tampak dari arah 'dir' (kunci terdekat tiap garis pandang)
+  return new Set(viewOf(struct,dir,mode).cells.map(c=>c.stackKeys[0]));
+}
+/*ENGINE-END*/
+
+/* ==================== RENDERER OBLIQUE ==================== */
+const S_DEF=64, D_DEF=27; // ukuran sisi & offset kedalaman (45° ke kanan-atas)
+function cubePos(x,y,z,x0,y0b,S,D){ // kiri-atas muka depan kubus
+  return [x0 + x*S + y*D, y0b + (2-z)*S - y*D];
+}
+function drawCubeFaces(ctx,px,py,S,D,ci,opts){
+  const c=COLORS[ci]||COLORS[0];opts=opts||{};
+  ctx.save();
+  ctx.lineWidth=Math.max(1.2,S*0.035);ctx.strokeStyle=opts.stroke||'rgba(8,14,28,.85)';ctx.lineJoin='round';
+  // muka depan
+  ctx.fillStyle=c.hex;ctx.beginPath();ctx.rect(px,py,S,S);ctx.fill();ctx.stroke();
+  // muka atas
+  ctx.fillStyle=c.light;ctx.beginPath();
+  ctx.moveTo(px,py);ctx.lineTo(px+S,py);ctx.lineTo(px+S+D,py-D);ctx.lineTo(px+D,py-D);ctx.closePath();ctx.fill();ctx.stroke();
+  // muka kanan
+  ctx.fillStyle=c.dark;ctx.beginPath();
+  ctx.moveTo(px+S,py);ctx.lineTo(px+S+D,py-D);ctx.lineTo(px+S+D,py+S-D);ctx.lineTo(px+S,py+S);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.restore();
+}
+function drawStruct(ctx,struct,opts){
+  opts=opts||{};
+  const S=opts.S||S_DEF,D=opts.D||D_DEF,x0=opts.x0||0,y0b=opts.y0b||0;
+  const mode=opts.mode||'manual';
+  if(opts.ground!==false){ // garis dasar lantai 3x3
+    ctx.save();ctx.strokeStyle='rgba(154,178,214,.28)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(x0,y0b);ctx.lineTo(x0+3*S,y0b);ctx.lineTo(x0+3*S+2*D,y0b-2*D);
+    ctx.lineTo(x0+2*D,y0b-2*D);ctx.closePath();ctx.stroke();ctx.restore();
+  }
+  const order=[]; // urutan painter: y turun (belakang->depan), z naik, x naik
+  for(let y=2;y>=0;y--)for(let z=0;z<3;z++)for(let x=0;x<3;x++)
+    if(struct.has(kk(x,y,z)))order.push([x,y,z]);
+  for(const [x,y,z] of order){
+    const [px,py]=cubePos(x,y,z,x0,y0b,S,D);
+    drawCubeFaces(ctx,px,py,S,D,colorOf(struct,kk(x,y,z),mode),opts);
+  }
+  return order;
+}
+function drawViewCanvas(ctx,W,view,opts){
+  opts=opts||{};
+  const cell=(W-30)/3,ox=6,oy=6;
+  ctx.clearRect(0,0,W,W);
+  ctx.font='700 '+(cell*0.42)+'px Segoe UI,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  for(const c of view.cells){
+    const px=ox+c.col*cell,py=oy+c.row*cell;
+    const col=COLORS[c.color]||COLORS[0];
+    ctx.fillStyle=col.hex;ctx.fillRect(px+1,py+1,cell-2,cell-2);
+    ctx.strokeStyle='rgba(8,14,28,.8)';ctx.lineWidth=1.4;ctx.strokeRect(px+1,py+1,cell-2,cell-2);
+    if(opts.showDepth&&c.depth>1){ // badge jumlah lapisan
+      ctx.fillStyle='rgba(8,14,28,.72)';
+      const bw=(c.depth>=10?30:22),bh=15;
+      ctx.beginPath();ctx.roundRect(px+cell-bw-3,py+3,bw,bh,6);ctx.fill();
+      ctx.fillStyle='#fff';ctx.font='700 11px Segoe UI,sans-serif';
+      ctx.fillText('\u00d7'+c.depth,px+cell-bw/2-3,py+3+bh/2+0.5);
+      ctx.font='700 '+(cell*0.42)+'px Segoe UI,sans-serif';
+    }
+  }
+  // kotak kosong samar
+  for(let col=0;col<3;col++)for(let row=0;row<3;row++){
+    if(!view.cells.some(c=>c.col===col&&c.row===row)){
+      ctx.strokeStyle='rgba(154,178,214,.22)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+      ctx.strokeRect(ox+col*cell+1,oy+row*cell+1,cell-2,cell-2);ctx.setLineDash([]);
+    }
+  }
+  // jumlah per kolom di bawah
+  if(opts.colCounts!==false){
+    const yC=oy+3*cell+10;
+    ctx.fillStyle='#fbbf24';ctx.font='700 12px Segoe UI,sans-serif';
+    for(let col=0;col<3;col++)ctx.fillText(String(view.colCounts[col]),ox+col*cell+cell/2,yC);
+    if(yC+13<W-2){
+      ctx.fillStyle='#9fb3d9';ctx.font='600 10px Segoe UI,sans-serif';
+      ctx.fillText('jumlah per kolom',W/2,yC+13);
+    }
+  }
+}
+</script>
+<script>
+/* ==================== UTIL KANVAS ==================== */
+function setupHiDPI(cv,w,h){
+  const dpr=window.devicePixelRatio||1;
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);}
+  const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);return ctx;
+}
+/* ==================== COVER ==================== */
+function drawCover(){
+  const cv=document.getElementById('coverCubes');if(!cv)return;
+  const ctx=setupHiDPI(cv,640,230);
+  ctx.clearRect(0,0,640,230);
+  const st=buildStruct([[0,0,0],[1,0,0],[1,0,1],[2,0,0],[2,0,1],[2,0,2],[1,1,0]]);
+  const S=46,D=19,x0=232,y0b=58;
+  drawStruct(ctx,st,{S,D,x0,y0b,mode:'z'});
+  ctx.font='700 13px Segoe UI,sans-serif';ctx.fillStyle='#9fb3d9';ctx.textAlign='center';
+  ctx.fillText('depan \u2193',x0+S*1.5,212);
+  ctx.fillText('\u2197 belakang',x0+3*S+2*D+50,26);
+  ctx.fillText('kanan \u2192',x0+3*S+2*D+42,120);
+  ctx.fillText('\u2190 kiri',x0-46,120);
+}
+/* ==================== SLIDE 3: KONSEP ==================== */
+const CONCEPT_STRUCT=buildStruct([[0,0,0],[1,0,0],[1,0,1],[2,0,0],[2,0,1],[2,0,2],[0,1,0],[1,1,0]]);
+let conceptDir='depan';
+const CONCEPT_INFO={
+  depan:{t:'Tampak Depan',d:'Pengamat berdiri <b>di depan</b> susunan dan menatap ke belakang. Terlihat <b>6 petak</b> — seluruh kubus baris depan (merah): tingginya 1, 2, lalu 3 dari kiri ke kanan (bentuk tangga). Dua kubus ungu di baris belakang <b>tertutup rapat</b> oleh kubus merah, sehingga tidak ikut terhitung.',
+    c:6,h:2},
+  belakang:{t:'Tampak Belakang',d:'Pengamat berpindah ke <b>belakang</b> susunan. Jumlah petaknya <b>tetap 6</b> — sama dengan tampak depan! Tetapi gambarnya <b>tercermin</b> (tinggi 3, 2, 1 dari kiri ke kanan) dan warnanya berubah: kini kubus <b>ungu</b> yang paling dekat dengan pengamat menutupi kubus merah di depannya.',
+    c:6,h:2},
+  kanan:{t:'Tampak Samping Kanan',d:'Pengamat berdiri di <b>sisi kanan</b>, menatap ke kiri. Terlihat <b>4 petak</b>: baris depan (y paling depan) tampak 3 petak tinggi — kubus merah terjauh x-nya yang tampak — dan baris belakang hanya 1 petak rendah (ungu). Bagian dalam yang lebih rendah tidak terlihat dari arah ini.',
+    c:4,h:4},
+  kiri:{t:'Tampak Samping Kiri',d:'Pengamat berdiri di <b>sisi kiri</b>, menatap ke kanan. Jumlah petaknya <b>4</b> — persis sama dengan tampak kanan (itu aturannya!), tetapi <b>tercermin</b> dan kubus yang tampak berbeda: dari kiri kita melihat kubus sisi kiri (x terkecil): tiga merah dan satu ungu. Kubus sisi kanan semuanya tersembunyi.',
+    c:4,h:4}
+};
+function drawConceptArrows(ctx,S,D,x0,y0b){
+  const w=608,h=426;
+  const P={
+    depan:   {x:x0+S*1.1, y:y0b+3*S+34, tx:x0+S*1.1, ty:y0b+3*S+6,  label:'DEPAN', face:'bottom'},
+    belakang:{x:x0+3*S+2*D+34, y:y0b-2*D-30, tx:x0+3*S+D-8, ty:y0b-D-6, label:'BELAKANG', face:'tr'},
+    kanan:   {x:x0+3*S+2*D+56, y:y0b+1.4*S, tx:x0+3*S+D+16, ty:y0b+1.4*S-10, label:'KANAN', face:'r'},
+    kiri:    {x:x0-52, y:y0b+1.4*S, tx:x0-8, ty:y0b+1.4*S-10, label:'KIRI', face:'l'}
+  };
+  for(const dir of ['depan','belakang','kanan','kiri']){
+    const p=P[dir],on=dir===conceptDir;
+    ctx.save();
+    ctx.strokeStyle=on?'#38bdf8':'rgba(154,178,214,.4)';
+    ctx.fillStyle=on?'#38bdf8':'rgba(154,178,214,.4)';
+    ctx.lineWidth=on?4:2;
+    ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.tx,p.ty);ctx.stroke();
+    const ang=Math.atan2(p.ty-p.y,p.tx-p.x),ah=on?13:9;
+    ctx.beginPath();ctx.moveTo(p.tx,p.ty);
+    ctx.lineTo(p.tx-ah*Math.cos(ang-0.5),p.ty-ah*Math.sin(ang-0.5));
+    ctx.lineTo(p.tx-ah*Math.cos(ang+0.5),p.ty-ah*Math.sin(ang+0.5));
+    ctx.closePath();if(on){ctx.fill();}else{ctx.stroke();}
+    ctx.font=(on?'800 15px':'700 12.5px')+' Segoe UI,sans-serif';
+    ctx.fillText((on?'\uD83D\uDC41 ':'')+p.label,p.x,p.y+(dir==='depan'?16:-10));
+    ctx.restore();
+  }
+}
+function renderConcept(){
+  const cv=document.getElementById('conceptCanvas');if(!cv)return;
+  const ctx=setupHiDPI(cv,608,360);ctx.clearRect(0,0,608,360);
+  const S=58,D=24,x0=150,y0b=96;
+  drawStruct(ctx,CONCEPT_STRUCT,{S,D,x0,y0b,mode:'y'});
+  drawConceptArrows(ctx,S,D,x0,y0b);
+  const info=CONCEPT_INFO[conceptDir];
+  document.getElementById('conceptTitle').textContent=info.t;
+  document.getElementById('conceptInfo').innerHTML=info.d;
+  const v=viewOf(CONCEPT_STRUCT,conceptDir,'y');
+  document.getElementById('conceptCount').innerHTML=
+    '<b style="color:#7dd3fc">'+v.count+' petak kubus</b> &bull; <b style="color:#fbbf24">'+v.hidden+' kubus tersembunyi</b> dari arah ini';
+  const vc=document.getElementById('conceptView');const vctx=setupHiDPI(vc,240,240);
+  drawViewCanvas(vctx,240,v,{showDepth:true});
+  document.querySelectorAll('#dirbtns .dirbtn').forEach(b=>b.classList.toggle('on',b.dataset.dir===conceptDir));
+}
+/* ==================== LABORATORIUM ==================== */
+const labState={struct:new Map(),tool:'add',color:0,mode:'manual',showDepth:false,hover:null,
+  rot:{t:28*Math.PI/180,p:35*Math.PI/180}}; // rotasi 3D: yaw (t) & elevasi (p)
+let dragState=null,labAnim=null;
+const VIEW_ANGLES={iso:[28,35],depan:[0,0],kanan:[90,0],belakang:[180,0],kiri:[-90,0]}; // derajat
+function setActiveViewBtn(name){
+  document.querySelectorAll('.viewbtn').forEach(x=>x.classList.toggle('on',x.dataset.view===name));
+}
+function animateView(deg){ // [yaw,elev] derajat, transisi halus
+  const norm=a=>{while(a>Math.PI)a-=2*Math.PI;while(a<-Math.PI)a+=2*Math.PI;return a;};
+  let dt=norm(deg[0]*Math.PI/180-labState.rot.t);
+  const dp=deg[1]*Math.PI/180-labState.rot.p;
+  labAnim={t0:performance.now(),dur:380,ft:labState.rot.t,fp:labState.rot.p,dt,dp};
+  requestAnimationFrame(stepAnim);
+}
+function stepAnim(now){
+  if(!labAnim)return;
+  let k=(now-labAnim.t0)/labAnim.dur;
+  if(k>=1)k=1;
+  const e=1-Math.pow(1-k,3); // easeOutCubic
+  labState.rot.t=labAnim.ft+labAnim.dt*e;
+  labState.rot.p=labAnim.fp+labAnim.dp*e;
+  drawLab();
+  if(k<1)requestAnimationFrame(stepAnim);else labAnim=null;
+}
+const LAB_PRESETS={
+  tangga:   {mode:'z',cells:[[0,0,0],[1,0,0],[1,0,1],[2,0,0],[2,0,1],[2,0,2]]},
+  piramida: {mode:'z',cells:(function(){const a=[];for(let x=0;x<3;x++)for(let y=0;y<3;y++)a.push([x,y,0]);
+              a.push([1,0,1],[0,1,1],[1,1,1],[2,1,1],[1,2,1],[1,1,2]);return a;})()},
+  hurufT:   {mode:'y',cells:(function(){const a=[];for(let x=0;x<3;x++)for(let y=0;y<3;y++)a.push([x,y,0]);
+              a.push([1,0,1],[1,1,1],[1,2,1],[1,1,2]);return a;})()},
+  bingkai:  {mode:'y',cells:(function(){const a=[];for(let x=0;x<3;x++)for(let y=0;y<3;y++)if(!(x===1&&y===1))a.push([x,y,0]);
+              for(let x=0;x<3;x++)for(let y=0;y<3;y++)if(!(x===1&&y===1))a.push([x,y,1]);
+              a.push([0,0,2],[2,0,2],[0,2,2],[2,2,2]);return a;})()},
+  duaBaris: {mode:'y',cells:[[0,0,0],[1,0,0],[2,0,0],[0,1,0],[1,1,0],[2,1,0],[2,1,1],[2,2,0]]},
+  solid:    {mode:'y',cells:(function(){const a=[];for(let x=0;x<3;x++)for(let y=0;y<3;y++)for(let z=0;z<3;z++)a.push([x,y,z]);return a;})()}
+};
+/* ---- basis kamera 3D (orthographic, yaw theta + elevasi phi) ----
+   C = arah ke kamera; r = kanan layar; u = atas layar; theta 0 = kamera di depan */
+function camBasis(theta,phi){
+  const st=Math.sin(theta),ct=Math.cos(theta),sp=Math.sin(phi),cp=Math.cos(phi);
+  return {C:[cp*st,-cp*ct,sp], r:[ct,st,0], u:[-sp*st,sp*ct,cp], cp, sp};
+}
+function projP(x,y,z,B,m){ // titik unit relatif pusat struktur -> piksel layar
+  const sx=x*B.r[0]+y*B.r[1];
+  const sy=x*B.u[0]+y*B.u[1]+z*B.u[2];
+  return [m.cx+sx*m.S, m.cy-sy*m.S];
+}
+function labMetrics(){
+  const wrap=document.getElementById('labCanvasWrap');
+  const w=wrap.clientWidth-16,h=wrap.clientHeight-16;
+  const S=Math.max(30,Math.min(Math.min(w/5.0,h/5.6),88));
+  return {S,cx:w/2+8,cy:h/2+4,w,h};
+}
+const FACES3=[ // muka kubus + normal keluar; sudut dalam ruang unit
+  {n:[0,0,1], top:true, c:(x0,x1,y0,y1,z0,z1)=>[[x0,y1,z1],[x1,y1,z1],[x1,y0,z1],[x0,y0,z1]]},
+  {n:[1,0,0], c:(x0,x1,y0,y1,z0,z1)=>[[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[x1,y0,z1]]},
+  {n:[-1,0,0],c:(x0,x1,y0,y1,z0,z1)=>[[x0,y1,z0],[x0,y0,z0],[x0,y0,z1],[x0,y1,z1]]},
+  {n:[0,1,0], c:(x0,x1,y0,y1,z0,z1)=>[[x1,y1,z0],[x0,y1,z0],[x0,y1,z1],[x1,y1,z1]]},
+  {n:[0,-1,0],c:(x0,x1,y0,y1,z0,z1)=>[[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1]]}
+];
+const _rgbCache={};
+function hex2rgb(h){
+  if(_rgbCache[h])return _rgbCache[h];
+  return _rgbCache[h]=[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+}
+function shadeFace(ci,t){ // t 0..1 : muka hampir tegak lurus pandangan = lebih terang
+  const c=COLORS[ci]||COLORS[0];
+  const a=hex2rgb(c.dark),b=hex2rgb(c.hex);
+  const r=a.map((v,i)=>Math.round(v+(b[i]-v)*t));
+  return 'rgb('+r[0]+','+r[1]+','+r[2]+')';
+}
+function faceQuads(x,y,z,B,m){ // muka-muka terlihat sebuah sel (kubus ada/tidak)
+  const x0=x-1.5,x1=x-0.5,y0=y-1.5,y1=y-0.5,z0=z-1.5,z1=z-0.5;
+  const out=[];
+  for(const f of FACES3){
+    const d=f.n[0]*B.C[0]+f.n[1]*B.C[1]+f.n[2]*B.C[2];
+    if(d<=0.02)continue;
+    const pts=f.c(x0,x1,y0,y1,z0,z1).map(p=>projP(p[0],p[1],p[2],B,m));
+    out.push({n:f.n,pts,t:f.top?1:Math.min(1,d/B.cp)});
+  }
+  out.sort((a,b)=>b.t-a.t);
+  return out;
+}
+function ptInPoly(pts,mx,my){
+  let inside=false;
+  for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+    const [xi,yi]=pts[i],[xj,yj]=pts[j];
+    if((yi>my)!==(yj>my)&&mx<(xj-xi)*(my-yi)/(yj-yi)+xi)inside=!inside;
+  }
+  return inside;
+}
+function allHits(mx,my){ // sel yang terkena klik, urut dari kubus paling dekat kamera
+  const m=labMetrics();
+  const B=camBasis(labState.rot.t,labState.rot.p);
+  const cells=[];
+  for(let x=0;x<3;x++)for(let y=0;y<3;y++)for(let z=0;z<3;z++){
+    const d=(x-1)*B.C[0]+(y-1)*B.C[1]+(z-1)*B.C[2];
+    cells.push({x,y,z,d});
+  }
+  cells.sort((a,b)=>b.d-a.d); // terdekat dulu
+  const hits=[];
+  for(const c of cells){
+    for(const f of faceQuads(c.x,c.y,c.z,B,m)){
+      if(ptInPoly(f.pts,mx,my)){hits.push({x:c.x,y:c.y,z:c.z,n:f.n});break;}
+    }
+  }
+  return hits;
+}
+function addTarget(mx,my){ // target peletakan kubus baru (klik muka kubus = sampingnya; klik ruang kosong = di situ)
+  for(const hit of allHits(mx,my)){
+    if(labState.struct.has(kk(hit.x,hit.y,hit.z))){
+      const t={x:hit.x+hit.n[0],y:hit.y+hit.n[1],z:hit.z+hit.n[2]};
+      if(t.x>=0&&t.x<=2&&t.y>=0&&t.y<=2&&t.z>=0&&t.z<=2&&!labState.struct.has(kk(t.x,t.y,t.z)))return t;
+    }else return hit;
+  }
+  return null;
+}
+function paintDelTarget(mx,my){ // sel kubus paling depan yang terkena (hapus/warnai)
+  for(const hit of allHits(mx,my)){
+    if(labState.struct.has(kk(hit.x,hit.y,hit.z)))return hit;
+  }
+  return null;
+}
+function labAct(mx,my,forceDel){
+  const tool=forceDel?'del':labState.tool;
+  const t=(tool==='add')?addTarget(mx,my):paintDelTarget(mx,my);
+  if(!t)return;
+  const key=kk(t.x,t.y,t.z);
+  if(tool==='del'){if(labState.struct.has(key))labState.struct.delete(key);}
+  else if(tool==='paint'){if(labState.struct.has(key))labState.struct.set(key,labState.color);}
+  else{ // add
+    if(labState.struct.has(key))return;
+    labState.struct.set(key,labState.mode==='manual'?labState.color:null);
+  }
+  renderLab();
+}
+function drawCube3(ctx,x,y,z,ci,B,m,ghost){
+  for(const f of faceQuads(x,y,z,B,m)){
+    ctx.beginPath();
+    f.pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
+    ctx.closePath();
+    if(ghost){
+      ctx.fillStyle=ghost.fill;ctx.fill();
+      ctx.strokeStyle=ghost.stroke;ctx.lineWidth=2;ctx.setLineDash([7,4]);ctx.stroke();ctx.setLineDash([]);
+    }else{
+      ctx.fillStyle=f.n[2]===1?(COLORS[ci]||COLORS[0]).light:shadeFace(ci,f.t);
+      ctx.fill();
+      ctx.strokeStyle='rgba(8,14,28,.85)';ctx.lineWidth=Math.max(1.2,m.S*0.035);ctx.stroke();
+    }
+  }
+}
+function drawFloor(ctx,B,m){ // lantai 3x3 ikut berputar sebagai acuan kedalaman
+  ctx.save();ctx.strokeStyle='rgba(154,178,214,.30)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+  const P=(a,b)=>projP(a-1.5,b-1.5,-1.5,B,m);
+  const c=[P(0,0),P(3,0),P(3,3),P(0,3)];
+  ctx.beginPath();ctx.moveTo(c[0][0],c[0][1]);
+  for(let i=1;i<4;i++)ctx.lineTo(c[i][0],c[i][1]);
+  ctx.closePath();ctx.stroke();
+  ctx.strokeStyle='rgba(154,178,214,.15)';
+  for(let i=1;i<3;i++){
+    let a=P(i,0),b=P(i,3);
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+    a=P(0,i);b=P(3,i);
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+  }
+  ctx.restore();
+}
+function drawSideLabels(ctx,B,m){ // label sisi mengikuti rotasi
+  const labs=[
+    ['DEPAN',[0,-1,0],[0,-2.55,-1.5]],['BELAKANG',[0,1,0],[0,2.55,-1.5]],
+    ['KANAN',[1,0,0],[2.55,0,-1.5]],['KIRI',[-1,0,0],[-2.55,0,-1.5]]
+  ];
+  ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font='700 12px Segoe UI,sans-serif';
+  for(const [txt,n,pos] of labs){
+    const d=n[0]*B.C[0]+n[1]*B.C[1];
+    if(d<0.22)continue; // sisi menghadap menjauh
+    const [px,py]=projP(pos[0],pos[1],pos[2],B,m);
+    if(px<14||px>m.w+2||py<10||py>m.h)continue;
+    ctx.fillStyle=d>0.8?'rgba(234,241,255,.9)':'rgba(154,178,214,.6)';
+    ctx.fillText(txt,px,py);
+  }
+  ctx.restore();
+}
+function drawLab(){
+  const cv=document.getElementById('labCanvas');
+  const m=labMetrics();
+  const ctx=setupHiDPI(cv,m.w+16,m.h+16);
+  ctx.clearRect(0,0,m.w+16,m.h+16);
+  ctx.save();ctx.translate(8,8);
+  const B=camBasis(labState.rot.t,labState.rot.p);
+  drawFloor(ctx,B,m);
+  const list=[];
+  for(const k of labState.struct.keys()){
+    const [x,y,z]=pk(k);
+    list.push({x,y,z,d:(x-1)*B.C[0]+(y-1)*B.C[1]+(z-1)*B.C[2]});
+  }
+  list.sort((a,b)=>a.d-b.d); // painter: terjauh digambar dulu
+  for(const c of list)drawCube3(ctx,c.x,c.y,c.z,colorOf(labState.struct,kk(c.x,c.y,c.z),labState.mode),B,m);
+  // pratinjau hover (ghost)
+  if(labState.hover&&!dragState){
+    const {mx,my}=labState.hover;
+    const tool=labState.tool;
+    const t=(tool==='add')?addTarget(mx,my):paintDelTarget(mx,my);
+    if(t&&(tool==='add'||labState.struct.has(kk(t.x,t.y,t.z)))){
+      const g=tool==='del'?{fill:'rgba(248,113,113,.30)',stroke:'#f87171'}
+             :tool==='paint'?{fill:'rgba(255,255,255,.12)',stroke:COLORS[labState.color].hex}
+             :{fill:'rgba(56,189,248,.30)',stroke:'#38bdf8'};
+      drawCube3(ctx,t.x,t.y,t.z,labState.color,B,m,g);
+    }
+  }
+  drawSideLabels(ctx,B,m);
+  ctx.restore();
+}
+function renderLab(){
+  drawLab();
+  let front=0;
+  for(const dir of ['depan','belakang','kanan','kiri']){
+    const v=viewOf(labState.struct,dir,labState.mode);
+    const panel=document.getElementById('vp-'+dir);
+    const cv=panel.querySelector('canvas');
+    const ctx=setupHiDPI(cv,136,136);
+    drawViewCanvas(ctx,136,v,{showDepth:labState.showDepth});
+    panel.querySelector('.cnt').textContent=v.count+' kubus';
+    panel.querySelector('.hid').innerHTML=v.hidden>0
+      ? 'tersembunyi di baliknya: <b>'+v.hidden+'</b> kubus'
+      : 'tidak ada kubus tersembunyi \u2714';
+    if(dir==='depan')front=v.count;
+  }
+  document.getElementById('statTotal').textContent=labState.struct.size;
+  document.getElementById('statFront').textContent=front;
+  document.getElementById('statHidden').textContent=labState.struct.size-front;
+}
+function initLab(){
+  const cv=document.getElementById('labCanvas');
+  // palet warna
+  const swWrap=document.getElementById('swatches');
+  COLORS.forEach((c,i)=>{
+    const d=document.createElement('div');d.className='sw'+(i===0?' on':'');
+    d.style.background=c.hex;d.title=c.name;
+    d.onclick=()=>{labState.color=i;
+      swWrap.querySelectorAll('.sw').forEach(s=>s.classList.remove('on'));d.classList.add('on');};
+    swWrap.appendChild(d);
+  });
+  const setTool=t=>{labState.tool=t;
+    document.getElementById('toolAdd').classList.toggle('on',t==='add');
+    document.getElementById('toolPaint').classList.toggle('on',t==='paint');
+    document.getElementById('toolDel').classList.toggle('on',t==='del');
+    renderLab();};
+  document.getElementById('toolAdd').onclick=()=>setTool('add');
+  document.getElementById('toolPaint').onclick=()=>setTool('paint');
+  document.getElementById('toolDel').onclick=()=>setTool('del');
+  document.getElementById('autoColor').onchange=e=>{
+    labState.mode=e.target.value;
+    document.getElementById('toolPaint').disabled=(labState.mode!=='manual');
+    renderLab();};
+  document.getElementById('tglDepth').onchange=e=>{labState.showDepth=e.target.checked;renderLab();};
+  document.getElementById('btnClear').onclick=()=>{labState.struct.clear();renderLab();};
+  document.getElementById('presetSel').onchange=e=>{
+    const p=LAB_PRESETS[e.target.value];if(!p)return;
+    labState.struct=buildStruct(p.cells);
+    labState.mode=p.mode;e.target.value='';
+    document.getElementById('autoColor').value=p.mode;
+    document.getElementById('toolPaint').disabled=(p.mode!=='manual');
+    setTool('add');};
+  // tombol putar: ratakan ke 4 tampak atau kembali ke 3D
+  document.querySelectorAll('.viewbtn').forEach(b=>b.addEventListener('click',()=>{
+    setActiveViewBtn(b.dataset.view);
+    labState.hover=null;
+    animateView(VIEW_ANGLES[b.dataset.view]);
+  }));
+  cv.addEventListener('pointerdown',e=>{
+    const [mx,my]=labXY(e);
+    dragState={mx,my,moved:false,btn:e.button};
+  });
+  cv.addEventListener('pointermove',e=>{
+    const [mx,my]=labXY(e);
+    if(dragState){ // seret = memutar bebas
+      const dx=mx-dragState.mx,dy=my-dragState.my;
+      if(dragState.moved||Math.hypot(dx,dy)>4){
+        dragState.moved=true;labAnim=null;labState.hover=null;
+        labState.rot.t+=dx*0.011;
+        labState.rot.p=Math.max(0,Math.min(1.396,labState.rot.p+dy*0.009));
+        setActiveViewBtn(null);
+        dragState.mx=mx;dragState.my=my;
+        drawLab();
+      }
+    }else{
+      labState.hover={mx,my};drawLab();
+    }
+  });
+  cv.addEventListener('pointerup',e=>{
+    if(!dragState)return;
+    const moved=dragState.moved,btn=dragState.btn;
+    dragState=null;
+    if(!moved){const [mx,my]=labXY(e);labAct(mx,my,btn===2);} // klik tanpa geser = aksi tool
+  });
+  cv.addEventListener('pointerleave',()=>{dragState=null;labState.hover=null;drawLab();});
+  cv.addEventListener('wheel',e=>{ // scroll = putar 15°
+    e.preventDefault();labAnim=null;labState.hover=null;
+    labState.rot.t+=(e.deltaY>0?1:-1)*Math.PI/12;
+    setActiveViewBtn(null);drawLab();
+  },{passive:false});
+  cv.addEventListener('contextmenu',e=>e.preventDefault());
+}
+</script>
+<script>
+/* ==================== DATA 20 SOAL ==================== */
+/* check: tipe verifikasi otomatis (dipakai juga saat QA) */
+const QUIZ=[
+ {level:'Mudah',mode:'z',cells:[[0,0,0],[1,0,0],[1,0,1],[2,0,0],[2,0,1],[2,0,2]],
+  q:'Berapa <b>banyak kubus</b> yang tampak dari <b>tampak depan</b>?',
+  opts:['3 kubus','4 kubus','6 kubus','9 kubus'],ans:2,
+  check:{type:'count',dir:'depan'},
+  exp:{views:['depan'],text:'Tampak depan dibaca <b>per kolom</b> dari kiri ke kanan: kolom kiri 1 petak, kolom tengah 2 petak, kolom kanan 3 petak (bentuk tangga). Jadi 1+2+3 = <b>6 kubus</b>.'}},
+ {level:'Mudah',mode:'z',cells:[[0,0,0],[1,0,0],[1,0,1],[2,0,0],[2,0,1],[2,0,2]],
+  q:'Berapa banyak kubus yang tampak dari <b>tampak samping kanan</b>?',
+  opts:['2 kubus','3 kubus','4 kubus','6 kubus'],ans:1,
+  check:{type:'count',dir:'kanan'},
+  exp:{views:['kanan'],text:'Berdirilah di sisi kanan. Seluruh tangga terdiri dari kubus di <b>baris paling depan</b>, sehingga dari kanan semuanya bersembunyi di belakang satu kolom: tampak <b>3 petak</b> bertumpuk (bawah-tengah-atas). Enam kubus sesungguhnya, tapi hanya 3 yang tampak.'}},
+ {level:'Mudah',mode:'z',cells:[[0,0,0],[1,0,0],[1,0,1],[2,0,0],[2,0,1],[2,0,2]],
+  q:'Berapa banyak kubus yang tampak dari <b>tampak samping kiri</b>?',
+  opts:['2 kubus','3 kubus','4 kubus','6 kubus'],ans:1,
+  check:{type:'count',dir:'kiri'},
+  exp:{views:['kiri'],text:'Aturan emas #4: jumlah petak tampak kiri <b>selalu sama</b> dengan tampak kanan, hanya <b>tercermin</b>. Karena tampak kanan 3 petak, tampak kiri juga <b>3 petak</b>.'}},
+ {level:'Mudah',mode:'y',cells:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,2,0],[2,2,1]],
+  q:'Berapa banyak kubus yang tampak dari <b>tampak depan</b>?',
+  opts:['3 kubus','4 kubus','5 kubus','6 kubus'],ans:1,
+  check:{type:'count',dir:'depan'},
+  exp:{views:['depan'],text:'Susunannya seperti huruf L yang menekuk ke belakang kanan. Dari depan: kolom kiri 1 petak, kolom tengah 1 petak, kolom kanan 2 petak (ada kubus yang naik satu tingkat). Total 1+1+2 = <b>4 kubus</b>. Dua kubus di belakang kanan tersembunyi.'}},
+ {level:'Sedang',mode:'y',cells:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,2,0],[2,2,1]],
+  q:'Susunan ini terdiri dari <b>6 kubus</b>. Berapa kubus yang <b>TIDAK terlihat</b> dari depan?',
+  opts:['1 kubus','2 kubus','3 kubus','4 kubus'],ans:1,
+  check:{type:'hidden',dir:'depan'},
+  exp:{views:['depan'],text:'Dari depan tampak 4 petak (lihat pembahasan soal sebelumnya). Kubus tersembunyi = seluruh kubus − kubus tampak = 6 − 4 = <b>2 kubus</b>: yaitu kubus di (kanan, kedalaman ke-2) dan (kanan, kedalaman ke-3) yang tertutup kubus merah depan.',formula:'tersembunyi = 6 \u2212 4 = <b>2</b>'}},
+ {level:'Mudah',mode:'manual',cells:[[0,0,0,1],[1,0,0,1],[2,0,0,1],[0,1,0,0],[1,1,0,0],[2,1,0,0]],
+  q:'Dari <b>tampak depan</b>, kubus-kubus susunan ini tampak berwarna…',
+  opts:['semuanya biru','semuanya merah','bercampur biru dan merah','bercampur ungu dan oranye'],ans:0,
+  check:{type:'allColor',dir:'depan',color:1},
+  exp:{views:['depan'],text:'Hanya kubus <b>paling dekat dengan pengamat</b> yang terlihat! Baris biru berada paling depan, sehingga keenam petak tampak depan semuanya <b>biru</b>. Baris merah di belakangnya tersembunyi sepenuhnya. Coba bayangkan: dari belakang, semuanya justru tampak merah!'}},
+ {level:'Sedang',mode:'manual',cells:[[0,0,0,1],[1,0,0,1],[2,0,0,1],[0,1,0,0],[1,1,0,0],[2,1,0,0]],
+  q:'Berapa kubus <b>MERAH</b> yang tampak dari <b>tampak belakang</b>?',
+  opts:['0 kubus','1 kubus','3 kubus','6 kubus'],ans:2,
+  check:{type:'colorCount',dir:'belakang',color:0},
+  exp:{views:['belakang'],text:'Dari belakang, yang paling dekat dengan pengamat adalah baris <b>merah</b>. Ketiga petak tampak belakang kini berwarna merah — jadi <b>3 kubus merah</b> tampak. Kubus biru yang tadinya menutupi kini justru tersembunyi di baliknya.'}},
+ {level:'Sedang',mode:'z',cells:(function(){const a=[];
+   for(let x=0;x<3;x++)for(let y=0;y<3;y++)a.push([x,y,0]);
+   a.push([0,0,1],[2,0,1],[0,2,1],[2,2,1],[1,1,2]);return a;})(),
+  q:'Berapa <b>jumlah seluruh kubus</b> penyusun bangunan ini?',
+  opts:['12 kubus','13 kubus','14 kubus','15 kubus'],ans:2,
+  check:{type:'total'},
+  exp:{views:[],text:'Hitung <b>per tingkat lantai</b> dari bawah ke atas (warna tiap tingkat berbeda): lantai 1 (biru) penuh 3\u00d73 = <b>9 kubus</b>; lantai 2 (hijau) hanya 4 kubus di keempat sudut; lantai 3 (kuning) 1 kubus di tengah. Total 9+4+1 = <b>14 kubus</b>.',
+  formula:'9 + 4 + 1 = <b>14 kubus</b>'}},
+ {level:'Sedang',mode:'z',cells:(function(){const a=[];
+   for(let x=0;x<3;x++)for(let y=0;y<3;y++)a.push([x,y,0]);
+   a.push([1,0,1],[1,1,1],[1,2,1]);return a;})(),
+  q:'Berapa <b>petak kubus</b> yang tampak dari <b>tampak depan</b>?',
+  opts:['3 petak','4 petak','6 petak','9 petak'],ans:1,
+  check:{type:'count',dir:'depan'},
+  exp:{views:['depan'],text:'Lantai bawah penuh 3\u00d73 menampilkan <b>3 petak</b> di baris bawah. Lantai atas hanya berupa dinding sepanjang kolom tengah, sehingga baris atas tampak <b>1 petak</b> di tengah. Total 3+1 = <b>4 petak</b>.'}},
+ {level:'Sedang',mode:'z',cells:(function(){const a=[];
+   for(let x=0;x<3;x++)for(let y=0;y<3;y++)a.push([x,y,0]);
+   a.push([1,0,1],[1,1,1],[1,2,1]);return a;})(),
+  q:'Pada susunan yang sama, berapa <b>petak kubus</b> yang tampak dari <b>tampak kanan</b>?',
+  opts:['4 petak','5 petak','6 petak','9 petak'],ans:2,
+  check:{type:'count',dir:'kanan'},
+  exp:{views:['kanan'],text:'Dari samping kanan terlihat <b>dua baris</b>: lantai bawah penuh (3 petak) dan lantai atas juga memanjang penuh dari depan ke belakang (3 petak, karena dinding tengah terlihat sepanjang y). Total 3+3 = <b>6 petak</b>. Bandingkan dengan tampak depan yang hanya 4!'}},
+ {level:'Sedang',mode:'manual',cells:[[0,0,0,2],[0,1,0,3],[0,2,0,4],[1,0,0,0]],
+  q:'Berapa kubus yang <b>TIDAK terlihat</b> dari <b>tampak depan</b>?',
+  opts:['0 kubus','1 kubus','2 kubus','3 kubus'],ans:2,
+  check:{type:'hidden',dir:'depan'},
+  exp:{views:['depan'],text:'Dari depan hanya tampak 2 petak: hijau (kiri) dan merah (kanan). Kubus <b>kuning</b> dan <b>ungu</b> berdiri persis di belakang kubus hijau, pada garis pandang yang sama, sehingga keduanya tertutup. Total kubus 4 − tampak 2 = <b>2 kubus tersembunyi</b>.',
+  formula:'tersembunyi = 4 \u2212 2 = <b>2</b> (kuning &amp; ungu)'}},
+ {level:'Sedang',mode:'manual',cells:[[0,0,0,2],[0,1,0,3],[0,2,0,4],[1,0,0,0]],
+  q:'Pada susunan yang sama, berapa <b>petak</b> yang tampak dari <b>tampak kiri</b>?',
+  opts:['1 petak','2 petak','3 petak','4 petak'],ans:2,
+  check:{type:'count',dir:'kiri'},
+  exp:{views:['kiri'],text:'Dari kiri, ketiga kubus berjajar memanjang ke belakang dan saling tidak menutupi (mereka berada pada garis pandang yang berbeda). Ketiganya tampak sebagai <b>3 petak</b> menyamping — ungu, kuning, hijau dari kiri ke kanan gambar. Kubus merah di kolom kedua tersembunyi di sisi dalam.'}},
+ {level:'Sedang',mode:'y',cells:[[0,0,0],[1,0,0],[1,0,1],[2,0,0],[2,0,1],[2,0,2],[0,1,0],[1,1,0]],
+  q:'Tampak depan susunan ini menunjukkan <b>6 petak</b>. Berapa petak yang tampak dari <b>tampak belakang</b>?',
+  opts:['4 petak','5 petak','6 petak','8 petak'],ans:2,
+  check:{type:'count',dir:'belakang'},
+  exp:{views:['depan','belakang'],text:'Aturan emas #3: jumlah petak tampak belakang <b>selalu sama</b> dengan tampak depan, karena keduanya memproyeksikan bangunan pada bidang yang sama (hanya dihadang kubus yang berbeda). Jadi jawabannya <b>6 petak</b>. Perhatikan gambar: susunannya tercermin (tinggi 3-2-1 \u2192 1-2-3) dan dua petak berwarna ungu — itu kubus baris belakang yang kini paling dekat dengan pengamat.'}},
+ {level:'Sedang',mode:'x',cells:[[0,0,0],[0,1,0],[0,2,0],[1,0,0],[1,1,0],[2,0,0]],
+  q:'Tampak kanan susunan ini menunjukkan <b>3 petak</b>. Berapa petak yang tampak dari <b>tampak kiri</b>?',
+  opts:['2 petak','3 petak','4 petak','6 petak'],ans:1,
+  check:{type:'count',dir:'kiri'},
+  exp:{views:['kanan','kiri'],text:'Aturan emas #4: tampak kiri dan kanan <b>selalu sama jumlah petaknya</b> — keduanya proyeksi pada bidang samping yang sama. Jawaban: <b>3 petak</b>. Gambarnya tercermin, dan kubus yang tampak berbeda: dari kanan tampak kolom biru-oranye, dari kiri tampak baris merah memanjang.'}},
+ {level:'Sulit',mode:'y',cells:[[0,0,0],[0,0,1],[0,1,0],[0,2,0],[1,0,0],[2,0,0]],
+  q:'Pada tampak depan, <b>kolom paling kiri</b> tampak 2 petak. Berapa kubus yang <b>sesungguhnya</b> menyusun kolom paling kiri itu?',
+  opts:['2 kubus','3 kubus','4 kubus','6 kubus'],ans:2,
+  check:{type:'xcount',x:0},
+  exp:{views:['depan'],text:'Petak tampak hanyalah "kerang depan". Kolom kiri terdiri dari: 1 kubus atas terlihat, lalu kubus bawah depan yang terlihat, dan <b>2 kubus lagi tersembunyi di belakangnya</b> (kedalaman ke-2 dan ke-3 — aktifkan "jumlah lapisan" di Laboratorium untuk membuktikan: badge \u00d73 pada petak kiri-bawah). Jadi kolom kiri tersusun dari <b>4 kubus</b>. Kolom lain masing-masing hanya 1 kubus (total bangunan 6).',
+  formula:'kolom kiri = 2 tampak + 2 tersembunyi = <b>4 kubus</b>'}},
+ {level:'Sulit',mode:'z',cells:[[0,0,0],[0,0,1],[1,1,0],[2,0,0],[2,0,1],[2,0,2]],
+  q:'Berapa <b>selisih</b> jumlah petak pada <b>tampak depan</b> dan <b>tampak kanan</b>?',
+  opts:['1 petak','2 petak','3 petak','4 petak'],ans:1,
+  check:{type:'diff',a:'depan',b:'kanan'},
+  exp:{views:['depan','kanan'],text:'Hitung keduanya lalu kurangkan. Tampak depan: kolom kiri 2, tengah 1, kanan 3 \u2192 <b>6 petak</b>. Tampak kanan: baris depan 3 petak (tinggi 1-2-3), baris belakang 1 petak \u2192 <b>4 petak</b>. Selisih 6 \u2212 4 = <b>2 petak</b>.',
+  formula:'6 \u2212 4 = <b>2 petak</b>'}},
+ {level:'Sedang',mode:'manual',cells:[[0,0,0,0],[1,0,0,3],[2,0,0,1],[0,1,0,2],[1,1,0,4],[2,1,0,5]],
+  q:'Berapa <b>warna berbeda</b> yang tampak dari <b>tampak belakang</b>?',
+  opts:['0 warna','1 warna','3 warna','6 warna'],ans:2,
+  check:{type:'colorsDistinct',dir:'belakang'},
+  exp:{views:['belakang'],text:'Dari belakang, baris depan (merah-kuning-biru) seluruhnya tertutup. Yang tampak adalah baris belakang: <b>hijau, ungu, oranye</b> — tiga warna berbeda. Ingat: jawaban ini juga 3 bila dilihat dari depan (merah-kuning-biru), karena depan-belakang selalu menampilkan jumlah petak yang sama.'}},
+ {level:'Sulit',mode:'y',cells:[[1,0,0],[1,0,1],[1,0,2],[1,1,0],[1,1,1],[1,2,0]],
+  q:'Menara ini berdiri di <b>kolom tengah</b> saja, melandai ke belakang. Berapa <b>petak</b> yang tampak dari <b>tampak kanan</b>?',
+  opts:['3 petak','4 petak','5 petak','6 petak'],ans:3,
+  check:{type:'count',dir:'kanan'},
+  exp:{views:['kanan'],text:'Dari depan, menara hanya tampak 3 petak (satu kolom tinggi 3). Tetapi dari kanan, ketiga baris kedalaman terlihat karena menurun bertingkat: baris depan tinggi 3, baris tengah 2, baris belakang 1 — semuanya <b>tidak saling menutupi</b>. Total 3+2+1 = <b>6 petak</b>.',
+  formula:'3 + 2 + 1 = <b>6 petak</b>'}},
+ {level:'Sulit',mode:'z',cells:(function(){const a=[];
+   for(let x=0;x<3;x++)for(let y=0;y<3;y++)a.push([x,y,0]);
+   a.push([1,0,1],[0,1,1],[1,1,1],[2,1,1],[1,2,1],[1,1,2]);return a;})(),
+  q:'Berapa <b>jumlah seluruh kubus</b> penyusun piramida bertingkat ini?',
+  opts:['12 kubus','14 kubus','15 kubus','17 kubus'],ans:2,
+  check:{type:'total'},
+  exp:{views:[],text:'Hitung per tingkat (warna tiap tingkat berbeda): lantai 1 biru penuh <b>9 kubus</b>; lantai 2 hijau berbentuk plus (tengah + 4 sisi) = <b>5 kubus</b>; puncak kuning <b>1 kubus</b>. Total 9+5+1 = <b>15 kubus</b>. Jangan terkecoh: tampak depan hanya menampilkan 6 petak, padahal kubus di belakangnya banyak yang tersembunyi!',
+  formula:'9 + 5 + 1 = <b>15 kubus</b>'}},
+ {level:'Sulit',mode:'z',cells:(function(){const a=[];
+   for(let x=0;x<3;x++)for(let y=0;y<3;y++)a.push([x,y,0]);
+   a.push([1,1,2]);return a;})(),
+  q:'Bangunan ini terdiri dari <b>10 kubus</b>. Berapa kubus yang <b>tidak terlihat dari depan</b> dan <b>juga tidak terlihat dari kanan</b>?',
+  opts:['2 kubus','3 kubus','4 kubus','5 kubus'],ans:2,
+  check:{type:'hiddenBoth',dirs:['depan','kanan']},
+  exp:{views:['depan','kanan'],text:'Tampak depan menampilkan 4 petak → 4 kubus tampak (tiga dasar depan + puncak). Tampak kanan juga 4 petak → 4 kubus tampak (tiga dasar kanan + puncak). Kubus yang tampak dari kanan sebagian sudah dihitung: dasar depan-kanan dan puncak terlihat dari <b>kedua</b> arah. Kubus tampak gabungan = 4 + 4 \u2212 2 = 6. Maka tersembunyi dari keduanya = 10 \u2212 6 = <b>4 kubus</b> (dua dasar kiri + dua dasar tengah).',
+  formula:'terlihat gabungan = 4 + 4 \u2212 2 = 6 \u2192 tersembunyi = 10 \u2212 6 = <b>4 kubus</b>'}}
+];
+</script>
+<script>
+/* ==================== POLYFILL ==================== */
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    r=Math.min(r,w/2,h/2);this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);
+    this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this;};
+}
+/* ==================== KUIS ==================== */
+const LETTERS=['A','B','C','D'];
+const quizState={cur:0,answers:Array(20).fill(null),checked:Array(20).fill(false),correct:Array(20).fill(0)};
+let STAGE_SCALE=1;
+function qMetrics(){return {S:54,D:23,x0:22,y0b:60};}
+function drawQFig(idx){
+  const q=QUIZ[idx],cv=document.getElementById('qFig');
+  const ctx=setupHiDPI(cv,252,238);ctx.clearRect(0,0,252,238);
+  const m=qMetrics();
+  drawStruct(ctx,buildStruct(q.cells),{S:m.S,D:m.D,x0:m.x0,y0b:m.y0b,mode:q.mode});
+}
+function checkedCount(){return quizState.checked.filter(Boolean).length;}
+function scoreCount(){return quizState.correct.reduce((a,b)=>a+b,0);}
+function updateScoreUI(){
+  document.getElementById('qScoreBadge').textContent='Skor: '+scoreCount()+' benar / '+checkedCount()+' dikerjakan';
+  document.getElementById('qscoreline').innerHTML=
+    'Benar: <b>'+scoreCount()+'</b> &nbsp;•&nbsp; Salah: <b style="color:var(--bad)">'+(checkedCount()-scoreCount())+'</b>';
+  const g=document.getElementById('qgrid');
+  QUIZ.forEach((_,i)=>{
+    const b=g.children[i];b.classList.remove('ok','bad');
+    if(quizState.checked[i])b.classList.add(quizState.correct[i]?'ok':'bad');
+    b.classList.toggle('cur',i===quizState.cur);
+  });
+}
+function renderQOpts(q){
+  const wrap=document.getElementById('qOpts');wrap.innerHTML='';
+  const isChecked=quizState.checked[quizState.cur];
+  q.opts.forEach((txt,oi)=>{
+    const b=document.createElement('button');b.className='opt';
+    b.innerHTML='<span class="letter">'+LETTERS[oi]+'</span><span>'+txt+'</span>';
+    if(isChecked){
+      b.disabled=true;
+      if(oi===q.ans)b.classList.add('right');
+      else if(oi===quizState.answers[quizState.cur])b.classList.add('wrong');
+    }else if(oi===quizState.answers[quizState.cur])b.classList.add('sel');
+    else b.onclick=()=>{quizState.answers[quizState.cur]=oi;renderQOpts(q);
+      document.getElementById('btnCheck').disabled=false;};
+    wrap.appendChild(b);
+  });
+}
+function renderExplain(q){
+  const vw=document.getElementById('qExpViews');vw.innerHTML='';
+  (q.exp.views||[]).forEach(dir=>{
+    const box=document.createElement('div');box.className='expview';
+    const cv=document.createElement('canvas');cv.width=140;cv.height=140;
+    const ctx=setupHiDPI(cv,140,140);
+    const v=viewOf(buildStruct(q.cells),dir,q.mode);
+    drawViewCanvas(ctx,140,v,{showDepth:true});
+    const t=document.createElement('div');t.className='t';
+    t.textContent='Tampak '+dir.charAt(0).toUpperCase()+dir.slice(1)+' \u2022 '+v.count+' petak';
+    box.appendChild(cv);box.appendChild(t);vw.appendChild(box);
+  });
+  document.getElementById('qExpText').innerHTML=q.exp.text;
+  const fl=document.getElementById('qExpFormula');
+  if(q.exp.formula){fl.innerHTML='\uD83E\uDDEE '+q.exp.formula;fl.style.display='block';}
+  else fl.style.display='none';
+}
+function renderQ(i){
+  quizState.cur=i;
+  const q=QUIZ[i];
+  document.getElementById('qNum').textContent='Soal '+(i+1)+' / 20';
+  document.getElementById('qLevel').textContent='Tingkat: '+q.level;
+  drawQFig(i);
+  document.getElementById('qText').innerHTML=q.q;
+  renderQOpts(q);
+  const isChecked=quizState.checked[i];
+  const btnCheck=document.getElementById('btnCheck');
+  btnCheck.disabled=isChecked||quizState.answers[i]===null;
+  btnCheck.innerHTML=isChecked?'\u2714 Sudah dicek':'\u2705 Cek Jawaban';
+  const vd=document.getElementById('qVerdict');
+  if(isChecked){
+    vd.className='verdict '+(quizState.correct[i]?'ok':'bad');
+    vd.textContent=quizState.correct[i]
+      ?'\uD83C\uDF89 Benar! Jawabanmu tepat.'
+      :'\u274C Belum tepat. Jawaban benar: '+LETTERS[q.ans];
+    renderExplain(q);
+    document.getElementById('qExplain').classList.add('show');
+  }else{
+    vd.className='verdict';vd.textContent='';
+    document.getElementById('qExplain').classList.remove('show');
+    document.getElementById('qExpViews').innerHTML='';
+  }
+  document.getElementById('btnPrevQ').disabled=(i===0);
+  document.getElementById('btnNextQ').disabled=(i===QUIZ.length-1);
+  const allDone=checkedCount()===QUIZ.length||(i===QUIZ.length-1&&isChecked);
+  document.getElementById('btnFinish').style.display=allDone?'inline-flex':'none';
+  updateScoreUI();
+}
+function checkAnswer(){
+  const i=quizState.cur;
+  if(quizState.answers[i]===null||quizState.checked[i])return;
+  quizState.checked[i]=true;
+  quizState.correct[i]=(quizState.answers[i]===QUIZ[i].ans)?1:0;
+  renderQ(i);
+}
+function resetQuiz(){
+  quizState.answers.fill(null);quizState.checked.fill(false);quizState.correct.fill(0);
+  renderQ(0);
+}
+function showResults(){
+  const n=QUIZ.length,s=scoreCount(),pct=Math.round(s/n*100);
+  document.getElementById('endScore').textContent=s+'/'+n;
+  document.getElementById('endPct').textContent=pct+'% benar';
+  document.getElementById('scoreCircle').style.setProperty('--pct',pct);
+  const pred=document.getElementById('endPredikat'),msg=document.getElementById('endMsg');
+  if(pct>=90){pred.textContent='\uD83C\uDFC6 Luar Biasa!';pred.style.color='#34d399';
+    msg.textContent='Kamu menguasai visualisasi spasial kubus secara menyeluruh — menghitung tampak, membaca warna, dan menemukan kubus tersembunyi dengan sangat cermat. Pertahankan kebiasaan menghitung per kolom dan per lapisan!';}
+  else if(pct>=75){pred.textContent='\uD83C\uDF1F Hebat!';pred.style.color='#7dd3fc';
+    msg.textContent='Pemahamanmu sudah kuat. Buka kembali pembahasan soal yang keliru, lalu coba buktikan jawabannya di Laboratorium Kubus dengan menyusun bangunan yang sama.';}
+  else if(pct>=60){pred.textContent='\uD83D\uDC4D Bagus!';pred.style.color='#fbbf24';
+    msg.textContent='Dasar-dasarnya sudah ada. Fokuskan latihan pada aturan emas #3 dan #4 (depan=belakang, kanan=kiri) serta cara menemukan kubus tersembunyi, lalu ulangi latihannya.';}
+  else{pred.textContent='\uD83C\uDF31 Terus Berlatih!';pred.style.color='#f9a8d4';
+    msg.textContent='Tidak apa-apa — visualisasi spasial adalah keterampilan yang tumbuh dengan latihan. Pelajari lagi Slide 3 dan 5, coba-coba sendiri di Laboratorium Kubus, lalu ulangi 20 soal ini.';}
+  const rc=document.getElementById('recap');rc.innerHTML='';
+  QUIZ.forEach((_,i)=>{
+    const d=document.createElement('div');d.className='recapchip';
+    d.title='Soal '+(i+1);
+    if(quizState.checked[i]){d.classList.add(quizState.correct[i]?'ok':'bad');d.textContent='\u2713';}
+    else d.textContent=i+1;
+    rc.appendChild(d);
+  });
+}
+function initQuiz(){
+  const g=document.getElementById('qgrid');
+  QUIZ.forEach((_,i)=>{
+    const b=document.createElement('button');b.className='qcell';b.textContent=i+1;
+    b.title='Soal '+(i+1);
+    b.onclick=()=>renderQ(i);
+    g.appendChild(b);
+  });
+  document.getElementById('btnCheck').onclick=checkAnswer;
+  document.getElementById('btnPrevQ').onclick=()=>renderQ(Math.max(0,quizState.cur-1));
+  document.getElementById('btnNextQ').onclick=()=>renderQ(Math.min(QUIZ.length-1,quizState.cur+1));
+  document.getElementById('btnFinish').onclick=()=>{showResults();go(7);};
+  document.getElementById('btnResetQuiz').onclick=()=>{resetQuiz();go(6);};
+  renderQ(0);
+}
+/* ==================== NAVIGASI ==================== */
+const SLIDE_NAMES=['Cover','Tujuan','Konsep 4 Arah','Laboratorium','Poin Kunci','Panduan','Latihan 20 Soal','Hasil'];
+let curSlide=0;
+function go(i){
+  curSlide=Math.max(0,Math.min(SLIDE_NAMES.length-1,i));
+  document.querySelectorAll('.slide').forEach((s,si)=>s.classList.toggle('active',si===curSlide));
+  document.getElementById('progress').style.width=((curSlide+1)/SLIDE_NAMES.length*100)+'%';
+  document.getElementById('slidecount').textContent=(curSlide+1)+' / '+SLIDE_NAMES.length;
+  document.getElementById('dots').querySelectorAll('.dot').forEach((d,di)=>d.classList.toggle('on',di===curSlide));
+  document.getElementById('btnPrev').disabled=(curSlide===0);
+  document.getElementById('btnNext').disabled=(curSlide===SLIDE_NAMES.length-1);
+  if(curSlide===2)renderConcept();
+  if(curSlide===3)renderLab();
+}
+function fitStage(){
+  const s=Math.min(window.innerWidth/1280,window.innerHeight/720);
+  STAGE_SCALE=s;
+  document.getElementById('stage').style.transform='scale('+s+')';
+}
+function initNav(){
+  const dots=document.getElementById('dots');
+  SLIDE_NAMES.forEach((nm,i)=>{
+    const d=document.createElement('div');d.className='dot'+(i===0?' on':'');
+    d.dataset.t=nm;d.onclick=()=>go(i);dots.appendChild(d);
+  });
+  document.getElementById('btnPrev').onclick=()=>go(curSlide-1);
+  document.getElementById('btnNext').onclick=()=>go(curSlide+1);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='PageDown')go(curSlide+1);
+    else if(e.key==='ArrowLeft'||e.key==='PageUp')go(curSlide-1);
+    else if(e.key>='1'&&e.key<='8')go(e.key-1);
+  });
+}
+function labXY(e){
+  const r=document.getElementById('labCanvas').getBoundingClientRect();
+  const s=STAGE_SCALE||1;
+  return [(e.clientX-r.left)/s-8,(e.clientY-r.top)/s-8];
+}
+/* ==================== INIT ==================== */
+function init(){
+  fitStage();drawCover();initLab();renderLab();renderConcept();initQuiz();initNav();go(0);
+  document.querySelectorAll('#dirbtns .dirbtn').forEach(b=>{
+    b.addEventListener('click',()=>{conceptDir=b.dataset.dir;renderConcept();});
+  });
+  window.addEventListener('resize',()=>{fitStage();drawCover();
+    if(curSlide===3)renderLab();});
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+
+</div></div>
+</body>
+</html>
